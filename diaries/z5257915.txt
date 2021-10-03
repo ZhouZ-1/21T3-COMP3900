@@ -1,0 +1,24 @@
+# Week 1
+Thursday: Started draft on ShareSight research.
+Friday: Finished draft on ShareSight research.
+Saturday: Confirmed core functionality with team. Brainstormed and assigned epics.
+Sunday: Wrote user stories and acceptance criteria for my assigned epic.
+
+# Week 2
+Monday: Collaborated with the team to make flow/state diagram on lucidcharts.
+Wednesday: Consulted with Matthew about all the questions we had about the project. Discussed with team about system architecture and storyboarding.
+Friday: Wrote a few short paragraphs for some novelties, write up report on outcome of research for software architecture for the business layer and database layer.
+Saturday: Created Project proposal document and edited in the basic structure of the proposal from the specification. Also suggested novelty in the meeting.
+Sunday: Moved content from the previous meetings into the proposal draft. Added story points and priority for user stories.  
+
+# Week 3
+Monday: Decided as a team when the sprints will be. Decided together to use harvard referencing style, and to ask Matthew to review novelties at the next lab.
+Tuesday: Joined github classroom.
+Wednesday: Decided together which novelties to do, and what external actors are applicable. Provided feedback on missing user stories.
+Thursday: Refined proposal by improving current background and existing solutions sections.
+Saturday: Added references for my parts. Added storyboard explaination.
+Sunday: Created work diary. Team finally finshed off the proposal and submitted after we edited and reviewed the proposal together.
+
+Diary entries from now on should be in more depth than before since I can state what we plan to do instead of what has been done, and any problems that arise.
+
+# Week 4
