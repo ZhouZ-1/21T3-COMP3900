@@ -22,3 +22,4 @@ Sunday: Created work diary. Team finally finshed off the proposal and submitted 
 Diary entries from now on should be in more depth than before since I can state what we plan to do instead of what has been done, and any problems that arise.
 
 # Week 4
+Tuesday: Started working on the infrastructure of the backend and discovered the python modules on vlab is somewhat outdated. No impediments so far.
