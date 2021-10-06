@@ -1,7 +1,14 @@
+import { useState } from "react";
 import { useHistory } from "react-router";
 
 function SignUp(){
     var history = useHistory();
+    const [firstName,setFirstName] = useState('');
+    const [lastName,setLastName] = useState('');
+    const [email,setEmail] = useState('');
+    const [userName,setUserName] = useState('');
+    const [password,setPassword] = useState('');
+    
     const handleSignUp = () => {
         //@TODO: Put information to the database.
         history.push('/') //    Go back to main page.
@@ -9,19 +16,19 @@ function SignUp(){
     return(
         <div class="text-center w-100 p-3">
             <label for="inputFirstName" class="sr-only">First Name</label>
-            <input type="firstName" id="inputFirstName" class="form-control" placeholder="Michael" required autofocus/>
+            <input type="firstName" id="inputFirstName" class="form-control" placeholder="Michael" required autofocus onChange={(evt)=>setFirstName(evt.target.value)}/>
 
             <label for="inputLastName" class="sr-only">Last Name</label>
-            <input type="lastName" id="inputLastName" class="form-control" placeholder="Jackson" required autofocus/>
+            <input type="lastName" id="inputLastName" class="form-control" placeholder="Jackson" required autofocus onChange={(evt)=>setLastName(evt.target.value)}/>
 
             <label for="inputEmail" class="sr-only">Email</label>
-            <input type="email" id="email" class="form-control" placeholder="michal.jackson@gmail.com" required autofocus/>
+            <input type="email" id="email" class="form-control" placeholder="michal.jackson@gmail.com" required autofocus onChange={(evt)=>setEmail(evt.target.value)}/>
 
             <label for="inputUserName" class="sr-only">User Name</label>
-            <input type="userName" id="inputUserName" class="form-control" placeholder="michael0943" required autofocus/>
+            <input type="userName" id="inputUserName" class="form-control" placeholder="michael0943" required autofocus onChange={(evt)=>setUserName(evt.target.value)}/>
 
             <label for="inputPassword" class="sr-only">Password</label>
-            <input type="password" id="inputPassword" class="form-control" placeholder="Password" required/>
+            <input type="password" id="inputPassword" class="form-control" placeholder="Password" required onChange={(evt)=>setPassword(evt.target.value)}/>
             
             <button class="btn btn-lg btn-primary btn-block" onClick={handleSignUp}>Sign Up</button>
         </div>
