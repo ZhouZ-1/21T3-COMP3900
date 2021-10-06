@@ -1,0 +1,19 @@
+# Week 1
+Created proposal document 
+Start writing problem overview 
+
+# Week 2
+Meeting about user stories
+Start thinking about user stories 
+Write user stories 
+
+# Week 3
+Draft up technologies for infrastructure in meeting 
+Research APIs for stock market data 
+Write up about API we are using (Alpha Vantage) 
+
+# Week 4
+Finish off justifying use of Alpha Vantage 
+Add story points and priorities 
+Polish our solution
+Finish satisfaction of user story to key features
