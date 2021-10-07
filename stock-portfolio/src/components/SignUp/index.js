@@ -1,29 +1,68 @@
+import { useState } from "react";
 import { useHistory } from "react-router";
-
+import { validatePassword,validateEmail } from './helper';
+import PasswordRuleModal from './PasswordRuleModal';
+import EmailRuleModal from './EmailRuleModal';
 function SignUp(){
     var history = useHistory();
+    const [firstName,setFirstName] = useState('');
+    const [lastName,setLastName] = useState('');
+    const [email,setEmail] = useState('');
+    const [userName,setUserName] = useState('');
+    const [password,setPassword] = useState('');
+    const [isPasswordError,setIsPasswordError] = useState(false);
+    const [isEmailError,setIsEmailError] = useState(false);
+
     const handleSignUp = () => {
-        //@TODO: Put information to the database.
-        history.push('/') //    Go back to main page.
+        const isPasswordOkay = validatePassword(password);
+        const isEmailOkay = validateEmail(email);
+
+        if(!isPasswordOkay){
+            setIsPasswordError(true);
+        }else{
+            setIsPasswordError(false);
+        }
+        if(!isEmailOkay){
+            setIsEmailError(true);
+        }else{
+            setIsEmailError(false);
+        }
+
+        if(isPasswordOkay && isEmailOkay){
+            //  Put user information to database.
+            history.push('/');
+        }
     }
     return(
-        <div class="text-center w-100 p-3">
-            <label for="inputFirstName" class="sr-only">First Name</label>
-            <input type="firstName" id="inputFirstName" class="form-control" placeholder="Michael" required autofocus/>
+        // text-center w-50 p-3 offset-md-3
+        <div class="text-center mx-auto w-50">
+            <label for="inputFirstName" class="sr-only mt-3">First Name</label>
+            <input type="firstName" id="inputFirstName" class="form-control" placeholder="Michael" required autofocus onChange={(evt)=>setFirstName(evt.target.value)}/>
 
-            <label for="inputLastName" class="sr-only">Last Name</label>
-            <input type="lastName" id="inputLastName" class="form-control" placeholder="Jackson" required autofocus/>
+            <label for="inputLastName" class="sr-only mt-3">Last Name</label>
+            <input type="lastName" id="inputLastName" class="form-control" placeholder="Jackson" required autofocus onChange={(evt)=>setLastName(evt.target.value)}/>
 
-            <label for="inputEmail" class="sr-only">Email</label>
-            <input type="email" id="email" class="form-control" placeholder="michal.jackson@gmail.com" required autofocus/>
+            <div class='d-flex justify-content-center'>
+                <label for="inputEmail" class="sr-only mt-3">Email</label>
+                <EmailRuleModal/>
+            </div>
+            <input type="email" id="email" class="form-control" placeholder="michal.jackson@gmail.com" required autofocus onChange={(evt)=>setEmail(evt.target.value)}/>
+            {isEmailError && 
+                <p class='text-danger'>Please check Email Rule!</p>
+            }
 
-            <label for="inputUserName" class="sr-only">User Name</label>
-            <input type="userName" id="inputUserName" class="form-control" placeholder="michael0943" required autofocus/>
-
-            <label for="inputPassword" class="sr-only">Password</label>
-            <input type="password" id="inputPassword" class="form-control" placeholder="Password" required/>
+            <label for="inputUserName" class="sr-only mt-3">User Name</label>
+            <input type="userName" id="inputUserName" class="form-control" placeholder="michael0943" required autofocus onChange={(evt)=>setUserName(evt.target.value)}/>
             
-            <button class="btn btn-lg btn-primary btn-block" onClick={handleSignUp}>Sign Up</button>
+            <div class='d-flex justify-content-center'>
+                <label for="inputPassword" class="sr-only mt-3">Password</label>
+                <PasswordRuleModal/>
+            </div>
+            <input type="password" id="inputPassword" class="form-control" placeholder="Password" required onChange={(evt)=>setPassword(evt.target.value)}/>
+            {isPasswordError && 
+                <p class='text-danger'>Please check Password Rule!</p>
+            }
+            <button class="btn btn-lg btn-primary btn-block mt-5" onClick={handleSignUp}>Sign Up</button>
         </div>
     );
 }
