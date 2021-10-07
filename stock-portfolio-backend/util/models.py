@@ -1,5 +1,5 @@
-from app import api
 from flask_restplus import fields
+from app import api
 
 login_model = api.model('login_model', {
     "username": fields.String(required=True, example="johnsmith"),
