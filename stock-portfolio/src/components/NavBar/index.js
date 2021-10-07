@@ -1,7 +1,18 @@
+import { useState } from "react";
 import { useHistory } from "react-router";
 
 function NavBar(){
     var history = useHistory();
+    // @TODO:tony
+    // isAuthenticated = getToken()
+
+    const [keywords,SetKeyWords] = useState('');
+    const searchKeyWord = (evt) => {
+        SetKeyWords(evt.target.value);
+        //  @TODO:tony
+        //  1. search keywords making api call
+        //  2. display results under search bar.
+    }
     return(
         // navbar navbar-dark bg-primary
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -12,7 +23,8 @@ function NavBar(){
                 </button>
                 <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
                     <form class="d-flex">
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"></input>
+                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" onChange={(evt)=>searchKeyWord(evt)}></input>
+                        {/* {isAuthenticated ? (render sign in button) : (render sign out button)} */}
                         <button type="button" class="btn btn-outline-dark" onClick={()=>history.push('/signIn')}>Sign in</button>
                     </form>
                 </div>
