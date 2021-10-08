@@ -15,6 +15,7 @@ token_model = api.model('token_model', {
 })
 
 change_password_model = api.inherit('change_password_model', token_model, {
+    "old_password": fields.String(required=True),
     "new_password": fields.String(required=True)
 })
 
