@@ -3,7 +3,7 @@ from flask_restplus import Resource, abort
 from app import api, db
 from util.models import register_model, login_model, token_model, change_password_model, \
     recover_model
-from util.helpers import generate_token, hash_password
+from util.helpers import generate_token, hash_password, check_password
 
 accounts = api.namespace('accounts', description='Account Creation and Management')
 
@@ -50,11 +50,35 @@ class Register(Resource):
 
 @accounts.route('/login', doc={"description": "Allows the user to sign in."})
 class Login(Resource):
+    '''
+    Lets the user login with their username and password.
+    '''
     @accounts.expect(login_model)
     @accounts.response(200, 'Success', token_model)
+    @accounts.response(400, 'Username/Password is incorrect')
+
     def post(self):
+        body = request.json
+        username = body['username']
+        password = body['password']
+
+        # Check that the user exists
+        user = db.get_user_by_value("username", username)
+        if not user:
+            abort(400, "Username does not exists")
+
+        # Check that the password is correct
+        if not check_password(password, user["hashed_password"]):
+            abort(400, "Password is incorrect")
+
+        # Generate a new token
+        token = generate_token()
+
+        # Update the user's token
+        db.update_user_by_value(username, "active_token", token)
+
         return {
-            'token': 'dummy_token'
+            'token': token
         }
 
 @accounts.route('/update', doc={

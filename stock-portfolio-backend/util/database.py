@@ -50,4 +50,26 @@ def get_user_by_value(field, value):
     cursor = conn.cursor()
     cursor.execute(f"SELECT * FROM users WHERE {field}=?", [value])
 
-    return cursor.fetchone()
+    user = cursor.fetchone()
+
+    if user is None:
+        return None
+
+    username, email, hashed_password, active_token = user
+    return {
+        "username": username,
+        "email": email,
+        "hashed_password": hashed_password,
+        "active_token": active_token
+    }
+
+def update_user_by_value(username, field, value):
+    '''
+    Updates a user's email, password or token. 
+    '''
+    if field not in ["email", "hashed_password", "active_token"]:
+        return None
+    
+    cursor = conn.cursor()
+    cursor.execute(f"UPDATE users SET {field}=? WHERE username=?", [value, username])
+    conn.commit()
