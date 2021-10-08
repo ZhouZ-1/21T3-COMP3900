@@ -11,7 +11,7 @@ register_model = api.inherit('register_model', login_model, {
 })
 
 token_model = api.model('token_model', {
-    'token': fields.String()
+    'token': fields.String(required=True)
 })
 
 change_password_model = api.inherit('change_password_model', token_model, {
