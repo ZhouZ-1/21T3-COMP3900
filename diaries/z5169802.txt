@@ -17,3 +17,4 @@ Finish off justifying use of Alpha Vantage
 Add story points and priorities 
 Polish our solution
 Finish satisfaction of user story to key features
+Finish logout, change password feature for accounts
