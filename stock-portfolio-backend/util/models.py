@@ -1,5 +1,5 @@
-from app import api
 from flask_restplus import fields
+from app import api
 
 login_model = api.model('login_model', {
     "username": fields.String(required=True, example="johnsmith"),
@@ -11,7 +11,7 @@ register_model = api.inherit('register_model', login_model, {
 })
 
 token_model = api.model('token_model', {
-    'token': fields.String()
+    'token': fields.String(required=True)
 })
 
 change_password_model = api.inherit('change_password_model', token_model, {
