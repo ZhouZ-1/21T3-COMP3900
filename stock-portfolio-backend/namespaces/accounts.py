@@ -2,7 +2,7 @@ from flask import request
 from flask_restplus import Resource, abort
 from app import api, db
 from util.models import register_model, login_model, token_model, change_password_model, \
-    recover_model
+    recover_model, success_model
 from util.helpers import generate_token, hash_password, check_password
 
 accounts = api.namespace('accounts', description='Account Creation and Management')
@@ -102,8 +102,25 @@ class Logout(Resource):
 })
 class Delete(Resource):
     @accounts.expect(token_model)
+    @accounts.response(200, 'Success', success_model)
+    @accounts.response(400, 'Invalid token')
+
     def delete(self):
-        return {}
+        token = request.json['token']
+
+        # Check that token is valid
+        user = db.get_user_by_value("active_token", token)
+        if not user or token == "":
+            abort(400, "Invalid token")
+
+        # Do after portfolio implemented: remove all corresponding portfolio information from user.
+
+        # Remove user from database
+        db.delete_user(user["username"])
+
+        return {
+            "is_success": True
+        }
 
 @accounts.route('/recover', doc={"description": "Reset the user's password so that they can continue to use our service."})
 class Recover(Resource):

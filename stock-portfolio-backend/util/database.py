@@ -73,3 +73,11 @@ def update_user_by_value(username, field, value):
     cursor = conn.cursor()
     cursor.execute(f"UPDATE users SET {field}=? WHERE username=?", [value, username])
     conn.commit()
+
+def delete_user(username):
+    '''
+    Removes a user from the database.
+    '''
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM users WHERE username=?", [username])
+    conn.commit()
