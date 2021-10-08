@@ -1,4 +1,4 @@
-from flask import request, redirect
+from flask import request
 from flask.wrappers import Response
 from flask_restplus import Resource, abort
 from app import api, db
