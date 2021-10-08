@@ -21,3 +21,7 @@ change_password_model = api.inherit('change_password_model', token_model, {
 recover_model = api.inherit('recover_model', {
     "email": fields.String(required=True, example="john@email.com")
 })
+
+success_model = api.model('success_model', {
+    "is_success": fields.Boolean()
+})
