@@ -93,9 +93,25 @@ class Update(Resource):
     "description": "Notifies the backend that a user has logged out. Their token will be removed from the database"
 })
 class Logout(Resource):
+    '''
+    Allows the user to logout.
+    '''
     @accounts.expect(token_model)
+    @accounts.response(400, 'Token does not exist')
     def post(self):
-        return {}
+        body = request.json
+        token = body['token']
+        
+        # Check that the token exists
+        user = db.get_user_by_value("active_token", token)
+        if not user:
+            abort(400, "Token is invalid")
+
+        db.update_user_by_value(user['username'], "active_token", "")
+
+        return {
+            "is_success": True
+        }
 
 @accounts.route('/delete', doc={
     "description": "Permantly deletes a user's account and their corresponding data."
