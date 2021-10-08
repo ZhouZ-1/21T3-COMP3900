@@ -106,7 +106,7 @@ class Logout(Resource):
         # Check that the token exists
         user = db.get_user_by_value("active_token", token)
         if not user:
-            abort(400, "Token does not exists")
+            abort(400, "Token is invalid")
 
         db.update_user_by_value(user['username'], "active_token", "")
 
