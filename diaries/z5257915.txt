@@ -23,3 +23,6 @@ Diary entries from now on should be in more depth than before since I can state 
 
 # Week 4
 Tuesday: Started working on the infrastructure of the backend and discovered the python modules on vlab is somewhat outdated. No impediments so far.
+Wednesday: Wrote setup script for the backend, which works on Windows and VLAB. Attended meeting at lab and showed progress on the backend so far. 
+Thursday: Finished logic for the sign up route.
+Friday: Start working on writing some documentation for the backend. Will also try to finish the login route
