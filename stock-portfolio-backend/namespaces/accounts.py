@@ -1,5 +1,4 @@
 from flask import request
-from flask.wrappers import Response
 from flask_restplus import Resource, abort
 from app import api, db
 from util.models import register_model, login_model, token_model, change_password_model, \
