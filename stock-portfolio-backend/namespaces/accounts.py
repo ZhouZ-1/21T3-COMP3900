@@ -98,7 +98,7 @@ class Update(Resource):
         user = db.get_user_by_value("active_token", token)
 
         # Check that the user exists
-        if not user:
+        if not user or token == "":
             abort(400, "User is not logged in")
         
         # Check if password is valid
