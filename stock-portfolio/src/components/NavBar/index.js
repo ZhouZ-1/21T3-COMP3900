@@ -26,6 +26,8 @@ function NavBar(){
                         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" onChange={(evt)=>searchKeyWord(evt)}></input>
                         {/* {isAuthenticated ? (render sign in button) : (render sign out button)} */}
                         <button type="button" class="btn btn-outline-dark" onClick={()=>history.push('/signIn')}>Sign in</button>
+                        {/* TODO should be in the right most and it should be icon by default*/}
+                        <button type="button" class="btn btn-outline-dark" onClick={()=>history.push('/updateAccount')}>Update Account</button>
                     </form>
                 </div>
             </div>
