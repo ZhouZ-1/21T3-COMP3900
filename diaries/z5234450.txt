@@ -1,0 +1,21 @@
+# Week 1
+Get to know the teammates and deciding on what roles(scram master, frontend/backend developer) each would pick.
+Research on Yahoo/Google? Finance. 
+Finding their benefits and drawbacks as competitor reasearch. 
+
+# Week 2
+We hammer the details of user flow as a team on Lucid Dream.
+
+# Week 3
+Think about possible novelities.
+Create and finesse the visual prototype on figma. 
+Adding user arrow on figma?
+Create user stories and acceptance criteria for Data Visualisation.
+Finalise and proofread the proposal. 
+
+# Week 4
+Starting the work diary.
+Working on the Account Page and details display on the page.
+User information and password can be changed for users.
+
+# Week 5
