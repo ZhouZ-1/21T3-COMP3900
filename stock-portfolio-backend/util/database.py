@@ -17,7 +17,7 @@ if not os.path.exists(database_file):
         first_name text NOT NULL,
         last_name text NOT NULL,
         email text NOT NULL,
-        profile_image text DEFAULT 'default.png',
+        profile_image text DEFAULT 'default.jpg',
         hashed_password text NOT NULL, 
         active_token text
     );
@@ -77,7 +77,7 @@ def update_user_by_value(username, field, value):
     '''
     Updates a user's email, password or token. 
     '''
-    if field not in ["email", "first_name", "last_name", "hashed_password", "active_token"]:
+    if field not in ["email", "first_name", "last_name", "profile_image", "hashed_password", "active_token"]:
         return None
     
     cursor = conn.cursor()

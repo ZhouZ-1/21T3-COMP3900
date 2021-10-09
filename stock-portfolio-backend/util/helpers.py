@@ -2,6 +2,7 @@ import secrets
 import bcrypt
 import smtplib
 from email.message import EmailMessage
+import base64
 
 def generate_token():
     '''
@@ -39,3 +40,10 @@ def send_recovery_email(username, email, new_password):
     # Send message
     server.send_message(msg)
     server.close()
+
+def save_image(image_data, path):
+    '''
+    Saves an image in base64 format to the disk.
+    '''
+    with open(f"images/{path}", "wb") as fp:
+        fp.write(base64.decodebytes(image_data.encode("utf-8")))
