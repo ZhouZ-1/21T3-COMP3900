@@ -3,6 +3,7 @@ import { useHistory } from "react-router";
 import { validatePassword,validateEmail } from './helper';
 import PasswordRuleModal from './PasswordRuleModal';
 import EmailRuleModal from './EmailRuleModal';
+import api from '../../api'
 function SignUp(){
     var history = useHistory();
     const [firstName,setFirstName] = useState('');
@@ -30,7 +31,15 @@ function SignUp(){
 
         if(isPasswordOkay && isEmailOkay){
             //  Put user information to database.
-            history.push('/');
+            api('accounts/register', 'POST', {username: userName, email, password}).then(res => {
+                if (res.token) {
+                    // Set token and redirects to the main page.
+                    localStorage.setItem('token', res.token)
+                    history.push('/')
+                } else {
+                    // TODO: display error message
+                }
+            })
         }
     }
     return(
