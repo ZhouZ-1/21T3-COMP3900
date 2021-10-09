@@ -34,8 +34,8 @@ function SignUp(){
             api('accounts/register', 'POST', {username: userName, email, password}).then(res => {
                 if (res.token) {
                     // Set token and redirects to the main page.
-                    localStorage.setItem('token', res.token)
-                    history.push('/')
+                    localStorage.setItem('token', res.token);
+                    history.push('/');
                 } else {
                     // TODO: display error message
                 }
@@ -45,6 +45,8 @@ function SignUp(){
     return(
         // text-center w-50 p-3 offset-md-3
         <div class="text-center mx-auto w-50">
+            <h1 class="h3 mt-5 mb-3 font-weight-normal">Sign Up</h1>
+
             <label for="inputFirstName" class="sr-only mt-3">First Name</label>
             <input type="firstName" id="inputFirstName" class="form-control" placeholder="Michael" required autofocus onChange={(evt)=>setFirstName(evt.target.value)}/>
 
