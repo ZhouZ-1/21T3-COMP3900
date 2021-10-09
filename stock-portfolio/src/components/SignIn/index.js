@@ -1,24 +1,27 @@
 import { useState } from "react";
 import { useHistory } from "react-router";
+import api from '../../api'
 
 function SignIn(){
     var history = useHistory();
-    const [email,setEmail] = useState('');
+    const [username,setUsername] = useState('');
     const [password,setPassword] = useState('');
     const handleSignIn = () => {
-        //@TODO: check id/password to authenticate/authorise.
-        //  if(id,password exist){
-            history.push('/') // Go back to the main page
-        // }else{
-        //     display error message
-        // }
+        api('accounts/login', 'POST', {username, password}).then(res => {
+            if (res.token) {
+                localStorage.setItem('token', res.token)
+                history.push('/')
+            } else {
+                // display error message
+            }
+        })
     }
-
+    
     return(
         <div class="text-center w-100 p-3">
             <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-            <label for="inputEmail" class="sr-only">Email address</label>
-            <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus onChange={(evt)=>setEmail(evt.target.value)}/>
+            <label for="inputUsername" class="sr-only">Username</label>
+            <input type="username" id="inputUsername" class="form-control" placeholder="Username" required autofocus onChange={(evt)=>setUsername(evt.target.value)}/>
             <label for="inputPassword" class="sr-only">Password</label>
             <input type="password" id="inputPassword" class="form-control" placeholder="Password" required onChange={(evt)=>setPassword(evt.target.value)}/>
             <button class="btn btn-lg btn-primary btn-block" onClick={handleSignIn}>Sign in</button>
