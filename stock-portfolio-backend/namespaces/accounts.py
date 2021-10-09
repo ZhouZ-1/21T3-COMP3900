@@ -86,8 +86,41 @@ class Login(Resource):
 })
 class Update(Resource):
     @accounts.expect(change_password_model)
+    @accounts.response(200, 'Success', token_model)
+    @accounts.response(400, 'Username/Password is incorrect')
     def put(self):
-        return {}
+        body = request.json
+        token = body['token']
+        old_password = body['old_password']
+        new_password = body['new_password']
+
+        # Check that the user is logged in
+        user = db.get_user_by_value("active_token", token)
+
+        # Check that the user exists
+        if not user or token == "":
+            abort(400, "User is not logged in")
+        
+        # Check if password is valid
+        if len(new_password) < 8 or len(list(filter(str.isdigit, new_password))) == 0 or \
+            len(list(filter(str.isalpha, new_password))) == 0:
+            abort(400,'Password does not meet requirements')
+
+        # Check that the old password is correct
+        if not check_password(old_password, user["hashed_password"]):
+            abort(400, "Old password is incorrect")
+
+        # If new password is old password
+        if old_password == new_password:
+            abort(400, "New password is the same as the old password")
+
+        # Hash password
+        hashed_password = hash_password(new_password)
+        db.update_user_by_value(user["username"], "hashed_password", hashed_password)
+
+        return {
+            "is_success": True
+        }
 
 @accounts.route('/logout', doc={
     "description": "Notifies the backend that a user has logged out. Their token will be removed from the database"
