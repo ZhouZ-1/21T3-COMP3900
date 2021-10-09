@@ -178,7 +178,7 @@ class Delete(Resource):
 })
 class Recover(Resource):
     @accounts.expect(recover_model)
-    @accounts.response(200, success_model)
+    @accounts.response(200, 'success', success_model)
     def post(self):
         email = request.json['email']
 
