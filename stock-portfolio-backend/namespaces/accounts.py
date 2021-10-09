@@ -3,7 +3,8 @@ from flask_restplus import Resource, abort
 from app import api, db
 from util.models import register_model, login_model, token_model, change_password_model, \
     recover_model, success_model
-from util.helpers import generate_token, hash_password, check_password
+from util.helpers import generate_token, hash_password, check_password, generate_temp_password, \
+    send_recovery_email
 
 accounts = api.namespace('accounts', description='Account Creation and Management')
 
@@ -171,8 +172,24 @@ class Delete(Resource):
             "is_success": True
         }
 
-@accounts.route('/recover', doc={"description": "Reset the user's password so that they can continue to use our service."})
+@accounts.route('/recover', doc={
+    "description": "Reset the user's password so that they can continue to use our service. \
+        Does nothing if email if the email is invalid."
+})
 class Recover(Resource):
     @accounts.expect(recover_model)
+    @accounts.response(200, success_model)
     def post(self):
-        return {}
+        email = request.json['email']
+
+        # Do nothing if email doesn't exist
+        user = db.get_user_by_value("email", email)
+        if user:
+            # Generate new email and email the user.
+            temp_password = generate_temp_password()
+            db.update_user_by_value(user["username"], "hashed_password", hash_password(temp_password))
+            send_recovery_email(user["username"], email, temp_password)
+
+        return {
+            "is_success": True
+        }
