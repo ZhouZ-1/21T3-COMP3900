@@ -2,7 +2,7 @@ from flask import request
 from flask_restplus import Resource, abort
 from app import api, db
 from util.models import register_model, login_model, token_model, change_password_model, \
-    recover_model, success_model
+    recover_model, success_model, details_model, update_details_model
 from util.helpers import generate_token, hash_password, check_password, generate_temp_password, \
     send_recovery_email
 
@@ -23,6 +23,8 @@ class Register(Resource):
     def post(self):
         body = request.json
         username = body['username']
+        first_name = body['first_name']
+        last_name = body['last_name']
         email = body['email']
         password = body['password']
 
@@ -43,7 +45,7 @@ class Register(Resource):
         token = generate_token()
 
         # Add user to the database
-        db.create_user(username, email, hashed_password, token)
+        db.create_user(username, first_name, last_name, email, hashed_password, token)
 
         return {
             'token': token
@@ -82,12 +84,67 @@ class Login(Resource):
             'token': token
         }
 
-@accounts.route('/update', doc={
+@accounts.route('/details', doc={
+    "description": "Retrieves the details of the given user by their token"
+})
+class Details(Resource):
+    @accounts.expect(token_model)
+    @accounts.response(200, 'Success', details_model)
+    @accounts.response(401, 'Invalid token')
+    def put(self):
+        token = request.json['token']
+
+        # Check that the token is valid
+        user = db.get_user_by_value("active_token", token)
+        if not user or token == "":
+            abort(401, "Invalid token")
+
+        # Returns the user and remove sensitive information.
+        user.pop("active_token")
+        user.pop("hashed_password")
+        return user
+
+@accounts.route('/update-details', doc={
+    "description": "Allows the user to change their details such as email, first name, or last name if they are logged in."
+})
+class UpdateDetails(Resource):
+    @accounts.expect(update_details_model)
+    @accounts.response(200, 'Success', success_model)
+    @accounts.response(400, 'Invalid field')
+    @accounts.response(401, 'Invalid token')
+    @accounts.response(409, 'Email is registered to another account.')
+    def put(self):
+        body = request.json
+        token = body['token']
+        field = body['field']
+        value = body['value']
+
+        # Check that the token is valid
+        user = db.get_user_by_value("active_token", token)
+        if not user or token == "":
+            abort(401, "Invalid token")
+
+        # Check that the field is valid
+        if field not in ["email", "first_name", "last_name"]:
+            abort(400, f"{field} is an invalid field to change")
+
+        # Check that the email is not already in use
+        if field == "email" and db.get_user_by_value("email", value):
+            abort(409, f"Email {value} is already in use") 
+
+        # Change the user's details
+        db.update_user_by_value(user["username"], field, value)
+
+        return {
+            "is_success": True
+        }
+
+@accounts.route('/update-password', doc={
     "description": "Allows the user to change their password if they are logged in."
 })
-class Update(Resource):
+class UpdatePassword(Resource):
     @accounts.expect(change_password_model)
-    @accounts.response(200, 'Success', token_model)
+    @accounts.response(200, 'Success', success_model)
     @accounts.response(400, 'Username/Password is incorrect')
     def put(self):
         body = request.json
@@ -131,6 +188,7 @@ class Logout(Resource):
     Allows the user to logout.
     '''
     @accounts.expect(token_model)
+    @accounts.response(200, 'Success', success_model)
     @accounts.response(400, 'Token does not exist')
     def post(self):
         body = request.json
@@ -153,7 +211,7 @@ class Logout(Resource):
 class Delete(Resource):
     @accounts.expect(token_model)
     @accounts.response(200, 'Success', success_model)
-    @accounts.response(400, 'Invalid token')
+    @accounts.response(401, 'Invalid token')
 
     def delete(self):
         token = request.json['token']
@@ -161,7 +219,7 @@ class Delete(Resource):
         # Check that token is valid
         user = db.get_user_by_value("active_token", token)
         if not user or token == "":
-            abort(400, "Invalid token")
+            abort(401, "Invalid token")
 
         # Do after portfolio implemented: remove all corresponding portfolio information from user.
 
