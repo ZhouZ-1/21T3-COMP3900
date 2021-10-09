@@ -6,17 +6,17 @@ function SignIn(){
     var history = useHistory();
     const [username,setUsername] = useState('');
     const [password,setPassword] = useState('');
-    const handleSignIn = () => {
+    const handleSignIn = () =>
         api('accounts/login', 'POST', {username, password}).then(res => {
             if (res.token) {
+                // Set token and redirects to the main page.
                 localStorage.setItem('token', res.token)
                 history.push('/')
             } else {
-                // display error message
+                // TODO: display error message
             }
         })
-    }
-    
+
     return(
         <div class="text-center w-100 p-3">
             <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
