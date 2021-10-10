@@ -1,0 +1,18 @@
+# Week 1
+Set up group development environment(discord, meeting schedules, meeting minutes).
+Brain stormed core and novel functionalities.
+Researched pros/cons of Yahoo Finance.
+
+# Week2
+Started documenting User stories acceptance criteria for account management and watch list
+Completed documetation of account management and watch list epics.
+Started research on interface layer
+
+# Week3
+documented interface layer
+First commit in the github(setting up basic reac-app for the front-end).
+Started making basic components (NavBar, Sign in and signup page)
+
+# Week4
+Completed implementation of authentication (front end)
+Completed validation of email, password and added rules.
