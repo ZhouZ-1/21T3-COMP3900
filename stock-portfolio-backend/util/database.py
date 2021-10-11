@@ -93,19 +93,54 @@ def delete_user(username):
 """
     Stock table functions
 """
-
 def update_stock_listing(symbol, name, exchange, asset_type):
     '''
     Updates a stocks basic information 
     '''
     cursor = conn.cursor()
-    cursor.execute(f"SELECT EXISTS (SELECT 1 FROM stock_listing WHERE symbol= ?");", [symbol])
-
-    if cursor.fetchone is None:
+    cursor.execute(f"SELECT * FROM stock_listing WHERE symbol= ?", [symbol])
+    if cursor.fetchone() is None:
         cursor.execute('INSERT INTO stock_listing (symbol, name, exchange, asset_type) VALUES (?, ?, ?, ?)',
         [symbol, name, exchange, asset_type])
     else:
-        cursor.execute(f"UPDATE users SET name = ? exchange = ? asset_type = ? FROM stock_listing WHERE symbol = ?",
+        cursor.execute(f"UPDATE stock_listing SET name = ?, exchange = ?, asset_type = ? WHERE symbol = ?",
         [name, exchange, asset_type, symbol])
 
     conn.commit()
+
+class SearchIterator():
+    """
+    Iterates over all stocks
+    """
+    def __init__(self):
+        self.offset = 0
+        self.limit = 10
+        self.cursor = conn.cursor()
+        self.max = self.get_max_rows()
+
+    def next(self):
+        """
+        Retrieves the next search results
+        """
+        overall_offset = self.limit * self.offset
+        self.cursor.execute(f"SELECT * FROM stock_listing  ORDER BY symbol asc LIMIT ? OFFSET ?", [self.limit, self.offset])
+        rows = self.cursor.fetchall()
+
+        self.offset += 1
+
+        search_results = {}
+        for row in rows:
+            search_results[row[0]] = {
+                "name": row[1],
+                "exchange": row[2],
+                "asset_type": row[3]
+            }
+
+        return search_results
+
+    def get_max_rows(self):
+        self.cursor.execute(f"SELECT count(*) FROM stock_listing")
+        result = self.cursor.fetchone()
+        return result[0]
+
+s_iterator = SearchIterator()

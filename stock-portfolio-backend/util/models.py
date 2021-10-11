@@ -25,3 +25,7 @@ recover_model = api.inherit('recover_model', {
 success_model = api.model('success_model', {
     "is_success": fields.Boolean()
 })
+
+search_model = api.model('search_model', {
+    "symbol": fields.String(required=True, example="GOOG")
+})
