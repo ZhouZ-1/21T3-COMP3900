@@ -26,3 +26,4 @@ Tuesday: Started working on the infrastructure of the backend and discovered the
 Wednesday: Wrote setup script for the backend, which works on Windows and VLAB. Attended meeting at lab and showed progress on the backend so far. 
 Thursday: Finished logic for the sign up route.
 Friday: Start working on writing some documentation for the backend. Will also try to finish the login route
+Saturday: Yesterday I finished the backend for the login, delete and recover routes. Today I am working on connecting the backend to the currently existing frontend components.

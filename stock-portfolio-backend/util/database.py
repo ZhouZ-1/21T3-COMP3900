@@ -1,6 +1,8 @@
 import os
 import sqlite3
 
+base_url = 'http://127.0.0.1'
+
 # Set up sqlite3 database
 database_dir = os.path.join('db')
 database_file = os.path.join(database_dir, 'database.db')
@@ -11,36 +13,49 @@ if not os.path.exists(database_file):
     cursor = conn.cursor()
     cursor.execute('''
     CREATE TABLE users (
-        username text PRIMARY KEY, 
-        email text NOT NULL, 
+        username text PRIMARY KEY,
+        first_name text NOT NULL,
+        last_name text NOT NULL,
+        email text NOT NULL,
+        profile_image text DEFAULT 'default.jpg',
         hashed_password text NOT NULL, 
         active_token text
     );
     ''')
     cursor.execute('''
-    INSERT INTO users (username, email, hashed_password, active_token) 
-    VALUES (?, ?, ?, ?)''', [
+    INSERT INTO users (username, first_name, last_name, email, hashed_password, active_token) 
+    VALUES (?, ?, ?, ?, ?, ?)''', [
         'test',
+        'john',
+        'smith',
         'test@email.com',
         '$2b$12$lR/aAeLYBwQ/.Ii..4QHKu0HS8lxF7/Rpx79vXeW/8.wy1Yw/XcAq',
         'active_token'
     ])
+    cursor.execute('''
+    CREATE TABLE stock_listing (
+        symbol text PRIMARY KEY, 
+        name text NOT NULL, 
+        exchange text NOT NULL, 
+        asset_type text
+    );
+    ''')
     conn.commit()
 conn = sqlite3.connect('db/database.db', check_same_thread=False)
 
 
-def create_user(username, email, hashed_password, active_token):
+def create_user(username, first_name, last_name, email, hashed_password, active_token):
     '''
     Given the username, email, password hash and active_token, adds these details to the database.
     '''
     cursor = conn.cursor()
-    cursor.execute('INSERT INTO users (username, email, hashed_password, active_token) VALUES (?, ?, ?, ?)',
-        [username, email, hashed_password, active_token])
+    cursor.execute('INSERT INTO users (username, first_name, last_name, email, hashed_password, active_token) VALUES (?, ?, ?, ?, ?, ?)',
+        [username, first_name, last_name, email, hashed_password, active_token])
     conn.commit()
 
 def get_user_by_value(field, value):
     '''
-    Retrieves a user's details from either their username, email or active token.
+    Retrieves a user's details from either their username, first name, last name, email or active token.
     '''
     # Check that only certain fields can be searched
     if field not in ["username", "email", "active_token"]:
@@ -55,10 +70,13 @@ def get_user_by_value(field, value):
     if user is None:
         return None
 
-    username, email, hashed_password, active_token = user
+    username, first_name, last_name, email, profile_image, hashed_password, active_token = user
     return {
         "username": username,
+        "first_name": first_name,
+        "last_name": last_name,
         "email": email,
+        "profile_image": f"{base_url}/images/{profile_image}",
         "hashed_password": hashed_password,
         "active_token": active_token
     }
@@ -67,7 +85,7 @@ def update_user_by_value(username, field, value):
     '''
     Updates a user's email, password or token. 
     '''
-    if field not in ["email", "hashed_password", "active_token"]:
+    if field not in ["email", "first_name", "last_name", "profile_image", "hashed_password", "active_token"]:
         return None
     
     cursor = conn.cursor()
@@ -81,3 +99,58 @@ def delete_user(username):
     cursor = conn.cursor()
     cursor.execute("DELETE FROM users WHERE username=?", [username])
     conn.commit()
+
+"""
+    Stock table functions
+"""
+def update_stock_listing(symbol, name, exchange, asset_type):
+    '''
+    Updates a stocks basic information 
+    '''
+    cursor = conn.cursor()
+    cursor.execute(f"SELECT * FROM stock_listing WHERE symbol= ?", [symbol])
+    if cursor.fetchone() is None:
+        cursor.execute('INSERT INTO stock_listing (symbol, name, exchange, asset_type) VALUES (?, ?, ?, ?)',
+        [symbol, name, exchange, asset_type])
+    else:
+        cursor.execute(f"UPDATE stock_listing SET name = ?, exchange = ?, asset_type = ? WHERE symbol = ?",
+        [name, exchange, asset_type, symbol])
+
+    conn.commit()
+
+class SearchIterator():
+    """
+    Iterates over all stocks
+    """
+    def __init__(self):
+        self.offset = 0
+        self.limit = 10
+        self.cursor = conn.cursor()
+        self.max = self.get_max_rows()
+
+    def next(self):
+        """
+        Retrieves the next search results
+        """
+        overall_offset = self.limit * self.offset
+        self.cursor.execute(f"SELECT * FROM stock_listing  ORDER BY symbol asc LIMIT ? OFFSET ?", [self.limit, self.offset])
+        rows = self.cursor.fetchall()
+
+        self.offset += 1
+
+        search_results = {}
+        for row in rows:
+            search_results[row[0]] = {
+                "name": row[1],
+                "exchange": row[2],
+                "asset_type": row[3]
+            }
+
+        return search_results
+
+    def get_max_rows(self):
+        self.cursor.execute(f"SELECT count(*) FROM stock_listing")
+        result = self.cursor.fetchone()
+        return result[0]
+
+s_iterator = SearchIterator()
