@@ -5,6 +5,7 @@ Welcome to the backend for the stock portfolio management system.
 Make sure that you have C++ installed. You can install it at https://visualstudio.microsoft.com/downloads/. 
 
 ## Quickstart
+Note: First time loading of the backend will be significantly slower due to retrieval of stock listings.
 If this is your first time using the backend, use the setup script given in this directory to get started immediately by running the command `sh setup.py` in the backend directory.
 
 If that doesn't work, you can set up the backend manually by following the instructions below. Note that this may differ for other operating systems, and has only been tested on Windows and VLAB.
