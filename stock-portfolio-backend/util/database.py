@@ -8,7 +8,9 @@ database_dir = os.path.join('db')
 database_file = os.path.join(database_dir, 'database.db')
 if not os.path.exists(database_dir):
     os.mkdir(database_dir)
+first_time_flag = False
 if not os.path.exists(database_file):
+    first_time_flag = True
     conn = sqlite3.connect('db/database.db')
     cursor = conn.cursor()
     cursor.execute('''
@@ -154,3 +156,12 @@ class SearchIterator():
         return result[0]
 
 s_iterator = SearchIterator()
+
+# Run the stock listing scraper after all database functions have loaded (to avoid circular dependencies).
+if first_time_flag:
+    print("Running script to retrieve all stock listings...")
+    print("This will take a while (approx ~3 minutes). Please wait.")
+    from util.alpha_vantage_feed import dc
+    dc.refresh_stock_list()
+    print("Retrieved all stock listings.")
+    first_time_flag=False
