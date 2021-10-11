@@ -32,6 +32,14 @@ if not os.path.exists(database_file):
         '$2b$12$lR/aAeLYBwQ/.Ii..4QHKu0HS8lxF7/Rpx79vXeW/8.wy1Yw/XcAq',
         'active_token'
     ])
+    cursor.execute('''
+    CREATE TABLE stock_listing (
+        symbol text PRIMARY KEY, 
+        name text NOT NULL, 
+        exchange text NOT NULL, 
+        asset_type text
+    );
+    ''')
     conn.commit()
 conn = sqlite3.connect('db/database.db', check_same_thread=False)
 
@@ -91,3 +99,58 @@ def delete_user(username):
     cursor = conn.cursor()
     cursor.execute("DELETE FROM users WHERE username=?", [username])
     conn.commit()
+
+"""
+    Stock table functions
+"""
+def update_stock_listing(symbol, name, exchange, asset_type):
+    '''
+    Updates a stocks basic information 
+    '''
+    cursor = conn.cursor()
+    cursor.execute(f"SELECT * FROM stock_listing WHERE symbol= ?", [symbol])
+    if cursor.fetchone() is None:
+        cursor.execute('INSERT INTO stock_listing (symbol, name, exchange, asset_type) VALUES (?, ?, ?, ?)',
+        [symbol, name, exchange, asset_type])
+    else:
+        cursor.execute(f"UPDATE stock_listing SET name = ?, exchange = ?, asset_type = ? WHERE symbol = ?",
+        [name, exchange, asset_type, symbol])
+
+    conn.commit()
+
+class SearchIterator():
+    """
+    Iterates over all stocks
+    """
+    def __init__(self):
+        self.offset = 0
+        self.limit = 10
+        self.cursor = conn.cursor()
+        self.max = self.get_max_rows()
+
+    def next(self):
+        """
+        Retrieves the next search results
+        """
+        overall_offset = self.limit * self.offset
+        self.cursor.execute(f"SELECT * FROM stock_listing  ORDER BY symbol asc LIMIT ? OFFSET ?", [self.limit, self.offset])
+        rows = self.cursor.fetchall()
+
+        self.offset += 1
+
+        search_results = {}
+        for row in rows:
+            search_results[row[0]] = {
+                "name": row[1],
+                "exchange": row[2],
+                "asset_type": row[3]
+            }
+
+        return search_results
+
+    def get_max_rows(self):
+        self.cursor.execute(f"SELECT count(*) FROM stock_listing")
+        result = self.cursor.fetchone()
+        return result[0]
+
+s_iterator = SearchIterator()

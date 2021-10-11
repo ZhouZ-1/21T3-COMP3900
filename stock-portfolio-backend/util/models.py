@@ -29,6 +29,10 @@ success_model = api.model('success_model', {
     "is_success": fields.Boolean()
 })
 
+search_model = api.model('search_model', {
+    "symbol": fields.String(required=True, example="GOOG")
+})
+
 details_model = api.model('details_model', {
     "username": fields.String(required=True, example="user100"),
     "first_name": fields.String(required=True, example="john"),

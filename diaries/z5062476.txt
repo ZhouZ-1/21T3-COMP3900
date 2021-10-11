@@ -1,0 +1,33 @@
+Week 1
+- Organised our project and roles within the lab with the whole team
+- Research on current competitiors done (commsec)
+- Created admin jira account as a scrum master
+- Brainstorming the features with the team
+- Worked on epics and user stories for account management
+
+Week 2
+- Created user stories for account management
+- Created system architecture diagram
+- Created storyboards for portfolio and account management
+- Assigned and allocated work for team members
+
+Week 3
+- Set up jira with all the user stories and epics
+- Integrated github with jira (helped by Matthew)
+- Thought of a new novelty and worked on storyboards for novelty functionality (shared portfolios)
+- Assigned and allocated work for team members
+- Finalised proposal with team
+
+Week 4
+- Created extra user stories and setup subtasks on Jira
+- Structured the work to be allocated between team members
+- Started working on sprint 1 (user stories related to stocks)
+- Worked with the alpha_vantage API to retrieve stock data for individual stocks and overall stocks
+- Worked on the backend of stock searching and individual stock details
+
+
+sprint 3 end of week 9
+
+Matthews email
+z5187551@student.unsw.edu.au
+https://3900-w18a-group-group.atlassian.net/jira/projects?selectedProjectType=software
