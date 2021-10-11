@@ -1,4 +1,5 @@
 import NavBar from "../NavBar";
+import React from 'react';
 function MainPage(){
     return (
         <div>

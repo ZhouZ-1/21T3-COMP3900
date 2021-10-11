@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useHistory } from "react-router";
+import React from 'react';
 import { validatePassword,validateEmail } from './helper';
 import PasswordRuleModal from './PasswordRuleModal';
 import EmailRuleModal from './EmailRuleModal';

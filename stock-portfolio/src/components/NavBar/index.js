@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useHistory } from "react-router";
+import React from 'react';
 
 function NavBar(){
     var history = useHistory();
