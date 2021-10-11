@@ -10,7 +10,7 @@ function NavBar(){
     const [keywords,SetKeyWords] = useState('');
     const searchKeyWord = (evt) => {
         SetKeyWords(evt.target.value);
-        //  @TODO:tony
+        //  @TODO:
         //  1. search keywords making api call
         //  2. display results under search bar.
     }
@@ -35,7 +35,7 @@ function NavBar(){
                             (<button type="button" class="btn btn-outline-dark" onClick={()=>history.push('/signIn')}>Sign in</button>)
                         }
                     </form>
-                    <button type="button" class="btn btn-outline-dark" onClick={()=>history.push('/updateAccount')}>Update Account</button>
+                    <button type="button" class="btn btn-outline-dark" onClick={()=>history.push('/account')}>Account</button>
                 </div>
             </div>
         </nav>
