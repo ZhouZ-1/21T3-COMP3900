@@ -4,7 +4,7 @@
 //     Switch, 
 //     Link,
 //   } from "react-router-dom";
-  import React from 'react';
+import React from 'react';
 import { useHistory } from "react-router";
 // TODO fetch from api
 // import logo from './../../../public/logo192.png';
