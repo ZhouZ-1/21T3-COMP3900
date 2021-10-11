@@ -24,6 +24,12 @@ function AccDetails(){
     function edit() {
         // TODO Make the page
         // history.push('/editAccount');
+        // return(
+        //     <div>
+        //         <p>TBC</p>
+        //     </div>
+        // );
+        // alert("TBC");
         return;
     }
     
