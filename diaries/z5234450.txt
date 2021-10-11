@@ -19,3 +19,5 @@ Working on the Account Page and details display on the page.
 User information and password can be changed for users.
 
 # Week 5
+Working for side bar, account management.
+Intergrate with backend.
