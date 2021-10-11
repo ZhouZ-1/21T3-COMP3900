@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useHistory } from "react-router";
 import PasswordRuleModal from './../SignUp/PasswordRuleModal';
 import { validatePassword } from './../SignUp/helper';
-
+import api from '../../api'
 
 function UpdatePassword(){
     var history = useHistory();
@@ -16,8 +16,9 @@ function UpdatePassword(){
     const handleUpdateAccount = () => {
         const isPasswordOkay = validatePassword(newPassword);
         const isCheckPassword = checkPassword();
-        oldPassword = true;
+
         if(!isPasswordOkay){
+            // TODO check for old password and error
             setIsPasswordError(true);
         } else {
             setIsPasswordError(false);
@@ -32,7 +33,16 @@ function UpdatePassword(){
         //@TODO: check id/password to authenticate/authorise.
         //  if(id,password exist){
         if (isPasswordOkay && isCheckPassword){
-            history.push('/updatepwd') // stay in the refresh page
+            const token = localStorage.getItem('token');
+            const put = {
+                method: 'PUT', 
+                headers: {
+                 'Content-type': 'application/json'},
+                body: JSON.stringify({token, newPassword}) 
+            };
+            updateAPI(put);
+            history.push('/') // stay in the refresh page
+            alert("Successfully update your password!")
         }
         // }else{
         //     display error message
@@ -53,13 +63,17 @@ function UpdatePassword(){
         } 
         return true;
     }
+    
+    const updateAPI = (put) =>
+        api('accounts/update', put) .then(res => console.log(res))
+        
 
     
     return(
         <div class="text-center w-100 p-3">
             <h1 class="h3 mb-3 font-weight-normal">Account Security</h1>
             <label for="inputOldPassword" class="sr-only">Original Password</label>
-            <input type="oldPassword" id="inputOldPassword" class="form-control" placeholder="Enter Original Password" required onChange={(evt)=>setOldPassword(evt.target.value)}/>
+            <input type="password" id="inputOldPassword" class="form-control" placeholder="Enter Original Password" required onChange={(evt)=>setOldPassword(evt.target.value)}/>
             <div class='d-flex justify-content-center'>
                 <label for="inputNewPassword" class="sr-only">New Password</label>
                 <PasswordRuleModal/>
@@ -67,7 +81,7 @@ function UpdatePassword(){
             {isPasswordError && 
                 <p class='text-danger'>Please check Password Rule!</p>
             }
-            <input type="newPassword" id="inputNewPassword" class="form-control" placeholder="Enter New Password" required onChange={(evt)=>setNewPassword(evt.target.value)}/>
+            <input type="password" id="inputNewPassword" class="form-control" placeholder="Enter New Password" required onChange={(evt)=>setNewPassword(evt.target.value)}/>
             <label for="checkPassword" class="sr-only">Confirm Password</label>
             {isCheckPasswordError && 
                 <p class='text-danger'>The password confirmation does not match.</p>
