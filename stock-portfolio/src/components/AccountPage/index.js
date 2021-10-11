@@ -4,7 +4,7 @@
 //     Switch, 
 //     Link,
 //   } from "react-router-dom";
-  import React from 'react';
+import React from 'react';
 import { useHistory } from "react-router";
 import BasicTabs from './../AccNav/index';
 // import AccDetails from './../AccDetails/index';

@@ -1,23 +1,23 @@
 # Week 1
-Get to know the teammates and deciding on what roles(scram master, frontend/backend developer) each would pick.
-Research on Yahoo/Google? Finance. 
-Finding their benefits and drawbacks as competitor reasearch. 
+Deciding on epic story and figure out what roles(scrum master, frontend/backend developer) each teammate would pick.
+Researching on Google Finance and finding their benefits and drawbacks as competitor reasearch. 
 
 # Week 2
-We hammer the details of user flow as a team on Lucid Dream.
+Create user stories and acceptance criteria for information Visualisation.
+Thinking and modifying the user stories. Adding story point and priority point on story of Information Visualisation.
+Deciding the details of user flow as a team on Lucid Dream.
 
 # Week 3
-Think about possible novelities.
-Create and finesse the visual prototype on figma. 
-Adding user arrow on figma?
-Create user stories and acceptance criteria for Data Visualisation.
+Think about ideas for novelities.
+Create and finesse the visual prototype of storyboard on figma. 
+Adding user flow/details on existing figma board and create storyboard for Data Aggregation.
 Finalise and proofread the proposal. 
 
 # Week 4
 Starting the work diary.
 Working on the Account Page and details display on the page.
-User information and password can be changed for users.
+User Password can be changed for users.
 
 # Week 5
-Working for side bar, account management.
-Intergrate with backend.
+Working for Tabs on account page and account management.
+Intergrate account page with backend.
