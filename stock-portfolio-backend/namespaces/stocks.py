@@ -42,8 +42,8 @@ class Search(Resource):
             "sector": raw_data["Sector"],
             "industry": raw_data["Industry"],
             "price": raw_data["AnalystTargetPrice"],
-            "52_week_high": raw_data["52WeekHigh"],
-            "52_week_low": raw_data["52WeekLow"]
+            "year_high": raw_data["52WeekHigh"],
+            "year_low": raw_data["52WeekLow"]
         }
 
 @stocks.route('/searchall', doc={
