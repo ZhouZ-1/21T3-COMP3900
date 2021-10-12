@@ -22,9 +22,9 @@ function StockDetails(){
                         <ul>
                             <li>stock symbol: {stockDetails.symbol}</li>
                             <li>stock name: {stockDetails.name}</li>
-                            <li>stock name: {stockDetails.price}</li>
-                            <li>stock name: {stockDetails.sector}</li>
-                            <li>stock name: {stockDetails.asset_type}</li>
+                            <li>stock price: {stockDetails.price}</li>
+                            <li>stock sector: {stockDetails.sector}</li>
+                            <li>stock asset type: {stockDetails.asset_type}</li>
                         </ul>
                     </div>
                 ):
