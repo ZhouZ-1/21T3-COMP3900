@@ -41,7 +41,9 @@ class Search(Resource):
             "description": raw_data["Description"],
             "sector": raw_data["Sector"],
             "industry": raw_data["Industry"],
-            "price": raw_data["AnalystTargetPrice"]
+            "price": raw_data["AnalystTargetPrice"],
+            "52_week_high": raw_data["52WeekHigh"],
+            "52_week_low": raw_data["52WeekLow"]
         }
 
 @stocks.route('/searchall', doc={
@@ -49,8 +51,34 @@ class Search(Resource):
 })
 class SearchAll(Resource):
     def post(self):
+        # reset iterator
+        db.s_iterator.reset_max()
+        db.s_iterator.reset_page_num()
 
+        results = db.s_iterator.next()
         return {
-            "pg_num": db.s_iterator.offset,
-            "body": db.s_iterator.next()
+            "pg_num": db.s_iterator.page_num,
+            "body": results
+        }
+
+@stocks.route('/searchnext', doc={
+    "description": "Allows the user to view the next batch stocks"
+})
+class SearchNext(Resource):
+    def post(self):
+        results = db.s_iterator.next()
+        return {
+            "pg_num": db.s_iterator.page_num,
+            "body": results
+        }
+
+@stocks.route('/searchprev', doc={
+    "description": "Allows the user to view the previous batch stocks"
+})
+class SearchPrev(Resource):
+    def post(self):
+        results = db.s_iterator.back()
+        return {
+            "pg_num": db.s_iterator.page_num,
+            "body": results
         }

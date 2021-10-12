@@ -124,21 +124,34 @@ class SearchIterator():
     """
     Iterates over all stocks
     """
+
     def __init__(self):
-        self.offset = 0
-        self.limit = 10
         self.cursor = conn.cursor()
-        self.max = self.get_max_rows()
+        self.set_limit(10)
+        self.reset_page_num()
+        self.reset_max()
 
     def next(self):
         """
         Retrieves the next search results
         """
-        overall_offset = self.limit * self.offset
-        self.cursor.execute(f"SELECT * FROM stock_listing  ORDER BY symbol asc LIMIT ? OFFSET ?", [self.limit, self.offset])
-        rows = self.cursor.fetchall()
+        # if empty stock list
+        if self.max == 0:
+            return {}
 
-        self.offset += 1
+        if self.max <= self.limit:
+            self.cursor.execute(f"SELECT * FROM stock_listing ORDER BY symbol asc")
+        else:
+            # check if current page is last page
+            if self.page_num * self.limit < self.max:
+                # not the last page so move to next
+                self.page_num += 1
+            
+            offset = self.limit * (self.page_num - 1)
+
+            self.cursor.execute(f"SELECT * FROM stock_listing ORDER BY symbol asc LIMIT ? OFFSET ?", [self.limit, offset])
+        
+        rows = self.cursor.fetchall()
 
         search_results = {}
         for row in rows:
@@ -150,12 +163,50 @@ class SearchIterator():
 
         return search_results
 
-    def get_max_rows(self):
-        self.cursor.execute(f"SELECT count(*) FROM stock_listing")
-        result = self.cursor.fetchone()
-        return result[0]
+    def back(self):
+        """
+        Retrieves previous search results
+        """
+        # if empty stock list
+        if self.max == 0:
+            return {}
 
-s_iterator = SearchIterator()
+        if self.max <= self.limit:
+            self.cursor.execute(f"SELECT * FROM stock_listing ORDER BY symbol asc")
+        else:
+            # check if current page is first page
+            if self.page_num > 1:
+                # not the first page so move to prev
+                self.page_num -= 1
+            
+            offset = self.limit * (self.page_num - 1)
+
+            self.cursor.execute(f"SELECT * FROM stock_listing ORDER BY symbol asc LIMIT ? OFFSET ?", [self.limit, offset])
+        
+        rows = self.cursor.fetchall()
+
+        search_results = {}
+        for row in rows:
+            search_results[row[0]] = {
+                "name": row[1],
+                "exchange": row[2],
+                "asset_type": row[3]
+            }
+
+        return search_results
+
+    def skip(self, skip_count):
+        pass
+
+    def set_limit(self, limit):
+        self.limit = limit
+
+    def reset_page_num(self):
+        self.page_num = 0
+
+    def reset_max(self):
+        self.cursor.execute(f"SELECT count(*) FROM stock_listing")
+        self.max = self.cursor.fetchone()[0]
 
 # Run the stock listing scraper after all database functions have loaded (to avoid circular dependencies).
 if first_time_flag:
@@ -165,3 +216,5 @@ if first_time_flag:
     dc.refresh_stock_list()
     print("Retrieved all stock listings.")
     first_time_flag=False
+
+s_iterator = SearchIterator()
