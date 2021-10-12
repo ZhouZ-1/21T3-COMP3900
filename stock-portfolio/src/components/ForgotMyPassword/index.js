@@ -2,14 +2,27 @@ import { useState } from "react";
 import React from 'react';
 import api from '../../api'
 import NavBar from '../NavBar/index';
+import { validateEmail } from './../SignUp/helper';
+import EmailRuleModal from './../SignUp/EmailRuleModal';
 
 function ForgotMyPassword() {
   const [email, setEmail] = useState('');
   const [sentEmail, setSentEmail] = useState(false);
+  const [isEmailError, setIsEmailError] = useState(false);
+
 
   const handleSubmit = () => {
-    api('accounts/recover', 'POST', {email});
-    setSentEmail(true);
+    const isEmailOkay = validateEmail(email);
+    if(!isEmailOkay){
+        setIsEmailError(true);
+    } else {
+        setIsEmailError(false);
+    }
+  
+    if(isEmailOkay) {
+        api('accounts/recover', 'POST', {email});
+        setSentEmail(true);
+    }
   }
 
   return (
@@ -21,7 +34,13 @@ function ForgotMyPassword() {
         <>
           <div>Enter in your email address below to reset your password.</div>
           <form style={{paddingTop: '15px'}} onSubmit={handleSubmit}>
-            <label for="inputEmail" class="sr-only">Email</label>
+            {isEmailError && 
+                    <p class='text-danger'>Please check Email Rule!</p>
+            }
+            <div class='d-flex justify-content-center'>
+                <label for="inputEmail" class="sr-only">Email</label>
+                <EmailRuleModal/>
+            </div>
             <input type="email" id="inputEmail" class="form-control" placeholder="Email" required autofocus onChange={e => setEmail(e.target.value)}/>
             <button type="button" class="btn btn-primary" onClick={handleSubmit}>Submit</button>
           </form>
