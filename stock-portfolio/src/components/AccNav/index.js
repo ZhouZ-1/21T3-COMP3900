@@ -1,13 +1,17 @@
 import React from 'react';
-import { useState } from 'react';
 import { useHistory } from 'react-router';
-import { Route } from "react-router-dom";
-import api from '../../api';
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Link,
+  } from "react-router-dom";
 import { styled } from '@mui/material/styles';
 import { Button } from '@mui/material';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
+import DeleteAcc from './../DeleteAcc/index';
 import AccDetails from './../AccDetails/index';
 import Updatepwd from './../Updatepwd/index';
 
@@ -19,46 +23,42 @@ const Item = styled(Paper)(({ theme }) => ({
   }));
   
 
-export default function AccNav() {
-    var history = useHistory();
-    const [status, setStatus] = useState(true);
 
-    const handleDelete = async () => {
-      const confirmDelete = window.confirm(
-        'Are you sure you want to delete your account?'
-      );
-      
-      if (confirmDelete) {
-        api('accounts/delete', 'DELETE', {
-          token: localStorage.getItem('token'),
-        }).then((resp) => {
-          if (resp.is_success) {
-            localStorage.removeItem('token');
-            history.push('/');
-          }
-        });
-      }
-    };
+export default function AccNav() {
+  var history = useHistory();
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
-        <Grid container spacing={2}>
-          <Grid item xs={4}>
-            <Item>
-                <Button onclick={setStatus(true)} >Account Details</Button>
+    <Router>
+        <Box sx={{ flexGrow: 1 }} m={15} pt={1}>
+            <Grid container spacing={2}>
+              <Grid item xs={3}>
                 <hr/>
-                <Button onclick={setStatus(false)}>Update Password</Button>
-                <hr/>
-                <Button className='delete-button' onClick={(history) => handleDelete()}>Delete</Button>
-            </Item>
-          </Grid>
-          <Grid item xs={8}>
-            <Item>
-                {status ? <AccDetails/> : <Updatepwd/> }
+                <Item>
+                    <Link to="/account" style={{ textDecoration: 'none' }}>ACCOUNT DETAILS</Link>
+                    <hr/>
+                    <Link to="/updatepwd" style={{ textDecoration: 'none' }}>UPDATE PASSWORD</Link>
+                    <hr/>
+                    <DeleteAcc/>
                 </Item>
-          </Grid> 
-        </Grid> 
-    </Box>
+              </Grid>
+              <Grid item xs={1}>
+              </Grid>
+              <Grid item xs={8}>
+                <Item sx={{boxShadow: 0}}>
+                    <Switch>
+                      <Route path="/account">
+                        <AccDetails/>
+                      </Route>
+                      <Route path="/updatepwd">
+                        <Updatepwd/>
+                      </Route>
+                    </Switch>
+                </Item>
+              </Grid> 
+            </Grid> 
+        </Box>
+    </Router>
+
   );
 }
 
