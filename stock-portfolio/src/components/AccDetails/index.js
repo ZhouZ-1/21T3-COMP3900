@@ -1,17 +1,48 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useHistory } from "react-router";
 import React from 'react';
 // TODO fetch from api
+import api from '../../api'
 // import logo from './../../../public/logo192.png';
 
 function AccDetails(){
-    // should fetch from api
-    const firstName = "John"
-    const lastName = "Smith"
-
+    
     var history = useHistory();
-    const [email,setEmail] = useState('');
-    const [password,setPassword] = useState('');
+    const [username, setUsername] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [email, setEmail] = useState('');
+    const [profileImage, setProfileImage] = useState('');
+
+    const token = localStorage.getItem('token');
+
+    useEffect(() =>{
+        api('accounts/details', 'PUT', {token})
+            .then(res => {
+                if (!res.message) {
+                    setUsername(res.username);
+                    setFirstName(res.first_name);
+                    setLastName(res.last_name);
+                    setEmail(res.email);
+                    setProfileImage(res.profile_image);
+                } else {
+                    // Something went wrong 
+                }
+            })
+    })
+
+    const updateEmail = () => {
+        api('accounts/update-details', 'PUT', {token, field: 'email', value: email})
+    }
+
+    const updateFirstName = () => {
+        api('accounts/update-details', 'PUT', {token, field: 'first_name', value: firstName})
+    }
+
+    const updateEmail = () => {
+        api('accounts/update-details', 'PUT', {token, field: 'last_name', value: lastName})
+    }
+
     const handleAccountPage = () => {
         //@TODO: check id/password to authenticate/authorise.
         //  if(id,password exist){
@@ -46,9 +77,19 @@ function AccDetails(){
             <div>
                 <label> Profile Picture  </label>
                 <p>Picture</p>
-                {/* <img src={logo} alt="Logo" /> */}
+                <img src={`${profileImage}`} alt="Logo" />
                 </div>
-              
+            
+            <div>
+                <label> Email:  </label>
+                <p>{email}</p>
+            </div>
+
+            <div>
+                <label> Username:  </label>
+                <p>{username}</p>
+            </div>
+
             <div>
                 <label> First Name:  </label>
                 <p>{firstName}</p>
