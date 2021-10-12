@@ -7,10 +7,7 @@
 import { Button } from '@mui/material';
 import React from 'react';
 import { useHistory } from 'react-router';
-// import logo from './../../../public/logo192.png';
-import BasicTabs from './../AccNav/index';
-// import AccDetails from './../AccDetails/index';
-// import UpdatePassword from "../Updatepwd/index";
+import BasicGrid from './../AccNav/index';
 import api from '../../api';
 
 function AccountPage() {
@@ -35,7 +32,7 @@ function AccountPage() {
 
   return (
     <>
-      <BasicTabs />
+      <BasicGrid />
       <Button className='delete-button' onClick={(history) => handleDelete()}>
         Delete
       </Button>

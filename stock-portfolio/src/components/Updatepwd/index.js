@@ -31,7 +31,7 @@ function UpdatePassword(){
         }
         
         //@TODO: check id/password to authenticate/authorise.
-        //  if(id,password exist){
+        //  if(id.password exist){
         if (isPasswordOkay && isCheckPassword){
             const token = localStorage.getItem('token');
             api('accounts/update-password', 'PUT', {token, new_password: newPassword, old_password: oldPassword})
@@ -51,7 +51,6 @@ function UpdatePassword(){
         // }
     }
     
-    // setIsPasswordError(!validatePassword(newPassword));
 
     function checkPassword() {
         let checkPassword = document.getElementById("checkPassword").value;

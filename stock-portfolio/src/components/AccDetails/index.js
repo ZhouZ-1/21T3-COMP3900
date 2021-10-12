@@ -3,7 +3,8 @@ import { useHistory } from "react-router";
 import React from 'react';
 // TODO fetch from api
 import api from '../../api'
-// import logo from './../../../public/logo192.png';
+import { Avatar } from '@mui/material';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 function AccDetails(){
     
@@ -67,6 +68,9 @@ function AccDetails(){
     return(
         <div class="text-center w-100 p-3">
             <form>
+            {/* <svg data-testid="AccountCircleIcon"></svg> */}
+
+              <AccountCircleIcon />
               <h1>
                 Personal Information  
                 <button class="btn btn-lg btn-link btn-block" onClick={edit()}>Edit</button>
@@ -75,9 +79,12 @@ function AccDetails(){
             
             <form>
             <div>
-                <label> Profile Picture  </label>
-                <p>Picture</p>
-                <img src={`${profileImage}`} alt="Logo" />
+                <label> Profile Picture:  </label>
+                <Avatar
+                  alt="Logo"
+                  src={`${profileImage}`}
+                  sx={{ width: 56, height: 56 }}/>
+                {/* <img src={`${profileImage}`} alt="Logo" /> */}
                 </div>
             
             <div>

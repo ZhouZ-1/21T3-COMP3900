@@ -2,16 +2,27 @@ import { useState } from "react";
 import React from 'react';
 import api from '../../api'
 import NavBar from '../NavBar/index';
-import EmailRuleModal from './../SignUp/EmaildRuleModal';
-
+import { validateEmail } from './../SignUp/helper';
+import EmailRuleModal from './../SignUp/EmailRuleModal';
 
 function ForgotMyPassword() {
   const [email, setEmail] = useState('');
   const [sentEmail, setSentEmail] = useState(false);
+  const [isEmailError, setIsEmailError] = useState(false);
+
 
   const handleSubmit = () => {
-    api('accounts/recover', 'POST', {email});
-    setSentEmail(true);
+    const isEmailOkay = validateEmail(email);
+    if(!isEmailOkay){
+        setIsEmailError(true);
+    } else {
+        setIsEmailError(false);
+    }
+  
+    if(isEmailOkay) {
+        api('accounts/recover', 'POST', {email});
+        setSentEmail(true);
+    }
   }
 
   return (
@@ -23,7 +34,9 @@ function ForgotMyPassword() {
         <>
           <div>Enter in your email address below to reset your password.</div>
           <form style={{paddingTop: '15px'}} onSubmit={handleSubmit}>
-            <label for="inputEmail" class="sr-only">Email</label>
+            {isEmailError && 
+                    <p class='text-danger'>Please check Email Rule!</p>
+            }
             <div class='d-flex justify-content-center'>
                 <label for="inputEmail" class="sr-only">Email</label>
                 <EmailRuleModal/>
@@ -32,7 +45,7 @@ function ForgotMyPassword() {
             <button type="button" class="btn btn-primary" onClick={handleSubmit}>Submit</button>
           </form>
         </> : 
-        <p> Success! We have sent some instructions to your email on how to recover your account. Note that if the email is invalid, or we do not have your email address in our database, then you will not recieve an email.</p>}
+        <p>Success! We have sent some instructions to your email on how to recover your account. Note that if the email is invalid, or we do not have your email address in our database, then you will not recieve an email.</p>}
       </div>
     </>
   );
