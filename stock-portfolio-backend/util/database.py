@@ -65,7 +65,10 @@ def get_user_by_value(field, value):
 
     # Query db to retrieve user
     cursor = conn.cursor()
-    cursor.execute(f"SELECT * FROM users WHERE {field}=?", [value])
+    if field == "active_token":
+        cursor.execute("SELECT * FROM users WHERE active_token=?", [value])
+    else:
+        cursor.execute(f"SELECT * FROM users WHERE UPPER({field}) LIKE UPPER(?)", [value])
 
     user = cursor.fetchone()
 

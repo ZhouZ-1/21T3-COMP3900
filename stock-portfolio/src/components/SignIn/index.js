@@ -32,6 +32,8 @@ function SignIn(){
                     <p class='text-danger'>Incorrect Username or Password. Please try again!</p>
                 }
                 <button class="btn btn-lg btn-primary btn-block mt-5" onClick={handleSignIn}>Sign in</button>
+                
+                <div><a href="/resetPassword">Forgotten password?</a></div>
                 <p class="mt-3 text-muted">or</p>
                 <button class="btn btn-lg btn-primary btn-block mt-3" onClick={() => history.push('/signUp')}>Sign Up</button>
             </div>

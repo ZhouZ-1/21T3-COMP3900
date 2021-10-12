@@ -25,7 +25,7 @@ class Register(Resource):
         username = body['username']
         first_name = body['first_name']
         last_name = body['last_name']
-        email = body['email']
+        email = body['email'].lower()
         password = body['password']
 
         # Check if password is valid
