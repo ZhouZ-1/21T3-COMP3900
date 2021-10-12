@@ -3,7 +3,8 @@ import { useHistory } from "react-router";
 import React from 'react';
 // TODO fetch from api
 import api from '../../api'
-import { Avatar } from '@mui/material';
+import { Avatar, Box, TextField } from '@mui/material';
+import { Card, CardActions, CardContent, CardMedia, Typography } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 function AccDetails(){
@@ -70,43 +71,83 @@ function AccDetails(){
             <form>
             {/* <svg data-testid="AccountCircleIcon"></svg> */}
 
-              <AccountCircleIcon />
               <h1>
                 Personal Information  
                 <button class="btn btn-lg btn-link btn-block" onClick={edit()}>Edit</button>
               </h1>
             </form>
             
-            <form>
             <div>
-                <label> Profile Picture:  </label>
-                <Avatar
-                  alt="Logo"
-                  src={`${profileImage}`}
-                  sx={{ width: 56, height: 56 }}/>
-                {/* <img src={`${profileImage}`} alt="Logo" /> */}
-                </div>
-            
-            <div>
-                <label> Email:  </label>
-                <p>{email}</p>
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                >        
+                    <div>
+                        <Card sx={{ maxWidth: 345 }}>
+                          <CardMedia
+                            component="img"
+                            // height="140"
+                            image={`${profileImage}`}
+                            alt="Logo"
+                          />
+                          <CardContent>
+                            <Typography gutterBottom variant="h5" component="div">
+                              {username}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                                Profile 
+                            </Typography>
+                          </CardContent>
+                        </Card>
+                    </div>
+                    <Box
+                      component="form"
+                      sx={{
+                        '& .MuiTextField-root': { m: 1, width: '25ch' },
+                      }}
+                      noValidate
+                      m={23} pt={8}
+                      autoComplete="off"
+                    >
+                      <div>
+                        <TextField
+                          id="standard-read-only-input"
+                          label="Email"
+                          value={email}
+                          InputProps={{
+                            readOnly: true,
+                          }}
+                          variant="standard"
+                        />
+                      </div>
+                      <br/>
+                      <div>
+                        <TextField
+                          id="standard-read-only-input"
+                          label="First Name"
+                          value={firstName}
+                          InputProps={{
+                            readOnly: true,
+                          }}
+                          variant="standard"
+                        />
+                      </div>
+                      <br/>
+                      <div>
+                        <TextField
+                          id="standard-read-only-input"
+                          label="Last Name"
+                          value={lastName}
+                          InputProps={{
+                            readOnly: true,
+                          }}
+                          variant="standard"
+                        />
+                      </div>
+                    </Box>
+                </Box>
             </div>
-
-            <div>
-                <label> Username:  </label>
-                <p>{username}</p>
-            </div>
-
-            <div>
-                <label> First Name:  </label>
-                <p>{firstName}</p>
-            </div>
-            
-            <div>
-                <label> Last Name:  </label>
-                <p>{lastName}</p>
-              </div>
-            </form>
         </div>
     );
 }

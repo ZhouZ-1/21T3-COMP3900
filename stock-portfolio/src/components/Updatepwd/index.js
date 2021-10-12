@@ -70,6 +70,7 @@ function UpdatePassword(){
             <h1 class="h3 mb-3 font-weight-normal">Account Security</h1>
             <label for="inputOldPassword" class="sr-only">Original Password</label>
             <input type="password" id="inputOldPassword" class="form-control" placeholder="Enter Original Password" required onChange={(evt)=>setOldPassword(evt.target.value)}/>
+            <br/>
             <div class='d-flex justify-content-center'>
                 <label for="inputNewPassword" class="sr-only">New Password</label>
                 <PasswordRuleModal/>
@@ -78,11 +79,13 @@ function UpdatePassword(){
                 <p class='text-danger'>Please check Password Rule!</p>
             }
             <input type="password" id="inputNewPassword" class="form-control" placeholder="Enter New Password" required onChange={(evt)=>setNewPassword(evt.target.value)}/>
+            <br/>
             <label for="checkPassword" class="sr-only">Confirm Password</label>
             {isCheckPasswordError && 
                 <p class='text-danger'>The password confirmation does not match.</p>
             }
             <input type="password" id="checkPassword" class="form-control" placeholder="Enter Confirm Password"/>
+            <br/>
             <button class="btn btn-lg btn-primary btn-block" onClick={handleUpdateAccount}>Update</button>
         </div>
     );
