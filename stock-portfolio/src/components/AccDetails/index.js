@@ -39,7 +39,7 @@ function AccDetails(){
         api('accounts/update-details', 'PUT', {token, field: 'first_name', value: firstName})
     }
 
-    const updateEmail = () => {
+    const updateLastName = () => {
         api('accounts/update-details', 'PUT', {token, field: 'last_name', value: lastName})
     }
 
