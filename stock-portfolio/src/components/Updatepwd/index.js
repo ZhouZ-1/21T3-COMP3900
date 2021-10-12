@@ -34,15 +34,17 @@ function UpdatePassword(){
         //  if(id,password exist){
         if (isPasswordOkay && isCheckPassword){
             const token = localStorage.getItem('token');
-            const put = {
-                method: 'PUT', 
-                headers: {
-                 'Content-type': 'application/json'},
-                body: JSON.stringify({token, newPassword}) 
-            };
-            updateAPI(put);
-            history.push('/') // stay in the refresh page
-            alert("Successfully update your password!")
+            api('accounts/update-password', 'PUT', {token, new_password: newPassword, old_password: oldPassword})
+                .then(res => {
+                    if (res.is_success) {
+                        // Success
+                        alert("Successfully update your password!");
+                    } else {
+                        // Something went wrong
+                        alert(res.message);
+                    }
+                })
+
         }
         // }else{
         //     display error message
@@ -63,12 +65,7 @@ function UpdatePassword(){
         } 
         return true;
     }
-    
-    const updateAPI = (put) =>
-        api('accounts/update', put) .then(res => console.log(res))
-        
 
-    
     return(
         <div class="text-center w-100 p-3">
             <h1 class="h3 mb-3 font-weight-normal">Account Security</h1>
