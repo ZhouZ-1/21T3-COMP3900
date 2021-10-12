@@ -25,6 +25,8 @@ Week 4
 - Worked with the alpha_vantage API to retrieve stock data for individual stocks and overall stocks
 - Worked on the backend of stock searching and individual stock details
 
+Week 5
+- Added forward and backward iterator for stock searcher
 
 sprint 3 end of week 9
 
