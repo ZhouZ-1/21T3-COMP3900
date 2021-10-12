@@ -4,7 +4,6 @@ import SignIn from './components/SignIn/index';
 import SignUp from './components/SignUp/index';
 import Updatepwd from './components/Updatepwd/index';
 import AccountPage from './components/AccountPage/index';
-import React from 'react';
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 
 function App() {

@@ -20,4 +20,8 @@ User Password can be changed for users.
 
 # Week 5
 Working for Tabs on account page and account management.
+<<<<<<< HEAD
 Intergrate account page with backend.
+=======
+Intergrate account page with backend.
+>>>>>>> master
