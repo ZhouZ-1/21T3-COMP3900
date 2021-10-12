@@ -39,7 +39,8 @@ function NavBar(){
                         </ul>
                     </form>
                     {isAuthenticated ?
-                            (<button type="button" class="btn btn-danger" onClick={() => handleLogout()}>Logout</button>):
+                            [(<button type="button" class="btn btn-danger" onClick={() => handleLogout()}>Logout</button>),
+                            (<button type="button" class="btn btn-outline-dark" onClick={()=>history.push('/account')}>Update Account</button>)]:
                             (<button type="button" class="btn btn-outline-dark" onClick={()=>history.push('/signIn')}>Sign in</button>)
                     }
                 </div>
