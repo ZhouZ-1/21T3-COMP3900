@@ -1,52 +1,6 @@
 // import {
 //     BrowserRouter as Router,
 //     Route,
-<<<<<<< HEAD
-//     Switch, 
-//     Link,
-//   } from "react-router-dom";
-import React from 'react';
-import { useHistory } from "react-router";
-import BasicTabs from './../AccNav/index';
-// import AccDetails from './../AccDetails/index';
-// import UpdatePassword from "../Updatepwd/index";
-
-
-function AccountPage(){
-    var history = useHistory();
-    
-    return(
-        <BasicTabs/>
-        // <Router>
-        //   <div>
-        //     <ul>
-        //       <li>
-        //         <Link to="/account">Account Details</Link>
-        //       </li>
-        //       <li>
-        //         <Link to="/updatepwd">Update Account</Link>
-        //       </li>
-        //     </ul>
-    
-        //     <hr />
-    
-        //     <Switch>
-        //       <Route exact path="/account">
-        //         <AccDetails/>
-        //         {/* <BasicTabs/> */}
-        //       </Route>
-        //       <Route path="/updatepwd">
-        //         <UpdatePassword/>
-        //       </Route>
-        //     </Switch>
-        //   </div>
-        // </Router>
-    );
-}
-
-
-export default AccountPage;
-=======
 //     Switch,
 //     Link,
 //   } from "react-router-dom";
@@ -90,4 +44,3 @@ function AccountPage() {
 }
 
 export default AccountPage;
->>>>>>> master
