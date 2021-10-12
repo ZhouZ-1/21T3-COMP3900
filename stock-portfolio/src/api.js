@@ -12,7 +12,7 @@ const headers = {"Content-Type": "application/json"}
  * @param {Object} body A object that represents the body of the request. It will be converted and sent as JSON.
  * @precondition method is a valid HTTP method such as GET, POST, PUT, DELETE.
  */
-export default function api(path, method, body = null) {
+export default async function api(path, method, body = null) {
   let init = {method, headers}
   let resource = `${url}/${path}`
 

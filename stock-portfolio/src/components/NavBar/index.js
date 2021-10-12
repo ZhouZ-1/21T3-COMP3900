@@ -1,50 +1,63 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useHistory } from "react-router";
 import api from "../../api";
-
 function NavBar(){
     var history = useHistory();
-    // @TODO:tony
     let isAuthenticated = !!localStorage.getItem("token")
 
     const [keywords,setKeyWords] = useState('');
     const [stockResult,setStockResult] = useState();
-
+    const [stock, setStock] = useState(<li>Searching for stocks...</li>);
+    
     const handleLogout = () => {
         localStorage.removeItem("token");
         history.push('/');
     }
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('keyword sending',keywords);
-        
         api('stocks/search', 'POST', {symbol: keywords}).then(res => { // Make API call style consistent.
             setStockResult(res);
         });
-        console.log('response',stockResult);
     }
-    
+    const searchAllStock = async (type) => {
+        var response;
+        if (type == 'normal'){
+            response = await api('stocks/searchall', 'POST');
+        }else if (type == 'next'){
+            response = await api('stocks/searchnext', 'POST');
+        }else{
+            response = await api('stocks/searchprev', 'POST');
+        }
+        const stockData = []
+        for (const [quote, stockDetails] of Object.entries(response.body)) {
+            stockData.push([quote,stockDetails.name]);
+        }
+        const items = stockData.map(function(item){
+            return <li>{item[0]} {item[1]}</li>;
+        });
+        items.push(<div><span onClick={() => searchAllStock('prev')}>prev</span> <span onClick={() => searchAllStock('next')}>next</span></div>)
+        setStock(items);
+    }
+    const onSearchClick = async () => {
+        await searchAllStock('normal');
+    }
     return(
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container-fluid">
-                <a class="navbar-brand" onClick={() => history.push('/')}>Home</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
-                    <form class="d-flex" onSubmit={handleSubmit}>
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" onChange={(evt)=>setKeyWords(evt.target.value)} data-bs-toggle="dropdown" aria-expanded="false"/>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                            {stockResult ? <li>{stockResult.name}</li> : <li>Waiting for stock</li>}
-                        </ul>
-                    </form>
-                    {isAuthenticated ?
-                            [(<button type="button" class="btn btn-danger" onClick={() => handleLogout()}>Logout</button>),
-                            (<button type="button" class="btn btn-outline-dark" onClick={()=>history.push('/account')}>Update Account</button>)]:
-                            (<button type="button" class="btn btn-outline-dark" onClick={()=>history.push('/signIn')}>Sign in</button>)
+        <nav class="navbar navbar-light bg-light justify-content-around">
+            <a class="navbar-brand" onClick={() => history.push('/')}>Home</a>
+            <form class="form-inline" onSubmit={handleSubmit}>
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" onClick={onSearchClick} onChange={(evt)=>setKeyWords(evt.target.value)} data-bs-toggle="collapse" data-bs-target="#stockList" aria-expanded="false"/>
+                <ul id = "stockList" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                    {stockResult ? 
+                        (<li>{stockResult.symbol} {stockResult.name} {stockResult.price}</li>) : 
+                        (stock)
                     }
-                </div>
-            </div>
+                </ul>
+            </form>
+            {isAuthenticated ?
+                [(<button type="button" class="btn btn-danger" onClick={() => handleLogout()}>Logout</button>),
+                (<button type="button" class="btn btn-outline-dark" onClick={()=>history.push('/account')}>Update Account</button>)]:
+                (<button type="button" class="btn btn-outline-dark" onClick={()=>history.push('/signIn')}>Sign in</button>)
+            }
         </nav>
     );
 }
