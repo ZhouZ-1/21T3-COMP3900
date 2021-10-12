@@ -1,15 +1,14 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useHistory } from "react-router";
 import api from "../../api";
 
 function NavBar(){
     var history = useHistory();
-    // @TODO:tony
     let isAuthenticated = !!localStorage.getItem("token")
 
     const [keywords,setKeyWords] = useState('');
     const [stockResult,setStockResult] = useState();
-
+    const [stockPage,setStockPage] = useState({});
     const handleLogout = () => {
         localStorage.removeItem("token");
         history.push('/');
@@ -21,9 +20,21 @@ function NavBar(){
         api('stocks/search', 'POST', {symbol: keywords}).then(res => { // Make API call style consistent.
             setStockResult(res);
         });
-        console.log('response',stockResult);
+    }
+    const getStockLists= () => {
+        for (let index = 0; index < 1; index++) {   
+            api('stocks/searchall', 'POST').then(res => { // Make API call style consistent.
+                const body = res.body;
+                for (const [query, stockDetail] of Object.entries(body)) {
+                    console.log(query);
+                    console.log(stockDetail.name);
+                }
+            });
+        }
+        setStockPage(stockPage);
     }
     
+
     return(
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
@@ -33,9 +44,12 @@ function NavBar(){
                 </button>
                 <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
                     <form class="d-flex" onSubmit={handleSubmit}>
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" onChange={(evt)=>setKeyWords(evt.target.value)} data-bs-toggle="dropdown" aria-expanded="false"/>
+                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" onClick={getStockLists} onChange={(evt)=>setKeyWords(evt.target.value)} data-bs-toggle="dropdown" aria-expanded="false"/>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                            {stockResult ? <li>{stockResult.name}</li> : <li>Waiting for stock</li>}
+                            {stockResult ? 
+                                (<li>{stockResult.name}</li>) : 
+                                (<li>nothing</li>)
+                            }
                         </ul>
                     </form>
                     {isAuthenticated ?
