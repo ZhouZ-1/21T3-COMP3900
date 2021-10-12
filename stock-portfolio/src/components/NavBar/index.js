@@ -5,20 +5,10 @@ function NavBar(){
     var history = useHistory();
     let isAuthenticated = !!localStorage.getItem("token")
 
-<<<<<<< HEAD
-    const [keywords,SetKeyWords] = useState('');
-    const searchKeyWord = (evt) => {
-        SetKeyWords(evt.target.value);
-        //  @TODO:
-        //  1. search keywords making api call
-        //  2. display results under search bar.
-    }
-=======
     const [keywords,setKeyWords] = useState('');
     const [stockResult,setStockResult] = useState();
     const [stock, setStock] = useState(<li>Searching for stocks...</li>);
     
->>>>>>> master
     const handleLogout = () => {
         localStorage.removeItem("token");
         history.push('/');
@@ -52,26 +42,6 @@ function NavBar(){
         await searchAllStock('normal');
     }
     return(
-<<<<<<< HEAD
-        // navbar navbar-dark bg-primary
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container-fluid">
-                <a class="navbar-brand" onClick={() => history.push('/')}>Home</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
-                    <form class="d-flex">
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" onChange={(evt)=>searchKeyWord(evt)}></input>
-                        {isAuthenticated ?
-                            (<button type="button" class="btn btn-danger" onClick={() => handleLogout()}>Logout</button>):
-                            (<button type="button" class="btn btn-outline-dark" onClick={()=>history.push('/signIn')}>Sign in</button>)
-                        }
-                    </form>
-                    <button type="button" class="btn btn-outline-dark" onClick={()=>history.push('/account')}>Account</button>
-                </div>
-            </div>
-=======
         <nav class="navbar navbar-light bg-light justify-content-around">
             <a class="navbar-brand" onClick={() => history.push('/')}>Home</a>
             <form class="form-inline" onSubmit={handleSubmit}>
@@ -88,7 +58,6 @@ function NavBar(){
                 (<button type="button" class="btn btn-outline-dark" onClick={()=>history.push('/account')}>Update Account</button>)]:
                 (<button type="button" class="btn btn-outline-dark" onClick={()=>history.push('/signIn')}>Sign in</button>)
             }
->>>>>>> master
         </nav>
     );
 }
