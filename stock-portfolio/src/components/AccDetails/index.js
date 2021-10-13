@@ -12,6 +12,7 @@ import {
   Typography,
 } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { validateEmail } from '../SignUp/helper';
 
 function AccDetails() {
   var history = useHistory();
@@ -21,6 +22,7 @@ function AccDetails() {
   const [email, setEmail] = useState('');
   const [profileImage, setProfileImage] = useState('');
   const [editing, setEditing] = useState(false);
+  const [isValidEmail, setIsValidEmail] = useState(true);
 
   const token = localStorage.getItem('token');
 
@@ -60,6 +62,11 @@ function AccDetails() {
       field: 'last_name',
       value: lastName,
     });
+  };
+
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+    setIsValidEmail(validateEmail(e.target.value));
   };
 
   const handleAccountPage = () => {
@@ -136,9 +143,12 @@ function AccDetails() {
                 InputProps={{
                   readOnly: !editing,
                 }}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => handleEmailChange(e)}
                 variant='standard'
               />
+              {!isValidEmail && (
+                <p class='text-danger'>Please check the email rules</p>
+              )}
             </div>
             <br />
             <div>
@@ -170,7 +180,11 @@ function AccDetails() {
               />
             </div>
             {editing && (
-              <button class='btn-primary' onClick={handleUpdate}>
+              <button
+                class='btn-primary'
+                onClick={handleUpdate}
+                disabled={!isValidEmail}
+              >
                 Update
               </button>
             )}
