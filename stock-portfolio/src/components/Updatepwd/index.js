@@ -31,25 +31,26 @@ function UpdatePassword(){
         }
         
         //@TODO: check id/password to authenticate/authorise.
-        //  if(id,password exist){
+        //  if(id.password exist){
         if (isPasswordOkay && isCheckPassword){
             const token = localStorage.getItem('token');
-            const put = {
-                method: 'PUT', 
-                headers: {
-                 'Content-type': 'application/json'},
-                body: JSON.stringify({token, newPassword}) 
-            };
-            updateAPI(put);
-            history.push('/') // stay in the refresh page
-            alert("Successfully update your password!")
+            api('accounts/update-password', 'PUT', {token, new_password: newPassword, old_password: oldPassword})
+                .then(res => {
+                    if (res.is_success) {
+                        // Success
+                        alert("Successfully update your password!");
+                    } else {
+                        // Something went wrong
+                        alert(res.message);
+                    }
+                })
+
         }
         // }else{
         //     display error message
         // }
     }
     
-    // setIsPasswordError(!validatePassword(newPassword));
 
     function checkPassword() {
         let checkPassword = document.getElementById("checkPassword").value;
@@ -63,17 +64,13 @@ function UpdatePassword(){
         } 
         return true;
     }
-    
-    const updateAPI = (put) =>
-        api('accounts/update', put) .then(res => console.log(res))
-        
 
-    
     return(
         <div class="text-center w-100 p-3">
             <h1 class="h3 mb-3 font-weight-normal">Account Security</h1>
             <label for="inputOldPassword" class="sr-only">Original Password</label>
             <input type="password" id="inputOldPassword" class="form-control" placeholder="Enter Original Password" required onChange={(evt)=>setOldPassword(evt.target.value)}/>
+            <br/>
             <div class='d-flex justify-content-center'>
                 <label for="inputNewPassword" class="sr-only">New Password</label>
                 <PasswordRuleModal/>
@@ -82,11 +79,13 @@ function UpdatePassword(){
                 <p class='text-danger'>Please check Password Rule!</p>
             }
             <input type="password" id="inputNewPassword" class="form-control" placeholder="Enter New Password" required onChange={(evt)=>setNewPassword(evt.target.value)}/>
+            <br/>
             <label for="checkPassword" class="sr-only">Confirm Password</label>
             {isCheckPasswordError && 
                 <p class='text-danger'>The password confirmation does not match.</p>
             }
             <input type="password" id="checkPassword" class="form-control" placeholder="Enter Confirm Password"/>
+            <br/>
             <button class="btn btn-lg btn-primary btn-block" onClick={handleUpdateAccount}>Update</button>
         </div>
     );

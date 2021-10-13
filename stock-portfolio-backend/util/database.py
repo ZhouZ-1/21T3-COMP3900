@@ -1,7 +1,7 @@
 import os
 import sqlite3
 
-base_url = 'http://127.0.0.1'
+base_url = 'http://127.0.0.1:5000'
 
 # Set up sqlite3 database
 database_dir = os.path.join('db')

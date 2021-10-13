@@ -1,66 +1,64 @@
-import * as React from 'react';
-import PropTypes from 'prop-types';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import Typography from '@mui/material/Typography';
+import React from 'react';
+import { useHistory } from 'react-router';
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Link,
+  } from "react-router-dom";
+import { styled } from '@mui/material/styles';
+import { Button } from '@mui/material';
 import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
+import Grid from '@mui/material/Grid';
+import DeleteAcc from './../DeleteAcc/index';
 import AccDetails from './../AccDetails/index';
-import UpdatePassword from "../Updatepwd/index";
+import Updatepwd from './../Updatepwd/index';
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
+const Item = styled(Paper)(({ theme }) => ({
+    ...theme.typography.body2,
+    padding: theme.spacing(1),
+    textAlign: 'center',
+    color: theme.palette.text.secondary,
+  }));
+  
+
+
+export default function AccNav() {
+  var history = useHistory();
 
   return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
+    <Router>
+        <Box sx={{ flexGrow: 1 }} m={15} pt={1}>
+            <Grid container spacing={2}>
+              <Grid item xs={3}>
+                <hr/>
+                <Item>
+                    <Link to="/account" style={{ textDecoration: 'none' }}>ACCOUNT DETAILS</Link>
+                    <hr/>
+                    <Link to="/updatepwd" style={{ textDecoration: 'none' }}>UPDATE PASSWORD</Link>
+                    <hr/>
+                    <DeleteAcc redirect={() => history.push('/')}/>
+                </Item>
+              </Grid>
+              <Grid item xs={1}>
+              </Grid>
+              <Grid item xs={8}>
+                <Item sx={{boxShadow: 0}}>
+                    <Switch>
+                      <Route path="/account">
+                        <AccDetails/>
+                      </Route>
+                      <Route path="/updatepwd">
+                        <Updatepwd/>
+                      </Route>
+                    </Switch>
+                </Item>
+              </Grid> 
+            </Grid> 
         </Box>
-      )}
-    </div>
+    </Router>
+
   );
 }
 
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.number.isRequired,
-  value: PropTypes.number.isRequired,
-};
-
-function a11yProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
-  };
-}
-
-export default function BasicTabs() {
-  const [value, setValue] = React.useState(0);
-
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-
-  return (
-    <Box sx={{ width: '100%' }}>
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-          <Tab label="Account Details" {...a11yProps(0)} />
-          <Tab label="Update Account" {...a11yProps(1)} />
-        </Tabs>
-      </Box>
-      <TabPanel value={value} index={0}>
-        <AccDetails/>
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-        <UpdatePassword/>
-      </TabPanel>
-    </Box>
-  );
-}

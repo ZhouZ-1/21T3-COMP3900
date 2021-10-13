@@ -14,13 +14,10 @@ function App() {
         <Route exact path='/' component={MainPage}/>
         <Route exact path='/signIn' component={SignIn}/>
         <Route exact path='/signUp' component={SignUp}/>
+        <Route exact path='/updatepwd' component={AccountPage}/>
         <Route exact path='/stockDetails/:symbol' component={StockDetails}/>
-        <Route exact path='/updatepwd' component={Updatepwd}/>
         <Route exact path='/account' component={AccountPage}/>
         <Route exact path='/resetPassword' component={ForgotMyPassword}/>
-
-
-
       </Switch>
     </Router>
   );
