@@ -6,6 +6,7 @@ import Updatepwd from './components/Updatepwd/index';
 import AccountPage from './components/AccountPage/index';
 import ForgotMyPassword from './components/ForgotMyPassword';
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
+import StockDetails from './components/StockDetails';
 function App() {
   return (
     <Router>
@@ -13,6 +14,7 @@ function App() {
         <Route exact path='/' component={MainPage}/>
         <Route exact path='/signIn' component={SignIn}/>
         <Route exact path='/signUp' component={SignUp}/>
+        <Route exact path='/stockDetails/:symbol' component={StockDetails}/>
         <Route exact path='/updatepwd' component={Updatepwd}/>
         <Route exact path='/account' component={AccountPage}/>
         <Route exact path='/resetPassword' component={ForgotMyPassword}/>

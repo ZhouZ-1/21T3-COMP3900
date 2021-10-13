@@ -33,7 +33,7 @@ function NavBar(){
             stockData.push([quote,stockDetails.name]);
         }
         const items = stockData.map(function(item){
-            return <li>{item[0]} {item[1]}</li>;
+            return <li onClick={()=>history.push(`/stockDetails/${item[0]}`)}>{item[0]} {item[1]}</li>;
         });
         items.push(<div><span onClick={() => searchAllStock('prev')}>prev</span> <span onClick={() => searchAllStock('next')}>next</span></div>)
         setStock(items);
@@ -48,7 +48,7 @@ function NavBar(){
                 <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" onClick={onSearchClick} onChange={(evt)=>setKeyWords(evt.target.value)} data-bs-toggle="collapse" data-bs-target="#stockList" aria-expanded="false"/>
                 <ul id = "stockList" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                     {stockResult ? 
-                        (<li>{stockResult.symbol} {stockResult.name} {stockResult.price}</li>) : 
+                        (<li onClick={()=>history.push(`/stockDetails/${keywords}`)}>{stockResult.symbol} {stockResult.name} {stockResult.price}</li>) : 
                         (stock)
                     }
                 </ul>
