@@ -7,7 +7,6 @@ import {
     Link,
   } from "react-router-dom";
 import { styled } from '@mui/material/styles';
-import { Button } from '@mui/material';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
@@ -38,7 +37,7 @@ export default function AccNav() {
                     <hr/>
                     <Link to="/updatepwd" style={{ textDecoration: 'none' }}>UPDATE PASSWORD</Link>
                     <hr/>
-                    <DeleteAcc/>
+                    <DeleteAcc redirect={() => history.push('/')}/>
                 </Item>
               </Grid>
               <Grid item xs={1}>
