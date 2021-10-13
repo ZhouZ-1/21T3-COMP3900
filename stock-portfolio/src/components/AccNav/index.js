@@ -38,7 +38,7 @@ export default function AccNav() {
                     <hr/>
                     <Link to="/updatepwd" style={{ textDecoration: 'none' }}>UPDATE PASSWORD</Link>
                     <hr/>
-                    <DeleteAcc/>
+                    <DeleteAcc redirect={() => history.push('/')}/>
                 </Item>
               </Grid>
               <Grid item xs={1}>
