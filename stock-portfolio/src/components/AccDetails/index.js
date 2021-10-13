@@ -15,6 +15,7 @@ function AccDetails(){
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [profileImage, setProfileImage] = useState('');
+    const [editing, setEditing] = useState(false);
 
     const token = localStorage.getItem('token');
 
@@ -55,17 +56,17 @@ function AccDetails(){
     }
 
     function edit() {
-        // TODO Make the page
-        // history.push('/editAccount');
-        // return(
-        //     <div>
-        //         <p>TBC</p>
-        //     </div>
-        // );
-        // alert("TBC");
+        setEditing(true);
         return;
     }
-    
+
+    function handleUpdate() {
+      setEditing(false);
+      updateFirstName();
+      updateLastName();
+      updateEmail();
+    }
+
     return(
         <div class="text-center w-100 p-3">
             <form>
@@ -73,7 +74,7 @@ function AccDetails(){
 
               <h1>
                 Personal Information  
-                <button class="btn btn-lg btn-link btn-block" onClick={edit()}>Edit</button>
+                {!editing && <button class="btn btn-lg btn-link btn-block" onClick={edit}>Edit</button>}
               </h1>
             </form>
             
@@ -116,8 +117,9 @@ function AccDetails(){
                           label="Email"
                           value={email}
                           InputProps={{
-                            readOnly: true,
+                            readOnly: !editing,
                           }}
+                          onChange={e => setEmail(e.target.value)}
                           variant="standard"
                         />
                       </div>
@@ -128,8 +130,9 @@ function AccDetails(){
                           label="First Name"
                           value={firstName}
                           InputProps={{
-                            readOnly: true,
+                            readOnly: !editing,
                           }}
+                          onChange={e => setFirstName(e.target.value)}
                           variant="standard"
                         />
                       </div>
@@ -140,11 +143,13 @@ function AccDetails(){
                           label="Last Name"
                           value={lastName}
                           InputProps={{
-                            readOnly: true,
+                            readOnly: !editing,
                           }}
+                          onChange={e => {setLastName(e.target.value); console.log(e)}}
                           variant="standard"
                         />
                       </div>
+                      {editing && <button class="btn-primary" onClick={handleUpdate}>Update</button>}
                     </Box>
                 </Box>
             </div>
