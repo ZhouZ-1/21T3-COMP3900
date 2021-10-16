@@ -123,6 +123,15 @@ def update_stock_listing(symbol, name, exchange, asset_type):
 
     conn.commit()
 
+def query_stocks(query, limit=5, offset=0):
+    '''
+    Searches the database for stocks that match the given query.
+    '''
+    cursor = conn.cursor()
+    cursor.execute(f"SELECT * FROM stock_listing WHERE symbol || name LIKE ? ORDER BY symbol asc LIMIT ? OFFSET ?", [f"%{query}%", limit, offset])
+
+    return [{"symbol": symbol, "name": name, "exchange": exchange, "asset_type": asset_type} for symbol, name, exchange, asset_type in cursor.fetchall()]
+
 class SearchIterator():
     """
     Iterates over all stocks
