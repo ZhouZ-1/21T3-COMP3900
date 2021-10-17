@@ -23,13 +23,10 @@ function NavBar(){
     }
     const onKeywordChange = async (e) => {
         setKeyWords(e.target.value);
-        console.log(`stocks?query=${keywords}`);
-        const response = await api(`stocks?query=${keywords}`,'GET',{
-            limit:5,
-            offset:2
-        });
+        const response = await api(`stocks?query=${keywords}&limit=${5}&offset=${2}`,'GET');
         console.log(response);
     }
+
     const searchAllStock = async (type) => {
         var response;
         if (type == 'normal'){
