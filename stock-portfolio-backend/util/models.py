@@ -33,6 +33,25 @@ search_model = api.model('search_model', {
     "symbol": fields.String(required=True, example="GOOG")
 })
 
+simple_stock_info_model = api.model('simple_stock_info_model', {
+    "symbol": fields.String(required=True, example="GOOG"),
+    "name": fields.String(required=True, example="Alphabet Inc - Class C"),
+    "exchange": fields.String(required=True, example="NASDAQ"),
+    "asset_type": fields.String(required=True, example="Stock")
+})
+
+stock_info_model = api.model('stock_info_model', {
+    "symbol": fields.String(required=True, example="GOOG"),
+    "asset_type": fields.String(required=True, example="Common Stock"),
+    "name": fields.String(required=True, example="Alphabet Inc"),
+    "description": fields.String(required=True, example="Alphabet Inc. is an American multinational conglomerate headquartered in Mountain View, California. It was created through a restructuring of Google on October 2, 2015, and became the parent company of Google and several former Google subsidiaries. The two co-founders of Google remained as controlling shareholders, board members, and employees at Alphabet. Alphabet is the world's fourth-largest technology company by revenue and one of the world's most valuable companies."),
+    "sector": fields.String(required=True, example="TECHNOLOGY"),
+    "industry": fields.String(required=True, example="SERVICES-COMPUTER PROGRAMMING, DATA PROCESSING, ETC."),
+    "price": fields.String(required=True, example="3106.11"),
+    "year_high": fields.String(required=True, example="2936.41"),
+    "year_low": fields.String(required=True, example="1514.62")
+})
+
 details_model = api.model('details_model', {
     "username": fields.String(required=True, example="user100"),
     "first_name": fields.String(required=True, example="john"),
