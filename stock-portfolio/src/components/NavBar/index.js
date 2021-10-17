@@ -21,6 +21,15 @@ function NavBar(){
             setStockResult(res);
         });
     }
+    const onKeywordChange = async (e) => {
+        setKeyWords(e.target.value);
+        console.log(`stocks?query=${keywords}`);
+        const response = await api(`stocks?query=${keywords}`,'GET',{
+            limit:5,
+            offset:2
+        });
+        console.log(response);
+    }
     const searchAllStock = async (type) => {
         var response;
         if (type == 'normal'){
@@ -47,7 +56,7 @@ function NavBar(){
         <nav class="navbar navbar-light bg-light justify-content-around">
             <a class="navbar-brand" onClick={() => history.push('/')}>Home</a>
             <form class="form-inline" onSubmit={handleSubmit}>
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" onClick={onSearchClick} onChange={(evt)=>setKeyWords(evt.target.value)} data-bs-toggle="collapse" data-bs-target="#stockList" aria-expanded="false"/>
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" onClick={onSearchClick} onChange={onKeywordChange} data-bs-toggle="collapse" data-bs-target="#stockList" aria-expanded="false"/>
                 <ul id = "stockList" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                     {stockResult ? 
                         (<li onClick={()=>history.push(`/stockDetails/${keywords}`)}>{stockResult.symbol} {stockResult.name} {stockResult.price}</li>) : 
