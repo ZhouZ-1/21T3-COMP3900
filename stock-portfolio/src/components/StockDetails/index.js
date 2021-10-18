@@ -6,16 +6,16 @@ import NavBar from "../NavBar";
 function StockDetails(){
     let { symbol } = useParams();
     const [stockDetails,setStockDetails] = useState();
-    console.log(symbol);
-    useEffect(async ()=>{
+
+    useEffect(async()=>{
         const response = await api('stocks/search', 'POST', {symbol: symbol});
         setStockDetails(response);
     },[symbol]);
+    
     return (
         <>
         <NavBar></NavBar>
         <div>
-            {console.log(stockDetails)}
             {stockDetails ? 
                 (
                     <div>
