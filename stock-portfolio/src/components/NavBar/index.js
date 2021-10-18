@@ -8,12 +8,15 @@ function NavBar(){
     let isAuthenticated = !!localStorage.getItem("token")
     const [keywords,setKeyWords] = useState('');
     const [stocks, setStocks] = useState();
+    const [dropdown, setDropdown] = useState(false);
     const handleLogout = () => {
         localStorage.removeItem("token");
         history.push('/');
     }
 
     const onStockClick = (symbol) => {
+        setDropdown(false);
+        setKeyWords('');
         history.push(`/stockDetails/${symbol}`)
     }
 
@@ -24,6 +27,7 @@ function NavBar(){
             return <li onClick={()=>onStockClick(item.symbol)}>{item.symbol} {item.name}</li>;
         });
         setStocks(stockResults);
+        setDropdown(true);
     }    
 
     const handleStockClick = () => {
@@ -34,9 +38,9 @@ function NavBar(){
     return(
         <nav class="navbar navbar-light bg-light justify-content-around">
             <a class="navbar-brand" onClick={() => history.push('/')}>Home</a>
-            <form id="inputForm" class="form-inline" onSubmit={(e)=>e.preventDefault()} value={keywords}>
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" onChange={onKeywordChange} data-bs-toggle="collapse" data-bs-target="#stockList" aria-expanded="true"/>
-                <ul id = "stockList" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+            <form id="inputForm" class="form-inline" onSubmit={(e)=>e.preventDefault()}>
+                <input class="form-control me-2" type="search" placeholder="Search" value={keywords} aria-label="Search" onChange={onKeywordChange} data-bs-toggle="collapse" data-bs-target="#stockList" aria-expanded="true"/>
+                <ul id = "stockList" class="dropdown-menu" aria-labelledby="dropdownMenuButton1" style={{display: (dropdown ? 'block' : 'none')}}>
                     {stocks ? (
                         stocks
                     ):
