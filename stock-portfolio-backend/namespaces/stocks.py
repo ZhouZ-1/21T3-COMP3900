@@ -26,12 +26,15 @@ class Search(Resource):
             abort(409, f"{inst_symbol} is not a string")
             
         try:
+            # get current stock data
             raw_data = dc.fd.get_company_overview(inst_symbol)[0]
+            ts_data = dc.ts.get_quote_endpoint(inst_symbol)[0]
+            ts_intraday = dc.ts.get_intraday(inst_symbol, interval='5min')[0]
+
+
         except ValueError:
             # case when stock cannot be found during the api call
             abort(409, "No matches found for the symbol")
-
-        # add in time series for performance tracking
 
         # add more fields depending on what information we want
         return { 
@@ -41,13 +44,20 @@ class Search(Resource):
             "description": raw_data["Description"],
             "sector": raw_data["Sector"],
             "industry": raw_data["Industry"],
-            "price": raw_data["AnalystTargetPrice"],
+            "price": ts_data["05. price"],
             "year_high": raw_data["52WeekHigh"],
-            "year_low": raw_data["52WeekLow"]
+            "year_low": raw_data["52WeekLow"],
+            "open": ts_data["02. open"],
+            "high": ts_data["03. high"],
+            "low": ts_data["04. low"],
+            "volume": ts_data["06. volume"],
+            "latest_trading_day": ts_data["07. latest trading day"],
+            "previous_close": ts_data["08. previous close"],
+            "change": ts_data["09. change"],
+            "change_percent": ts_data["10. change percent"],
+            "intraday": ts_intraday
         }
 
-    
-        
 @stocks.route('', doc={
     "description": "Backup search results incase we want to search a query asynchronously."
 })
