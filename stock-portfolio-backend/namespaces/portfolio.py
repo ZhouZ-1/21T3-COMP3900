@@ -74,10 +74,30 @@ class CreatePortfolio(Resource):
     "description": "Given the portfolio_id, delete's this portfolio and all it's holdings."
 })
 class DeletePortfolio(Resource):
+    @portfolio.expect(delete_portfolio_model)
+    @portfolio.response(200, 'Success', success_model)
+    @portfolio.response(400, 'Invalid token')
     def delete(self):
         """
-        [Unfinished] Delete's specified portfolio and all it's holdings.
+        Delete's specified portfolio and all it's holdings.
         """
+        body = request.json
+        token = body['token']
+        portfolio_id = body['portfolio_id']
+
+        # Get username from token
+        user = db.get_user_by_value("active_token", token)
+        if not user:
+            abort(400, "Token is invalid")
+
+        # Check that user owns the portfolio corresponding to the portfolio_id.
+        portfolio = db.query_portfolio(portfolio_id)
+        if portfolio is None or portfolio["owner"] != user["username"]:
+            abort(400, "User does not own portfolio")
+
+        # Delete the portfolio and all it's holdings.
+        db.remove_portfolio(portfolio_id)    
+
         return {
             "is_success": True
         }

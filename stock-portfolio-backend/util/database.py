@@ -170,6 +170,15 @@ def all_portfolios_from_user(username):
 
     return [{"portfolio_id": portfolio_id, "portfolio_name": portfolio_name} for portfolio_id, _, portfolio_name in cursor.fetchall()]
 
+def remove_portfolio(portfolio_id):
+    '''
+    Completely removes the correspondings and all associated stocks in the database.
+    '''
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM holdings WHERE held_by=?", [portfolio_id])
+    cursor.execute("DELETE FROM portfolios WHERE portfolio_id=?", [portfolio_id])
+    conn.commit()
+
 def add_stock(portfolio_id, symbol, value, qty, type, brokerage, exchange, date, currency):
     '''
     Adds a stock to the user's portfolio in the database.
