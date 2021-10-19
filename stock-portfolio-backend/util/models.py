@@ -76,3 +76,15 @@ create_portfolio_model = api.inherit('create_portfolio_model', token_model, {
 portfolio_id_model = api.model('portfolio_id_model', {
     "portfolio_id": fields.Integer(required=True)
 })
+
+add_stock_model = api.inherit('add_stock_model', token_model, {
+    "portfolio_id": fields.Integer(required=True, example=1),
+    "symbol": fields.String(required=True, example='TSLA'),
+    "value": fields.Float(required=True, example=1.1, description='The value of a single stock'),
+    "qty": fields.Float(required=True, example=99.9, description='The amount of stock that was bought/sold'),
+    "type": fields.String(required=True, example="buy", description="Either 'buy' or 'sell'"),
+    "brokerage": fields.Float(required=True, example=9.95, description="The amount of brokerage you paid"),
+    "exchange": fields.String(required=True, example='NYSE', description="The name of the exchange that this stock belongs to"),
+    "date": fields.String(required=True, example="19/10/21", description="A string in the format dd/mm/yy"),
+    "currency": fields.String(required=True, example="USD", description="The currency that is used to buy the stock")
+})

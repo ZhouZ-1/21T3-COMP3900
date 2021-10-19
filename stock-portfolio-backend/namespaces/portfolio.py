@@ -97,10 +97,41 @@ class GetHoldings(Resource):
     "description": "Given the portfolio_id, add a stock and it's relevant details to the portfolio (qty, price, date, type etc)."
 })
 class AddHoldings(Resource):
+    @portfolio.expect(add_stock_model)
+    @portfolio.response(200, 'Success', success_model)
     def post(self):
         """
-        [Unfinished] Add a holding to the portfolio.
+        Add a holding to the portfolio.
         """
+        body = request.json
+        portfolio_id = body['portfolio_id']
+        symbol = body['symbol']
+        value = body['value']
+        qty = body['qty']
+        type = body['type']
+        brokerage = body['brokerage']
+        exchange = body['exchange']
+        date = body['date']
+        currency = body['currency']
+        token = body['token']
+
+        # Get username from token
+        user = db.get_user_by_value("active_token", token)
+        if not user:
+            abort(400, "Token is invalid")
+
+        # Check that user owns the portfolio corresponding to the portfolio_id.
+        portfolio = db.query_portfolio(portfolio_id)
+        if portfolio is None or portfolio["owner"] != user["username"]:
+            abort(400, "User does not own portfolio")
+
+        # Check that the type is either buy or sell.
+        if type not in ['buy', 'sell']:
+            abort(400, "Type is invalid")
+
+        # Add stock to portfolio.
+        db.add_stock(portfolio_id, symbol, value, qty, type, brokerage, exchange, date, currency)
+
         return {
             "is_success": True
         }

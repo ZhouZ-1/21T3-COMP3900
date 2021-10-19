@@ -58,6 +58,9 @@ if not os.path.exists(database_file):
         qty real NOT NULL,
         type text CHECK(type in ('buy', 'sell')),
         brokerage real NOT NULL,
+        exchange text NOT NULL,
+        date text NOT NULL,
+        currency text CHECK(currency in ('USD', 'AUD')),
         held_by integer NOT NULL,
         FOREIGN KEY(held_by) REFERENCES portfolios(portfolio_id)
     );
@@ -139,6 +142,33 @@ def add_portfolio(username, portfolio_name):
 
     # Return the portfolio_id
     return cursor.lastrowid
+
+def query_portfolio(portfolio_id):
+    '''
+    Returns details about a portfolio in the database given the portfolio_id.
+    '''
+    cursor = conn.cursor()
+    cursor.execute("SELECT * from portfolios WHERE portfolio_id=?", [portfolio_id])
+
+    res = cursor.fetchone()
+    if res is None:
+        return None
+    _, owner, portfolio_name = res
+
+    return {
+        "portfolio_id": portfolio_id,
+        "owner": owner,
+        "portfolio_name": portfolio_name
+    }
+
+def add_stock(portfolio_id, symbol, value, qty, type, brokerage, exchange, date, currency):
+    '''
+    Adds a stock to the user's portfolio in the database.
+    '''
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO holdings (symbol, value, qty, type, brokerage, exchange, date, currency, held_by) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+        [symbol, value, qty, type, brokerage, exchange, date, currency, portfolio_id])
+    conn.commit()
 
 """
     Stock table functions
