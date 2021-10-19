@@ -42,9 +42,32 @@ if not os.path.exists(database_file):
         asset_type text
     );
     ''')
+    cursor.execute('''
+    CREATE TABLE portfolios (
+        portfolio_id integer PRIMARY KEY AUTOINCREMENT,
+        owner text NOT NULL,
+        portfolio_name text NOT NULL,
+        FOREIGN KEY(owner) REFERENCES users(username)
+    );
+    ''')
+    cursor.execute('''
+    CREATE TABLE holdings (
+        holding_id integer PRIMARY KEY AUTOINCREMENT,
+        symbol text NOT NULL,
+        value real NOT NULL,
+        qty real NOT NULL,
+        type text CHECK(type in ('buy', 'sell')),
+        brokerage real NOT NULL,
+        held_by integer NOT NULL,
+        FOREIGN KEY(held_by) REFERENCES portfolios(portfolio_id)
+    );
+    ''')
     conn.commit()
 conn = sqlite3.connect('db/database.db', check_same_thread=False)
 
+# Ensure that foreign key constraints are active.
+conn.execute("PRAGMA foreign_keys = 1")
+conn.commit()
 
 def create_user(username, first_name, last_name, email, hashed_password, active_token):
     '''
