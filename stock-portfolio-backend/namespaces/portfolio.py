@@ -9,13 +9,24 @@ portfolio = api.namespace('portfolio', description='Portfolio management: Add, E
 @portfolio.route('', doc={
     "description": "Get data on the user's current portfolios"
 })
+@portfolio.param('token', description="The user's token", type=str, required=True)
 class GetPortfolios(Resource):
+    @portfolio.response(200, 'Success', portfolios_response_model)
+    @portfolio.response(400, 'Invalid token')
     def get(self):
         """
-        [Unfinished] Retrieve a list of portfolio ids that have been created by the current user.
+        Retrieve a list of portfolios and their details that have been created by the current user.
         """
+        token = request.args.get("token")
+
+        # Get username from token
+        user = db.get_user_by_value("active_token", token)
+        if not user:
+            abort(400, "Token is invalid")
+
+        # Retrieve list of portfolio details
         return {
-            "portfolio_ids": ["1", "2", "3"]
+            "portfolios": db.all_portfolios_from_user(user["username"])
         }
 
 @portfolio.route('/summary', doc={

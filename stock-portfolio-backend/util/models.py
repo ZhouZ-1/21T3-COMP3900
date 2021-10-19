@@ -88,3 +88,12 @@ add_stock_model = api.inherit('add_stock_model', token_model, {
     "date": fields.String(required=True, example="19/10/21", description="A string in the format dd/mm/yy"),
     "currency": fields.String(required=True, example="USD", description="The currency that is used to buy the stock")
 })
+
+basic_portfolio_info = api.model('basic_portfolio_info', {
+    "portfolio_id": fields.Integer(required=True, example=1), 
+    "portfolio_name": fields.String(required=True, example='My Portfolio')
+})
+
+portfolios_response_model = api.model('portfolio_response_model', {
+    "portfolios": fields.List(fields.Nested(basic_portfolio_info))
+})
