@@ -81,6 +81,10 @@ delete_portfolio_model = api.inherit('delete_portfolio_model', token_model, {
     "portfolio_id": fields.Integer(required=True)
 })
 
+edit_portfolio_model = api.inherit('edit_portfolio_model', create_portfolio_model, {
+    "portfolio_id": fields.Integer(required=True)
+})
+
 add_stock_model = api.inherit('add_stock_model', token_model, {
     "portfolio_id": fields.Integer(required=True, example=1),
     "symbol": fields.String(required=True, example='TSLA'),

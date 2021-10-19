@@ -179,6 +179,14 @@ def remove_portfolio(portfolio_id):
     cursor.execute("DELETE FROM portfolios WHERE portfolio_id=?", [portfolio_id])
     conn.commit()
 
+def update_portfolio(portfolio_id, portfolio_name):
+    '''
+    Updates the details of a portfolio in the database.
+    '''
+    cursor = conn.cursor()
+    cursor.execute("UPDATE portfolios SET portfolio_name=? WHERE portfolio_id=?", [portfolio_name, portfolio_id])
+    conn.commit()
+
 def add_stock(portfolio_id, symbol, value, qty, type, brokerage, exchange, date, currency):
     '''
     Adds a stock to the user's portfolio in the database.

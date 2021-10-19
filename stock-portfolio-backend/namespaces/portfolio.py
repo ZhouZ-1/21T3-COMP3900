@@ -106,10 +106,31 @@ class DeletePortfolio(Resource):
     "description": "Edit the portfolio's name, details/notes and other customisable stuff that may want to be updated."
 })
 class EditPortfolio(Resource):
+    @portfolio.expect(edit_portfolio_model)
+    @portfolio.response(200, 'Success', success_model)
+    @portfolio.response(400, 'Invalid token')
     def post(self):
         """
-        [Unfinshed] Edit portfolio details.
+        Edit portfolio details.
         """
+        body = request.json
+        token = body['token']
+        portfolio_name = body['portfolio_name']
+        portfolio_id = body['portfolio_id']
+
+        # Get username from token
+        user = db.get_user_by_value("active_token", token)
+        if not user:
+            abort(400, "Token is invalid")
+
+        # Check that user owns the portfolio corresponding to the portfolio_id.
+        portfolio = db.query_portfolio(portfolio_id)
+        if portfolio is None or portfolio["owner"] != user["username"]:
+            abort(400, "User does not own portfolio")
+
+        # Update the portfolio details.
+        db.update_portfolio(portfolio_id, portfolio_name)
+
         return {
             "is_success": True
         }
