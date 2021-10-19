@@ -75,7 +75,6 @@ watchlist_request_model = api.model("watchlist_request_model", {
 
 
 watchlist_info_model = api.model("watchlist_info_model", {
-    "username": fields.String(required=True, example="JohnSmith123"),
     "stocks": fields.List(fields.String, required=True, example=["AAPL", "MSFT"])
 })
 
