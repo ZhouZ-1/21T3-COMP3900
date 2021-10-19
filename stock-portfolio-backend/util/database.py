@@ -128,6 +128,18 @@ def delete_user(username):
     cursor.execute("DELETE FROM users WHERE username=?", [username])
     conn.commit()
 
+def add_portfolio(username, portfolio_name):
+    '''
+    Add a portfolio to the user's account in the database.
+    Returns the 
+    '''
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO portfolios (owner, portfolio_name) values (?, ?)", [username, portfolio_name])
+    conn.commit()
+
+    # Return the portfolio_id
+    return cursor.lastrowid
+
 """
     Stock table functions
 """

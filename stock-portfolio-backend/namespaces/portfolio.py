@@ -34,12 +34,29 @@ class Summary(Resource):
     "description": "Create a portfolio on the user's account."
 })
 class CreatePortfolio(Resource):
+    
+    @portfolio.expect(create_portfolio_model)
+    @portfolio.response(200, 'Success', portfolio_id_model)
+    @portfolio.response(400, 'Invalid token')
     def post(self):
         """
-        [Unfinished] Create and link a portfolio to the user's account via the portfolio_id.
+        Create and link a portfolio to the user's account via the portfolio_id.
         """
+        body = request.json
+        portfolio_name = body['portfolio_name']
+        token = body['token']
+
+        # Get username from token
+        user = db.get_user_by_value("active_token", token)
+        if not user:
+            abort(400, "Token is invalid")
+
+        # Create the portfolio
+        portfolio_id = db.add_portfolio(user["username"], portfolio_name)
+
+        # Return the user's portfolio_id for their portfolio.
         return {
-            "portfolio_id": "1"
+            "portfolio_id": portfolio_id
         }
 
 @portfolio.route('/delete', doc={
