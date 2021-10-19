@@ -90,9 +90,9 @@ def update_user_by_value(username, field, value):
     '''
     Updates a user's email, password or token. 
     '''
-    if field not in ["email", "first_name", "last_name", "profile_image", "hashed_password", "active_token"]:
+    if field not in ["email", "first_name", "last_name", "profile_image", "hashed_password", "active_token", "watchlist"]:
         return None
-    
+
     cursor = conn.cursor()
     cursor.execute(f"UPDATE users SET {field}=? WHERE username=?", [value, username])
     conn.commit()
