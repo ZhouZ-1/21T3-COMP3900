@@ -33,6 +33,11 @@ search_model = api.model('search_model', {
     "symbol": fields.String(required=True, example="GOOG")
 })
 
+search_past_model = api.model('search_past_model', {
+    "symbol": fields.String(required=True, example="GOOG"),
+    "date_before": fields.String(required=True, example="3 months")
+})
+
 simple_stock_info_model = api.model('simple_stock_info_model', {
     "symbol": fields.String(required=True, example="GOOG"),
     "name": fields.String(required=True, example="Alphabet Inc - Class C"),
