@@ -4,6 +4,9 @@ from app import api, db
 from util.models import watchlist_info_model, watchlist_request_model, watchlist_stock_model
 from util.alpha_vantage_feed import dc
 
+from ast import literal_eval
+import json
+
 watchlist = api.namespace('watchlist', description='Watchlist management: Add, remove stocks, retrieve watched stocks')
 
 @watchlist.route('/', doc={
@@ -13,9 +16,9 @@ class Watchlist(Resource):
     @watchlist.expect(watchlist_request_model)
     @watchlist.response(200, 'Success', watchlist_info_model)
     @watchlist.response(409, 'Unable to process request')
-    def get(self):
+    def post(self):
         """
-        Function that takes a symbol returns the overview details of a particular stock
+        Function that takes a stock returns the overview details of a particular stock
         """
         body = request.json
         username = body['username']
@@ -33,11 +36,15 @@ class Watchlist(Resource):
         # if current user does not have a watchlist, create one
         if "watchlist" not in user.keys():
             user["watchlist"] = []
-            db.update_user_by_value(username, "watchlist", [])
+            db.update_user_by_value(username, "watchlist", json.dumps([]))
+        
+        if user["watchlist"] == None or user["watchlist"] == "null":
+            db.update_user_by_value(username, "watchlist", json.dumps([]))
+            return {"watchlist": []}
 
         # add more fields depending on what information we want
         return { 
-            "watchlist": user["watchlist"]
+            "watchlist": literal_eval(user["watchlist"])
         }
 
 @watchlist.route('/add', doc={
@@ -49,11 +56,11 @@ class WatchlistAddStocks(Resource):
     @watchlist.response(409, 'Unable to process request')
     def post(self):
         """
-        Function that takes a symbol returns the overview details of a particular stock
+        Function that takes a stock returns the overview details of a particular stock
         """
         body = request.json
         username = body['username']
-        symbol = body['symbol']
+        stock = body['stock']
 
         # validity checks
         # make sure it is a string
@@ -66,12 +73,22 @@ class WatchlistAddStocks(Resource):
             abort(410, "Could not find user")
 
         if "watchlist" not in user.keys():
+            print("YOOOO")
             user["watchlist"] = []
             db.update_user_by_value(username, "watchlist", [])
 
+        if user["watchlist"] == None or user["watchlist"] == "null":
+            user["watchlist"] = '[]'
+
         # add more fields depending on what information we want
-        user["watchlist"].append(symbol)
-        db.update_user_by_value(username, "watchlist", user["watchlist"])
+        user["watchlist"] = literal_eval(user["watchlist"])
+
+        # check if stock is already in watchlist
+        if stock in user["watchlist"]:
+            abort(409, f"{stock} is already in your watchlist")
+
+        user["watchlist"].append(stock)
+        db.update_user_by_value(username, "watchlist", json.dumps(user["watchlist"]))
 
         return { 
             "watchlist": user["watchlist"]

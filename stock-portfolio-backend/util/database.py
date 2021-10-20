@@ -21,18 +21,20 @@ if not os.path.exists(database_file):
         email text NOT NULL,
         profile_image text DEFAULT 'default.jpg',
         hashed_password text NOT NULL, 
-        active_token text
+        active_token text,
+        watchlist varchar(255)
     );
     ''')
     cursor.execute('''
-    INSERT INTO users (username, first_name, last_name, email, hashed_password, active_token) 
-    VALUES (?, ?, ?, ?, ?, ?)''', [
+    INSERT INTO users (username, first_name, last_name, email, hashed_password, active_token, watchlist) 
+    VALUES (?, ?, ?, ?, ?, ?, ?)''', [
         'test',
         'john',
         'smith',
         'test@email.com',
         '$2b$12$lR/aAeLYBwQ/.Ii..4QHKu0HS8lxF7/Rpx79vXeW/8.wy1Yw/XcAq',
-        'active_token'
+        'active_token',
+        '[]'
     ])
     cursor.execute('''
     CREATE TABLE stock_listing (
@@ -51,8 +53,8 @@ def create_user(username, first_name, last_name, email, hashed_password, active_
     Given the username, email, password hash and active_token, adds these details to the database.
     '''
     cursor = conn.cursor()
-    cursor.execute('INSERT INTO users (username, first_name, last_name, email, hashed_password, active_token) VALUES (?, ?, ?, ?, ?, ?)',
-        [username, first_name, last_name, email, hashed_password, active_token])
+    cursor.execute('INSERT INTO users (username, first_name, last_name, email, hashed_password, active_token, watchlist) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        [username, first_name, last_name, email, hashed_password, active_token, []])
     conn.commit()
 
 def get_user_by_value(field, value):
@@ -75,7 +77,7 @@ def get_user_by_value(field, value):
     if user is None:
         return None
 
-    username, first_name, last_name, email, profile_image, hashed_password, active_token = user
+    username, first_name, last_name, email, profile_image, hashed_password, active_token, watchlist = user
     return {
         "username": username,
         "first_name": first_name,
@@ -83,7 +85,8 @@ def get_user_by_value(field, value):
         "email": email,
         "profile_image": f"{base_url}/images/{profile_image}",
         "hashed_password": hashed_password,
-        "active_token": active_token
+        "active_token": active_token,
+        "watchlist": watchlist
     }
 
 def update_user_by_value(username, field, value):
