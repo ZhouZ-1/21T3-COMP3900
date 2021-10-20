@@ -9,13 +9,24 @@ portfolio = api.namespace('portfolio', description='Portfolio management: Add, E
 @portfolio.route('', doc={
     "description": "Get data on the user's current portfolios"
 })
+@portfolio.param('token', description="The user's token", type=str, required=True)
 class GetPortfolios(Resource):
+    @portfolio.response(200, 'Success', portfolios_response_model)
+    @portfolio.response(400, 'Invalid token')
     def get(self):
         """
-        [Unfinished] Retrieve a list of portfolio ids that have been created by the current user.
+        Retrieve a list of portfolios and their details that have been created by the current user.
         """
+        token = request.args.get("token")
+
+        # Get username from token
+        user = db.get_user_by_value("active_token", token)
+        if not user:
+            abort(400, "Token is invalid")
+
+        # Retrieve list of portfolio details
         return {
-            "portfolio_ids": ["1", "2", "3"]
+            "portfolios": db.all_portfolios_from_user(user["username"])
         }
 
 @portfolio.route('/summary', doc={
@@ -34,22 +45,59 @@ class Summary(Resource):
     "description": "Create a portfolio on the user's account."
 })
 class CreatePortfolio(Resource):
+    
+    @portfolio.expect(create_portfolio_model)
+    @portfolio.response(200, 'Success', portfolio_id_model)
+    @portfolio.response(400, 'Invalid token')
     def post(self):
         """
-        [Unfinished] Create and link a portfolio to the user's account via the portfolio_id.
+        Create and link a portfolio to the user's account via the portfolio_id.
         """
+        body = request.json
+        portfolio_name = body['portfolio_name']
+        token = body['token']
+
+        # Get username from token
+        user = db.get_user_by_value("active_token", token)
+        if not user:
+            abort(400, "Token is invalid")
+
+        # Create the portfolio
+        portfolio_id = db.add_portfolio(user["username"], portfolio_name)
+
+        # Return the user's portfolio_id for their portfolio.
         return {
-            "portfolio_id": "1"
+            "portfolio_id": portfolio_id
         }
 
 @portfolio.route('/delete', doc={
     "description": "Given the portfolio_id, delete's this portfolio and all it's holdings."
 })
 class DeletePortfolio(Resource):
+    @portfolio.expect(delete_portfolio_model)
+    @portfolio.response(200, 'Success', success_model)
+    @portfolio.response(400, 'Invalid token')
     def delete(self):
         """
-        [Unfinished] Delete's specified portfolio and all it's holdings.
+        Delete's specified portfolio and all it's holdings.
         """
+        body = request.json
+        token = body['token']
+        portfolio_id = body['portfolio_id']
+
+        # Get username from token
+        user = db.get_user_by_value("active_token", token)
+        if not user:
+            abort(400, "Token is invalid")
+
+        # Check that user owns the portfolio corresponding to the portfolio_id.
+        portfolio = db.query_portfolio(portfolio_id)
+        if portfolio is None or portfolio["owner"] != user["username"]:
+            abort(400, "User does not own portfolio")
+
+        # Delete the portfolio and all it's holdings.
+        db.remove_portfolio(portfolio_id)    
+
         return {
             "is_success": True
         }
@@ -58,10 +106,31 @@ class DeletePortfolio(Resource):
     "description": "Edit the portfolio's name, details/notes and other customisable stuff that may want to be updated."
 })
 class EditPortfolio(Resource):
+    @portfolio.expect(edit_portfolio_model)
+    @portfolio.response(200, 'Success', success_model)
+    @portfolio.response(400, 'Invalid token')
     def post(self):
         """
-        [Unfinshed] Edit portfolio details.
+        Edit portfolio details.
         """
+        body = request.json
+        token = body['token']
+        portfolio_name = body['portfolio_name']
+        portfolio_id = body['portfolio_id']
+
+        # Get username from token
+        user = db.get_user_by_value("active_token", token)
+        if not user:
+            abort(400, "Token is invalid")
+
+        # Check that user owns the portfolio corresponding to the portfolio_id.
+        portfolio = db.query_portfolio(portfolio_id)
+        if portfolio is None or portfolio["owner"] != user["username"]:
+            abort(400, "User does not own portfolio")
+
+        # Update the portfolio details.
+        db.update_portfolio(portfolio_id, portfolio_name)
+
         return {
             "is_success": True
         }
@@ -80,10 +149,41 @@ class GetHoldings(Resource):
     "description": "Given the portfolio_id, add a stock and it's relevant details to the portfolio (qty, price, date, type etc)."
 })
 class AddHoldings(Resource):
+    @portfolio.expect(add_stock_model)
+    @portfolio.response(200, 'Success', success_model)
     def post(self):
         """
-        [Unfinished] Add a holding to the portfolio.
+        Add a holding to the portfolio.
         """
+        body = request.json
+        portfolio_id = body['portfolio_id']
+        symbol = body['symbol']
+        value = body['value']
+        qty = body['qty']
+        type = body['type']
+        brokerage = body['brokerage']
+        exchange = body['exchange']
+        date = body['date']
+        currency = body['currency']
+        token = body['token']
+
+        # Get username from token
+        user = db.get_user_by_value("active_token", token)
+        if not user:
+            abort(400, "Token is invalid")
+
+        # Check that user owns the portfolio corresponding to the portfolio_id.
+        portfolio = db.query_portfolio(portfolio_id)
+        if portfolio is None or portfolio["owner"] != user["username"]:
+            abort(400, "User does not own portfolio")
+
+        # Check that the type is either buy or sell.
+        if type not in ['buy', 'sell']:
+            abort(400, "Type is invalid")
+
+        # Add stock to portfolio.
+        db.add_stock(portfolio_id, symbol, value, qty, type, brokerage, exchange, date, currency)
+
         return {
             "is_success": True
         }
