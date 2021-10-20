@@ -31,3 +31,11 @@ Sunday: Taking a break today. Yesterday I also added logic and routes for images
 
 # Week 5
 Monday: Refactored stock listing retrieval. Was going to work on password recovery but the backend seemed a little bit slow. 
+Tuesday: Finished account/passworc recovery feature. Also connected the backend to the frontend components for account details and update password.
+Wednesday: Double checking code and making sure we haven't missed anything. Did the retrospective together after the demo. Decided together to start assigning stuff on saturday.
+Saturday: We assigned stuff for the next sprint after taking a short break. Also implemented search from keywords and pagination as I noticed it was missing.
+
+# Week 6
+Monday: Started brainstorming and creating stub functions and documentation for the portfolio routes. 
+Tuesday: Create schema for the portfolio and holdings tables. Also finished the implementation of a few core routes.
+Wednesday: Finished remove holdings implementation.
