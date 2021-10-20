@@ -196,6 +196,22 @@ def add_stock(portfolio_id, symbol, value, qty, type, brokerage, exchange, date,
         [symbol, value, qty, type, brokerage, exchange, date, currency, portfolio_id])
     conn.commit()
 
+def get_owner_from_holding(holding_id):
+    '''
+    Returns the username of the owner of the holding. Returns None if the holding does not exist.
+    '''
+    cursor = conn.cursor()
+    cursor.execute("SELECT p.owner FROM holdings h JOIN portfolios p ON h.held_by=p.portfolio_id WHERE holding_id=?", [holding_id])
+    return cursor.fetchone()
+
+def remove_holding(holding_id):
+    '''
+    Removes a holding from the database.
+    '''
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM holdings WHERE holding_id=?", [holding_id])
+    conn.commit()
+
 """
     Stock table functions
 """

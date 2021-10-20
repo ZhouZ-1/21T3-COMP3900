@@ -204,10 +204,28 @@ class EditHoldings(Resource):
     "description": "Removes a holding completly from the portfolio. It's as if the holding was never there."
 })
 class DeleteHoldings(Resource):
+    @portfolio.expect(delete_holding_model)
     def delete(self):
         """
-        [Unfinished] Deletes a holding from the portfolio.
+        Deletes a holding from the portfolio.
         """
+        body = request.json
+        holding_id = body['holding_id']
+        token = body['token']
+
+        # Get username from token
+        user = db.get_user_by_value("active_token", token)
+        if not user:
+            abort(400, "Token is invalid")
+
+        # Check that user owns the holding.
+        owner = db.get_owner_from_holding(holding_id)
+        if owner is None or owner[0] != user['username']:
+            abort(400, "User cannot access this holding.")
+
+        # Delete the holding.
+        db.remove_holding(holding_id)
+
         return {
             "is_success": True
         }

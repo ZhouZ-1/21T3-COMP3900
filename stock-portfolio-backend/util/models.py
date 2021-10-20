@@ -105,3 +105,7 @@ basic_portfolio_info = api.model('basic_portfolio_info', {
 portfolios_response_model = api.model('portfolio_response_model', {
     "portfolios": fields.List(fields.Nested(basic_portfolio_info))
 })
+
+delete_holding_model = api.inherit('delete_holding_model', token_model, {
+    "holding_id": fields.Integer(required=True, example=1)
+})
