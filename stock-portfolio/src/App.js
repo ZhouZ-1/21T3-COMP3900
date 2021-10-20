@@ -7,6 +7,7 @@ import AccountPage from './components/AccountPage/index';
 import ForgotMyPassword from './components/ForgotMyPassword';
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 import StockDetails from './components/StockDetails';
+import StockList from './components/StockList';
 function App() {
   return (
     <Router>
@@ -18,6 +19,7 @@ function App() {
         <Route exact path='/stockDetails/:symbol' component={StockDetails}/>
         <Route exact path='/account' component={AccountPage}/>
         <Route exact path='/resetPassword' component={ForgotMyPassword}/>
+        <Route exact path='/stockList' component={StockList}/>
       </Switch>
     </Router>
   );
