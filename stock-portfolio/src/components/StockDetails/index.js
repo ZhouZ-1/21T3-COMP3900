@@ -2,12 +2,15 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import api from "../../api";
 import NavBar from "../NavBar";
-
+import getPricesWithinTime from "./getPricesWithinTime";
+import getOpenPrices from "./getOpenPrices";
+import drawGraph from "./drawGraph";
 function StockDetails(){
     let { symbol } = useParams();
     const [stockDetails,setStockDetails] = useState();
     const [isLoading,setIsLoading] = useState(true);
     const [isInWatchList,setIsInWatchList] = useState(false);
+    const [isGraphReady,setIsGraphReady] = useState(true);
     
     //  Decide whether current stock is in user's watchlist or not
     // const setwatchListContainStock = () => {
@@ -17,6 +20,9 @@ function StockDetails(){
         setStockDetails(response);
         // setIsInWatchList(setwatchListContainStock());
         setIsLoading(false);
+        const pricesWithinTime = await getPricesWithinTime(symbol,'3 months');
+        const openPrices = getOpenPrices(pricesWithinTime);
+        drawGraph(openPrices);
     },[symbol]);
 
     const renderContents = () => {
@@ -58,7 +64,11 @@ function StockDetails(){
                 <div class='mt-2 graph-container'>
                     <div class="stock-trend-graph">
                         {/* TODO: TONY - implement graph here */}
-                        <p>graph comes here</p>
+                        {
+                            isGraphReady?
+                            (<canvas id="myChart" width="500" height="300"></canvas>):
+                            (<p>Loading graph</p>)
+                        }
                         <button type="button" class="btn btn-outline-primary 3-month">3M</button>
                         <button type="button" class="ms-3 btn btn-outline-primary 6-month">6M</button>
                         <button type="button" class="ms-3 btn btn-outline-primary 1-year">1YR</button>
