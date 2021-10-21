@@ -192,10 +192,34 @@ class AddHoldings(Resource):
     "description": "Given a holding_id, allows the user to edit details relating to that holding, such as qty, price, date"
 })
 class EditHoldings(Resource):
+    @portfolio.expect(edit_stock_model)
+    @portfolio.response(200, 'Success', success_model)
+    @portfolio.response(400, 'Invalid token')
     def post(self):
         """
-        [Unfinished] Edit holding details.
+        Edit holding details.
         """
+        body = request.json
+        token = body['token']
+        holding_id = body['holding_id']
+        
+        holding_details = body
+        holding_details.pop('token')
+        holding_details.pop('holding_id')
+
+        # Get username from token
+        user = db.get_user_by_value("active_token", token)
+        if not user:
+            abort(400, "Token is invalid")
+
+        # Check that user owns the holding.
+        owner = db.get_owner_from_holding(holding_id)
+        if owner is None or owner[0] != user['username']:
+            abort(400, "User cannot access this holding.")
+
+        # Update holding details.
+        db.update_holding(holding_id, holding_details)
+
         return {
             "is_success": True
         }

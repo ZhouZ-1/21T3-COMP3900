@@ -212,6 +212,16 @@ def remove_holding(holding_id):
     cursor.execute("DELETE FROM holdings WHERE holding_id=?", [holding_id])
     conn.commit()
 
+def update_holding(holding_id, holding_details):
+    '''
+    Update holding details in the database.
+    '''
+    cursor = conn.cursor()
+    for key in holding_details.keys():
+        if key in ['symbol', 'value', 'qty', 'type', 'brokerage', 'exchange', 'date', 'currency']:
+            cursor.execute(f"UPDATE holdings SET {key}=? WHERE holding_id=?", [holding_details[key], holding_id])
+    conn.commit()
+
 """
     Stock table functions
 """

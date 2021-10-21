@@ -109,3 +109,14 @@ portfolios_response_model = api.model('portfolio_response_model', {
 delete_holding_model = api.inherit('delete_holding_model', token_model, {
     "holding_id": fields.Integer(required=True, example=1)
 })
+
+edit_stock_model = api.inherit('edit_stock_model', delete_holding_model, {
+    "symbol": fields.String(example='TSLA'),
+    "value": fields.Float(example=1.1, description='The value of a single stock'),
+    "qty": fields.Float(example=99.9, description='The amount of stock that was bought/sold'),
+    "type": fields.String(example="buy", description="Either 'buy' or 'sell'"),
+    "brokerage": fields.Float(example=9.95, description="The amount of brokerage you paid"),
+    "exchange": fields.String(example='NYSE', description="The name of the exchange that this stock belongs to"),
+    "date": fields.String(example="19/10/21", description="A string in the format dd/mm/yy"),
+    "currency": fields.String(example="USD", description="The currency that is used to buy the stock")
+})
