@@ -2,15 +2,12 @@ import Chart from 'chart.js/auto';
 
 function drawGraph(openPrices){
     var ctx = document.getElementById('myChart').getContext('2d');
-    console.log(openPrices);
     var dates = [];
     var prices = [];
     openPrices.forEach(element => {
         dates.push(element[0]);
         prices.push(element[1]);
     });
-    console.log(dates);
-    console.log(prices);
     const labels = dates;
     const data = {
         labels: labels,
