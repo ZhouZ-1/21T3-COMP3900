@@ -5,12 +5,15 @@ import NavBar from "../NavBar";
 import getPricesWithinTime from "./getPricesWithinTime";
 import getOpenPrices from "./getOpenPrices";
 import drawGraph from "./drawGraph";
+import { Chart } from "chart.js";
+import Loader from "../Loader";
 function StockDetails(){
     let { symbol } = useParams();
     const [stockDetails,setStockDetails] = useState();
     const [isLoading,setIsLoading] = useState(true);
     const [isInWatchList,setIsInWatchList] = useState(false);
-    const [isGraphReady,setIsGraphReady] = useState(true);
+    const [isGraphLoading,setIsGraphLoading] = useState(true);
+    const [graphTimeOption,setGraphTimeOption] = useState('3 months');
     
     //  Decide whether current stock is in user's watchlist or not
     // const setwatchListContainStock = () => {
@@ -20,10 +23,23 @@ function StockDetails(){
         setStockDetails(response);
         // setIsInWatchList(setwatchListContainStock());
         setIsLoading(false);
-        const pricesWithinTime = await getPricesWithinTime(symbol,'3 months');
-        const openPrices = getOpenPrices(pricesWithinTime);
-        drawGraph(openPrices);
     },[symbol]);
+
+    useEffect(async ()=>{
+        const pricesWithinTime = await getPricesWithinTime(symbol,graphTimeOption);
+        const openPrices = getOpenPrices(pricesWithinTime);
+        let chartStatus = Chart.getChart("myChart"); // Delete graph if any.
+        if (chartStatus != undefined) {
+            chartStatus.destroy();
+        }
+        setIsGraphLoading(false);
+        drawGraph(openPrices);
+    },[graphTimeOption]);
+
+    const onTimeChange = (time) => {
+        setIsGraphLoading(true);
+        setGraphTimeOption(time);
+    }
 
     const renderContents = () => {
         return (
@@ -65,13 +81,17 @@ function StockDetails(){
                     <div class="stock-trend-graph">
                         {/* TODO: TONY - implement graph here */}
                         {
-                            isGraphReady?
-                            (<canvas id="myChart" width="500" height="300"></canvas>):
-                            (<p>Loading graph</p>)
+                            isGraphLoading?
+                            (<Loader></Loader>):
+                            (<canvas id="myChart" width="500" height="300"></canvas>)
                         }
-                        <button type="button" class="btn btn-outline-primary 3-month">3M</button>
-                        <button type="button" class="ms-3 btn btn-outline-primary 6-month">6M</button>
-                        <button type="button" class="ms-3 btn btn-outline-primary 1-year">1YR</button>
+                        <button type="button" class="ms-3 btn btn-outline-primary 1-day" onClick={() => onTimeChange('1 days')}>1d</button>
+                        <button type="button" class="ms-3 btn btn-outline-primary 3-day" onClick={() => onTimeChange('3 days')}>3d</button>
+                        <button type="button" class="ms-3 btn btn-outline-primary 1-week" onClick={() => onTimeChange('1 weeks')}>1W</button>
+                        <button type="button" class="ms-3 btn btn-outline-primary 1-month" onClick={() => onTimeChange('1 months')}>1M</button>
+                        <button type="button" class="ms-3 btn btn-outline-primary 3-month" onClick={() => onTimeChange('3 months')}>3M</button>
+                        <button type="button" class="ms-3 btn btn-outline-primary 6-month" onClick={() => onTimeChange('6 months')}>6M</button>
+                        <button type="button" class="ms-3 btn btn-outline-primary 1-year" onClick={() => onTimeChange('12 months')}>1YR</button>
                         <hr></hr>
                     </div>
                 </div>
@@ -108,11 +128,7 @@ function StockDetails(){
         <>
             <NavBar></NavBar>
             {isLoading ? (
-                <div class="text-center">
-                    <div class="spinner-border" role="status">
-                        <span class="sr-only">Loading...</span>
-                    </div>
-                </div>
+                <Loader></Loader>
             ) : (
                 renderContents()
             )}
