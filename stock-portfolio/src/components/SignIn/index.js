@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState } from "react";
 import { useHistory } from "react-router";
 import api from '../../api'
@@ -19,7 +20,7 @@ function SignIn(){
         })
 
     return(
-        <>
+        <div>
             <NavBar/>
             <div class="text-center mx-auto w-50">
                 <h1 class="h3 mt-5 mb-3 font-weight-normal">Please sign in</h1>
@@ -36,7 +37,7 @@ function SignIn(){
                 <p class="mt-3 text-muted">or</p>
                 <button class="btn btn-lg btn-primary btn-block mt-3" onClick={() => history.push('/signUp')}>Sign Up</button>
             </div>
-        </>
+        </div>
     );
 }
 

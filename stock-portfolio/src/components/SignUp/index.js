@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState } from "react";
 import { useHistory } from "react-router";
 import { validatePassword,validateEmail } from './helper';
@@ -45,7 +46,7 @@ function SignUp(){
     }
     return(
         // text-center w-50 p-3 offset-md-3
-        <>
+        <div>
             <NavBar/>
             <div class="text-center mx-auto w-50">
                 <h1 class="h3 mt-5 mb-3 font-weight-normal">Sign Up</h1>
@@ -78,7 +79,7 @@ function SignUp(){
                 }
                 <button class="btn btn-lg btn-primary btn-block mt-5" onClick={handleSignUp}>Sign Up</button>
             </div>
-        </>
+        </div>
     );
 }
 

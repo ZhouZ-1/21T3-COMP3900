@@ -1,3 +1,4 @@
+import React from 'react';
 import { useEffect, useState } from "react";
 import api from "../../api";
 import NavBar from "../NavBar";
@@ -30,7 +31,7 @@ function StockList() {
     }
 
     return (
-        <>
+        <div>
             <NavBar></NavBar>
             <div class="m-5">
                 <div>
@@ -43,7 +44,7 @@ function StockList() {
             <button type="button" class="btn btn-outline-primary ms-5" onClick={()=>getStockList('prev')}>prev</button>
             <button type="button" class="btn btn-outline-primary ms-2" onClick={()=>getStockList('next')}>next</button>
             
-        </>
+        </div>
     );
 }
 

@@ -6,10 +6,10 @@ import NavBar from '../NavBar/index';
 
 function AccountPage() {
   return (
-    <>
+    <div>
       <NavBar />
       <AccNav />
-    </>
+    </div>
   );
 }
 

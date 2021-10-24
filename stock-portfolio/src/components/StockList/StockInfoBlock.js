@@ -1,3 +1,4 @@
+import React from 'react';
 import { fontSize, fontWeight } from "@mui/system";
 import api from "../../api";
 
@@ -9,7 +10,7 @@ function StockInfoBlock(props) {
     const asset_type = data[3]
 
     return (
-        <>
+        <div>
             <div class='mt-2'>
                 <div>
                     <div class='d-inline-block'>
@@ -23,7 +24,7 @@ function StockInfoBlock(props) {
                     traded in: {exchange}
                 </div>
             </div>
-        </>
+        </div>
     );
 }
 
