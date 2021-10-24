@@ -1,4 +1,10 @@
 import React from 'react';
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Link
+} from "react-router-dom";
 import { makeStyles } from '@material-ui/core/styles';
 import {
     Grid,
@@ -19,6 +25,7 @@ import {
     useTheme
 } from '@mui/material';
 import NavBar from "../NavBar";
+import PortfolioPage from "../PortfolioPage";
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -42,10 +49,10 @@ function PortfolioOverview() {
 
     const classes = useStyles()
     const data = [
-        { Portfolio: 1, earnings: 13000 },
-        { Portfolio: 2, earnings: 16500 },
-        { Portfolio: 3, earnings: 14250 },
-        { Portfolio: 4, earnings: 19000 }
+        { id: 1, Portfolio: 1, earnings: 13000 },
+        { id: 2, Portfolio: 2, earnings: 16500 },
+        { id: 3, Portfolio: 3, earnings: 14250 },
+        { id: 4, Portfolio: 4, earnings: 19000 }
     ]
     return (
         <div className={classes.root}>
@@ -94,11 +101,13 @@ function PortfolioOverview() {
             >
                 {data.map(elem => (
                     <Grid item xs={12} sm={6} md={3} key={data.indexOf(elem)}>
-                        <Card>
+                        <Card 
+                            component={Link}
+                            to={`portfolio/${elem.id}`}>
                             <CardHeader
-                                title={`Portfolio : ${elem.Portfolio}`}
-                                subheader={`earnings : ${elem.earnings}`}
-                            />
+                                    title={`Portfolio : ${elem.Portfolio}`}
+                                    subheader={`earnings : ${elem.earnings}`}
+                                />  
                             <CardContent>
                                 <Typography variant="h5" gutterBottom>
                                     Hello World

@@ -9,8 +9,10 @@ import {
     useMediaQuery,
     useTheme
 } from '@mui/material';
+import NavBar from "../NavBar";
+import PortfolioPage from "../PortfolioPage";
 
-export default function ResponsiveDialog() {
+function PortfolioPage() {
   const [open, setOpen] = React.useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -55,3 +57,5 @@ export default function ResponsiveDialog() {
     </div>
   );
 }
+
+export default PortfolioPage;
