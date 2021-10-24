@@ -10,7 +10,6 @@ import {
     useTheme
 } from '@mui/material';
 import NavBar from "../NavBar";
-import PortfolioPage from "../PortfolioPage";
 
 function PortfolioPage() {
   const [open, setOpen] = React.useState(false);
@@ -24,6 +23,10 @@ function PortfolioPage() {
   const handleClose = () => {
     setOpen(false);
   };
+
+// https://github.com/gregnb/mui-datatables
+  
+// todo add stock in portfolio
 
   return (
     <div>
