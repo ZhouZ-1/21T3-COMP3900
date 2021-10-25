@@ -36,6 +36,7 @@ const useStyles = makeStyles(theme => ({
 
 function PortfolioOverview() {
     const [open, setOpen] = React.useState(false);
+    const [title,setTitle] = useState('');
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -46,6 +47,23 @@ function PortfolioOverview() {
     const handleClose = () => {
         setOpen(false);
     };
+
+    const handleCreate = () => {
+        //  api call for create new portfolio
+        const token = localStorage.getItem('token');
+        api('portfolio/create', 'POST', {token, portfolio_name: title}) 
+            .then(res => {
+                if (res.is_success) {
+                    // Success
+                    alert("Successfully update your password!");
+                } else {
+                    // Something went wrong
+                    alert(res.message);
+                }
+            })
+        setOpen(false);
+    };
+    
 
     const classes = useStyles()
     const data = [
@@ -77,14 +95,14 @@ function PortfolioOverview() {
                         <DialogContentText>
                             Please enter title of Portfolio:  
                         </DialogContentText>
-                        <TextField id="demo-helper-text-misaligned-no-helper" label="Title"></TextField>
+                        <TextField id="demo-helper-text-misaligned-no-helper" label="Title"  required autofocus onChange={(evt)=>setTitle(evt.target.value)}></TextField>
                         </DialogContent>                            
                         <br></br>
                         <DialogActions>
                         <Button autoFocus onClick={handleClose}>
                             Cancel
                         </Button>
-                        <Button onClick={handleClose} autoFocus>
+                        <Button onClick={handleCreate} autoFocus>
                             Confirm
                         </Button>
                         </DialogActions>
@@ -103,7 +121,7 @@ function PortfolioOverview() {
                     <Grid item xs={12} sm={6} md={3} key={data.indexOf(elem)}>
                         <Card 
                             variant="outlined"
-                            component={Link}
+                            component={PortfolioPage}
                             to={`portfolio/${elem.id}`}>
                             <CardHeader
                                     title={`Portfolio : ${elem.Portfolio}`}
