@@ -102,6 +102,7 @@ function PortfolioOverview() {
                 {data.map(elem => (
                     <Grid item xs={12} sm={6} md={3} key={data.indexOf(elem)}>
                         <Card 
+                            variant="outlined"
                             component={Link}
                             to={`portfolio/${elem.id}`}>
                             <CardHeader
@@ -110,7 +111,7 @@ function PortfolioOverview() {
                                 />  
                             <CardContent>
                                 <Typography variant="h5" gutterBottom>
-                                    Hello World
+                                    Description
                                 </Typography>
                             </CardContent>
                         </Card>
