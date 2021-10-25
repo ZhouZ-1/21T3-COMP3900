@@ -48,6 +48,21 @@ function PortfolioOverview() {
         setOpen(false);
     };
 
+    // const handlePort = () => {
+    //     //  api call for all the information about portfolios in general
+    //     const token = localStorage.getItem('token');
+    //     api('portfolio', 'GET') 
+    //         .then(res => {
+    //             if (res.is_success) {
+    //                 // Success
+    //                 alert("Successfully update your password!");
+    //             } else {
+    //                 // Something went wrong
+    //                 alert(res.message);
+    //             }
+    //         })
+    // };
+
     const handleCreate = () => {
         //  api call for create new portfolio
         const token = localStorage.getItem('token');
@@ -127,6 +142,7 @@ function PortfolioOverview() {
                                     title={`Portfolio : ${elem.Portfolio}`}
                                     subheader={`earnings : ${elem.earnings}`}
                                 />  
+                            <Button onClick={handleCreate} autoFocus>DELETE PORTFOLIO</Button>
                             <CardContent>
                                 <Typography variant="h5" gutterBottom>
                                     Description

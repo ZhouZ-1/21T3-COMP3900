@@ -38,12 +38,13 @@ const rows = [
 
 // net profit
 
-function PortfolioPage() {
+function WatchList() {
   return (
     <div>
       <div>
-        <p3>Portfolio</p3>
+        <p3>Watchlist</p3>
         <button type="button" class="btn btn-outline-primary ms-5">Add Stock</button>
+            <button type="button" class="btn btn-outline-primary ms-5">Move Stock To Portfolio</button>
         <button type="button" class="btn btn-outline-primary ms-5">Delete Stock</button>
       </div>
       <div style={{ height: 400, width: '100%' }}>
@@ -59,4 +60,4 @@ function PortfolioPage() {
   );
 }
 
-export default PortfolioPage;
+export default WatchList;
