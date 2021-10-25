@@ -1,7 +1,10 @@
 from alpha_vantage.fundamentaldata import FundamentalData
 from alpha_vantage.timeseries import TimeSeries
+
+import asyncio 
 import requests
 import csv
+
 import util.database as db
 
 ALPHAVANTAGE_API_KEY = "FVR0K5XNNUQA3HXT"
@@ -32,3 +35,5 @@ class DataCollector:
         #update search iterator
 
 dc = DataCollector()
+
+#Live feed
