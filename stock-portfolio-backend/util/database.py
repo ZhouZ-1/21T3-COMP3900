@@ -21,18 +21,20 @@ if not os.path.exists(database_file):
         email text NOT NULL,
         profile_image text DEFAULT 'default.jpg',
         hashed_password text NOT NULL, 
-        active_token text
+        active_token text,
+        watchlist varchar(255)
     );
     ''')
     cursor.execute('''
-    INSERT INTO users (username, first_name, last_name, email, hashed_password, active_token) 
-    VALUES (?, ?, ?, ?, ?, ?)''', [
+    INSERT INTO users (username, first_name, last_name, email, hashed_password, active_token, watchlist) 
+    VALUES (?, ?, ?, ?, ?, ?, ?)''', [
         'test',
         'john',
         'smith',
         'test@email.com',
         '$2b$12$lR/aAeLYBwQ/.Ii..4QHKu0HS8lxF7/Rpx79vXeW/8.wy1Yw/XcAq',
-        'active_token'
+        'active_token',
+        '[]'
     ])
     cursor.execute('''
     CREATE TABLE stock_listing (
@@ -42,17 +44,43 @@ if not os.path.exists(database_file):
         asset_type text
     );
     ''')
+    cursor.execute('''
+    CREATE TABLE portfolios (
+        portfolio_id integer PRIMARY KEY AUTOINCREMENT,
+        owner text NOT NULL,
+        portfolio_name text NOT NULL,
+        FOREIGN KEY(owner) REFERENCES users(username)
+    );
+    ''')
+    cursor.execute('''
+    CREATE TABLE holdings (
+        holding_id integer PRIMARY KEY AUTOINCREMENT,
+        symbol text NOT NULL,
+        value real NOT NULL,
+        qty real NOT NULL,
+        type text CHECK(type in ('buy', 'sell')),
+        brokerage real NOT NULL,
+        exchange text NOT NULL,
+        date text NOT NULL,
+        currency text CHECK(currency in ('USD', 'AUD')),
+        held_by integer NOT NULL,
+        FOREIGN KEY(held_by) REFERENCES portfolios(portfolio_id)
+    );
+    ''')
     conn.commit()
 conn = sqlite3.connect('db/database.db', check_same_thread=False)
 
+# Ensure that foreign key constraints are active.
+conn.execute("PRAGMA foreign_keys = 1")
+conn.commit()
 
 def create_user(username, first_name, last_name, email, hashed_password, active_token):
     '''
     Given the username, email, password hash and active_token, adds these details to the database.
     '''
     cursor = conn.cursor()
-    cursor.execute('INSERT INTO users (username, first_name, last_name, email, hashed_password, active_token) VALUES (?, ?, ?, ?, ?, ?)',
-        [username, first_name, last_name, email, hashed_password, active_token])
+    cursor.execute('INSERT INTO users (username, first_name, last_name, email, hashed_password, active_token, watchlist) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        [username, first_name, last_name, email, hashed_password, active_token, []])
     conn.commit()
 
 def get_user_by_value(field, value):
@@ -75,7 +103,7 @@ def get_user_by_value(field, value):
     if user is None:
         return None
 
-    username, first_name, last_name, email, profile_image, hashed_password, active_token = user
+    username, first_name, last_name, email, profile_image, hashed_password, active_token, watchlist = user
     return {
         "username": username,
         "first_name": first_name,
@@ -83,16 +111,17 @@ def get_user_by_value(field, value):
         "email": email,
         "profile_image": f"{base_url}/images/{profile_image}",
         "hashed_password": hashed_password,
-        "active_token": active_token
+        "active_token": active_token,
+        "watchlist": watchlist
     }
 
 def update_user_by_value(username, field, value):
     '''
     Updates a user's email, password or token. 
     '''
-    if field not in ["email", "first_name", "last_name", "profile_image", "hashed_password", "active_token"]:
+    if field not in ["email", "first_name", "last_name", "profile_image", "hashed_password", "active_token", "watchlist"]:
         return None
-    
+
     cursor = conn.cursor()
     cursor.execute(f"UPDATE users SET {field}=? WHERE username=?", [value, username])
     conn.commit()
@@ -103,6 +132,71 @@ def delete_user(username):
     '''
     cursor = conn.cursor()
     cursor.execute("DELETE FROM users WHERE username=?", [username])
+    conn.commit()
+
+def add_portfolio(username, portfolio_name):
+    '''
+    Add a portfolio to the user's account in the database.
+    Returns the 
+    '''
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO portfolios (owner, portfolio_name) values (?, ?)", [username, portfolio_name])
+    conn.commit()
+
+    # Return the portfolio_id
+    return cursor.lastrowid
+
+def query_portfolio(portfolio_id):
+    '''
+    Returns details about a portfolio in the database given the portfolio_id.
+    '''
+    cursor = conn.cursor()
+    cursor.execute("SELECT * from portfolios WHERE portfolio_id=?", [portfolio_id])
+
+    res = cursor.fetchone()
+    if res is None:
+        return None
+    _, owner, portfolio_name = res
+
+    return {
+        "portfolio_id": portfolio_id,
+        "owner": owner,
+        "portfolio_name": portfolio_name
+    }
+
+def all_portfolios_from_user(username):
+    '''
+    Returns a list of all portfolio in the user's account in the database.
+    '''
+    cursor = conn.cursor()
+    cursor.execute("SELECT * from portfolios WHERE owner=?", [username])
+
+    return [{"portfolio_id": portfolio_id, "portfolio_name": portfolio_name} for portfolio_id, _, portfolio_name in cursor.fetchall()]
+
+def remove_portfolio(portfolio_id):
+    '''
+    Completely removes the correspondings and all associated stocks in the database.
+    '''
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM holdings WHERE held_by=?", [portfolio_id])
+    cursor.execute("DELETE FROM portfolios WHERE portfolio_id=?", [portfolio_id])
+    conn.commit()
+
+def update_portfolio(portfolio_id, portfolio_name):
+    '''
+    Updates the details of a portfolio in the database.
+    '''
+    cursor = conn.cursor()
+    cursor.execute("UPDATE portfolios SET portfolio_name=? WHERE portfolio_id=?", [portfolio_name, portfolio_id])
+    conn.commit()
+
+def add_stock(portfolio_id, symbol, value, qty, type, brokerage, exchange, date, currency):
+    '''
+    Adds a stock to the user's portfolio in the database.
+    '''
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO holdings (symbol, value, qty, type, brokerage, exchange, date, currency, held_by) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+        [symbol, value, qty, type, brokerage, exchange, date, currency, portfolio_id])
     conn.commit()
 
 """
