@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useHistory } from "react-router";
 import api from "../../api";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-
 function NavBar(){
     var history = useHistory();
     let isAuthenticated = !!localStorage.getItem("token")
