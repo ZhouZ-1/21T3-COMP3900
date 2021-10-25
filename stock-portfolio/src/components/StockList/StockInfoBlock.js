@@ -1,7 +1,8 @@
 import { fontSize, fontWeight } from "@mui/system";
 import api from "../../api";
-
+import { useHistory } from "react-router";
 function StockInfoBlock(props) {
+    var history = useHistory();
     const {data} = props;
     const symbol = data[0]
     const name = data[1]
@@ -10,7 +11,7 @@ function StockInfoBlock(props) {
 
     return (
         <>
-            <div class='mt-2'>
+            <div class='mt-2 shadow p-3 mb-5 bg-white rounded' onClick={()=> history.push(`/stockDetails/${symbol}`)}>
                 <div>
                     <div class='d-inline-block'>
                         <h5>{name} ({symbol})</h5>

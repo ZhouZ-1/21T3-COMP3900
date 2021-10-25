@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useHistory } from "react-router";
 import api from "../../api";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-
 function NavBar(){
     var history = useHistory();
     let isAuthenticated = !!localStorage.getItem("token")
@@ -45,7 +44,9 @@ function NavBar(){
     }
     return(
         <nav class="navbar navbar-light bg-light justify-content-around">
-            <a class="navbar-brand" onClick={() => history.push('/')}>Home</a>
+            <a class="navbar-brand" onClick={() => history.push('/')}>
+                home
+            </a>
             <form class="form-inline" onSubmit={handleSubmit}>
                 <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" onClick={onSearchClick} onChange={(evt)=>setKeyWords(evt.target.value)} data-bs-toggle="collapse" data-bs-target="#stockList" aria-expanded="false"/>
                 <ul id = "stockList" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
