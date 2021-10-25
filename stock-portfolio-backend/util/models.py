@@ -33,6 +33,11 @@ search_model = api.model('search_model', {
     "symbol": fields.String(required=True, example="GOOG")
 })
 
+search_past_model = api.model('search_past_model', {
+    "symbol": fields.String(required=True, example="GOOG"),
+    "date_before": fields.String(required=True, example="3 months")
+})
+
 simple_stock_info_model = api.model('simple_stock_info_model', {
     "symbol": fields.String(required=True, example="GOOG"),
     "name": fields.String(required=True, example="Alphabet Inc - Class C"),
@@ -81,4 +86,41 @@ watchlist_info_model = api.model("watchlist_info_model", {
 watchlist_stock_model = api.model("watchlist_stock_model", {
     "username": fields.String(required=True, example="JohnSmith123"),
     "stock": fields.String(required=True, example="AAPL"),
+})
+
+create_portfolio_model = api.inherit('create_portfolio_model', token_model, {
+    "portfolio_name": fields.String(required=True)
+})
+
+portfolio_id_model = api.model('portfolio_id_model', {
+    "portfolio_id": fields.Integer(required=True)
+})
+
+delete_portfolio_model = api.inherit('delete_portfolio_model', token_model, {
+    "portfolio_id": fields.Integer(required=True)
+})
+
+edit_portfolio_model = api.inherit('edit_portfolio_model', create_portfolio_model, {
+    "portfolio_id": fields.Integer(required=True)
+})
+
+add_stock_model = api.inherit('add_stock_model', token_model, {
+    "portfolio_id": fields.Integer(required=True, example=1),
+    "symbol": fields.String(required=True, example='TSLA'),
+    "value": fields.Float(required=True, example=1.1, description='The value of a single stock'),
+    "qty": fields.Float(required=True, example=99.9, description='The amount of stock that was bought/sold'),
+    "type": fields.String(required=True, example="buy", description="Either 'buy' or 'sell'"),
+    "brokerage": fields.Float(required=True, example=9.95, description="The amount of brokerage you paid"),
+    "exchange": fields.String(required=True, example='NYSE', description="The name of the exchange that this stock belongs to"),
+    "date": fields.String(required=True, example="19/10/21", description="A string in the format dd/mm/yy"),
+    "currency": fields.String(required=True, example="USD", description="The currency that is used to buy the stock")
+})
+
+basic_portfolio_info = api.model('basic_portfolio_info', {
+    "portfolio_id": fields.Integer(required=True, example=1), 
+    "portfolio_name": fields.String(required=True, example='My Portfolio')
+})
+
+portfolios_response_model = api.model('portfolio_response_model', {
+    "portfolios": fields.List(fields.Nested(basic_portfolio_info))
 })
