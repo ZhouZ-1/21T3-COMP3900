@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useHistory } from "react-router";
 import api from "../../api";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -7,54 +7,64 @@ function NavBar(){
     let isAuthenticated = !!localStorage.getItem("token")
 
     const [keywords,setKeyWords] = useState('');
-    const [stockResult,setStockResult] = useState();
-    const [stock, setStock] = useState(<li>Searching for stocks...</li>);
-    
+    const [showAllStocks,setShowAllStocks] = useState(true);
+    const [stocks, setStocks] = useState();
+    const [showDropDown,setShowDropDown] = useState(false);
     const handleLogout = () => {
         localStorage.removeItem("token");
         history.push('/');
     }
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        api('stocks/search', 'POST', {symbol: keywords}).then(res => { // Make API call style consistent.
-            setStockResult(res);
-        });
+
+    useEffect(()=>{
+        if(keywords === ''){
+            setShowAllStocks(true);
+        }
+    },[keywords]);
+    const onSearchFocus = () => {
+        setShowDropDown(true);
     }
-    const searchAllStock = async (type) => {
-        var response;
-        if (type == 'normal'){
-            response = await api('stocks/searchall', 'POST');
-        }else if (type == 'next'){
-            response = await api('stocks/searchnext', 'POST');
+
+    const onKeywordChange = async (e) => {
+        setKeyWords(e.target.value);
+        if (keywords === ''){
+            setShowAllStocks(true);
         }else{
-            response = await api('stocks/searchprev', 'POST');
+            setShowAllStocks(false);
         }
-        const stockData = []
-        for (const [quote, stockDetails] of Object.entries(response.body)) {
-            stockData.push([quote,stockDetails.name]);
-        }
-        const items = stockData.map(function(item){
-            return <li onClick={()=>history.push(`/stockDetails/${item[0]}`)}>{item[0]} {item[1]}</li>;
+        const response = await api(`stocks?query=${keywords}&limit=${10}&offset=${2}`,'GET');
+        const stockResults = response.map(function(item,idx){
+            return <li key={idx} onMouseDown={() => onStockClick(item.symbol)}>{item.symbol} {item.name}</li>;
         });
-        items.push(<div><span onClick={() => searchAllStock('prev')}>prev</span> <span onClick={() => searchAllStock('next')}>next</span></div>)
-        setStock(items);
+        setStocks(stockResults);
     }
-    const onSearchClick = async () => {
-        await searchAllStock('normal');
+
+    const onStockClick = (symbol) => {
+        setShowAllStocks(true);
+        setShowDropDown(false);
+        setKeyWords('');
+        document.getElementById("searchBar").value = '';
+        history.push(`/stockDetails/${symbol}`);
     }
+    
     return(
         <nav class="navbar navbar-light bg-light justify-content-around">
-            <a class="navbar-brand" onClick={() => history.push('/')}>
-                home
-            </a>
-            <form class="form-inline" onSubmit={handleSubmit}>
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" onClick={onSearchClick} onChange={(evt)=>setKeyWords(evt.target.value)} data-bs-toggle="collapse" data-bs-target="#stockList" aria-expanded="false"/>
-                <ul id = "stockList" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                    {stockResult ? 
-                        (<li onClick={()=>history.push(`/stockDetails/${keywords}`)}>{stockResult.symbol} {stockResult.name} {stockResult.price}</li>) : 
-                        (stock)
+            <a class="navbar-brand" onClick={() => history.push('/')}>Home</a>
+            <form class="form-inline" onSubmit={(e) => e.preventDefault()}>
+                <input id="searchBar" class="form-control me-2" type="search" placeholder="Search" aria-label="Search" onBlur={()=>setShowDropDown(false)} onFocus={onSearchFocus} onChange={(e) => onKeywordChange(e)} data-bs-toggle="collapse" data-bs-target="#stockList" aria-expanded="false"/>
+                    {showDropDown ? (
+                        showAllStocks ? (
+                            <ul id = "stockList" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                <li onMouseDown={() => history.push('/stockList')}>Please tap here to search all stocks</li>
+                            </ul>
+                            ):(
+                            <ul id = "stockList" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                {stocks}
+                            </ul>
+                            )
+                        
+                        ):
+                        (null)
                     }
-                </ul>
             </form>
             {isAuthenticated ?
                 [(<button type="button" class="btn btn-danger" onClick={() => handleLogout()}>Logout</button>),

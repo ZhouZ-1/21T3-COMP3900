@@ -15,14 +15,15 @@ function StockDetails(){
     const [isGraphLoading,setIsGraphLoading] = useState(true);
     const [graphTimeOption,setGraphTimeOption] = useState('3 months');
     
-    //  Decide whether current stock is in user's watchlist or not
-    // const setwatchListContainStock = () => {
-    // }
+    //  @TODO: Decide whether current stock is in user's watchlist or not
+    //  const setwatchListContainStock = () => {
+    //  }
     useEffect(async ()=>{
         const response = await api('stocks/search', 'POST', {symbol: symbol});
         setStockDetails(response);
         // setIsInWatchList(setwatchListContainStock());
         setIsLoading(false);
+        setIsGraphLoading(true);
     },[symbol]);
 
     useEffect(async ()=>{
@@ -34,7 +35,7 @@ function StockDetails(){
         }
         setIsGraphLoading(false);
         drawGraph(openPrices);
-    },[graphTimeOption]);
+    },[isGraphLoading,graphTimeOption]);
 
     const onTimeChange = (time) => {
         setIsGraphLoading(true);
@@ -43,7 +44,6 @@ function StockDetails(){
 
     const renderContents = () => {
         return (
-            
             <div class="text-center mx-auto w-50">
                 <div class='main-stock-detail-container'>
                     <div>
@@ -79,7 +79,6 @@ function StockDetails(){
 
                 <div class='mt-2 graph-container'>
                     <div class="stock-trend-graph">
-                        {/* TODO: TONY - implement graph here */}
                         {
                             isGraphLoading?
                             (<Loader></Loader>):
