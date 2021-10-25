@@ -21,3 +21,10 @@ Finish logout, change password feature for accounts
 
 # Week 5
 Finish frontend of delete account
+
+# Week 6
+Moved into a new place
+Started watchlist api
+
+# Week 7
+Finished watchlist api
