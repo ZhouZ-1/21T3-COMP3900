@@ -14,34 +14,28 @@ function StockDetails(){
     const [isInWatchList,setIsInWatchList] = useState(false);
     const [isGraphLoading,setIsGraphLoading] = useState(true);
     const [graphTimeOption,setGraphTimeOption] = useState('3 months');
-    const [navBar,setNavBar] = useState(<NavBar id='navBar'></NavBar>);
     
-    //  Decide whether current stock is in user's watchlist or not
-    // const setwatchListContainStock = () => {
-    // }
+    //  @TODO: Decide whether current stock is in user's watchlist or not
+    //  const setwatchListContainStock = () => {
+    //  }
     useEffect(async ()=>{
-        var elem = document.getElementById('narBar');
-        if (elem != undefined){
-            console.log('here?');
-            elem.remove();
-        }
-        setNavBar(<NavBar id='navBar'></NavBar>);
         const response = await api('stocks/search', 'POST', {symbol: symbol});
         setStockDetails(response);
         // setIsInWatchList(setwatchListContainStock());
         setIsLoading(false);
+        setIsGraphLoading(true);
     },[symbol]);
 
-    // useEffect(async ()=>{
-    //     const pricesWithinTime = await getPricesWithinTime(symbol,graphTimeOption);
-    //     const openPrices = getOpenPrices(pricesWithinTime);
-    //     let chartStatus = Chart.getChart("myChart"); // Delete graph if any.
-    //     if (chartStatus != undefined) {
-    //         chartStatus.destroy();
-    //     }
-    //     setIsGraphLoading(false);
-    //     drawGraph(openPrices);
-    // },[graphTimeOption]);
+    useEffect(async ()=>{
+        const pricesWithinTime = await getPricesWithinTime(symbol,graphTimeOption);
+        const openPrices = getOpenPrices(pricesWithinTime);
+        let chartStatus = Chart.getChart("myChart"); // Delete graph if any.
+        if (chartStatus != undefined) {
+            chartStatus.destroy();
+        }
+        setIsGraphLoading(false);
+        drawGraph(openPrices);
+    },[isGraphLoading,graphTimeOption]);
 
     const onTimeChange = (time) => {
         setIsGraphLoading(true);
@@ -50,7 +44,6 @@ function StockDetails(){
 
     const renderContents = () => {
         return (
-            
             <div class="text-center mx-auto w-50">
                 <div class='main-stock-detail-container'>
                     <div>
@@ -86,7 +79,6 @@ function StockDetails(){
 
                 <div class='mt-2 graph-container'>
                     <div class="stock-trend-graph">
-                        {/* TODO: TONY - implement graph here */}
                         {
                             isGraphLoading?
                             (<Loader></Loader>):
@@ -133,7 +125,7 @@ function StockDetails(){
     }
     return (
         <>
-            {navBar}
+            <NavBar></NavBar>
             {isLoading ? (
                 <Loader></Loader>
             ) : (
