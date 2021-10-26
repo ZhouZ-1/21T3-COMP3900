@@ -1,5 +1,18 @@
 import * as React from 'react';
+import { useState } from "react";
+import { 
+    Button,  
+    TextField,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    useMediaQuery,
+    useTheme
+} from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
+import api from "../../api";
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 70 },
@@ -43,8 +56,10 @@ function PortfolioPage() {
     <div>
       <div>
         <p3>Portfolio</p3>
-        <button type="button" class="btn btn-outline-primary ms-5">Add Stock</button>
-        <button type="button" class="btn btn-outline-primary ms-5">Delete Stock</button>
+        <Button type="button" class="btn btn-outline-primary ms-5">Edit Portfolio</Button>
+        <Button type="button" class="btn btn-outline-primary ms-5">DELETE PORTFOLIO</Button>
+        <Button type="button" class="btn btn-outline-primary ms-5">Add Stock</Button>
+        <Button type="button" class="btn btn-outline-primary ms-5">Delete Stock</Button>
       </div>
       <div style={{ height: 400, width: '100%' }}>
         <DataGrid

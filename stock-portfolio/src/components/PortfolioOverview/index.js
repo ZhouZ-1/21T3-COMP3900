@@ -1,11 +1,7 @@
 import React from 'react';
-import {
-    BrowserRouter as Router,
-    Switch,
-    Route,
-    Link
-} from "react-router-dom";
+import { useState } from "react";
 import { makeStyles } from '@material-ui/core/styles';
+import { useHistory } from "react-router";
 import {
     Grid,
     Card,
@@ -24,6 +20,7 @@ import {
     useMediaQuery,
     useTheme
 } from '@mui/material';
+import api from "../../api";
 import NavBar from "../NavBar";
 import PortfolioPage from "../PortfolioPage";
 
@@ -35,10 +32,20 @@ const useStyles = makeStyles(theme => ({
 }))
 
 function PortfolioOverview() {
+    // comment after it is done
+    var data = [
+        { id: 1, Portfolio: 1, earnings: 13000 },
+        { id: 2, Portfolio: 2, earnings: 16500 },
+        { id: 3, Portfolio: 3, earnings: 14250 },
+        { id: 4, Portfolio: 4, earnings: 19000 }
+    ];
+                                
     const [open, setOpen] = React.useState(false);
     const [title,setTitle] = useState('');
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+    var history = useHistory();
+    const classes = useStyles()
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -48,20 +55,25 @@ function PortfolioOverview() {
         setOpen(false);
     };
 
-    // const handlePort = () => {
-    //     //  api call for all the information about portfolios in general
-    //     const token = localStorage.getItem('token');
-    //     api('portfolio', 'GET') 
-    //         .then(res => {
-    //             if (res.is_success) {
-    //                 // Success
-    //                 alert("Successfully update your password!");
-    //             } else {
-    //                 // Something went wrong
-    //                 alert(res.message);
-    //             }
-    //         })
-    // };
+    const handlePortfolio = () => {
+        //  api call for all the information about portfolios in general
+        const token = localStorage.getItem('token');
+        api('portfolio', 'GET') 
+            .then(res => {
+                if (res.is_success) {
+                    // Success
+                    data = res.portfolios;
+                    const id = data['portfolio_id'];
+                    const name = data['portfolio_name'];
+                    const earnings = 0;
+                } else {
+
+                    // Something went wrong
+                    alert(res.message);
+                    
+                }
+            })
+    };
 
     const handleCreate = () => {
         //  api call for create new portfolio
@@ -80,13 +92,6 @@ function PortfolioOverview() {
     };
     
 
-    const classes = useStyles()
-    const data = [
-        { id: 1, Portfolio: 1, earnings: 13000 },
-        { id: 2, Portfolio: 2, earnings: 16500 },
-        { id: 3, Portfolio: 3, earnings: 14250 },
-        { id: 4, Portfolio: 4, earnings: 19000 }
-    ]
     return (
         <div className={classes.root}>
             <NavBar/>
@@ -133,7 +138,7 @@ function PortfolioOverview() {
                 alignItems="flex-start"
             >
                 {data.map(elem => (
-                    <Grid item xs={12} sm={6} md={3} key={data.indexOf(elem)}>
+                    <Grid item xs={12} sm={6} md={3} key={data.indexOf(elem)} onChange={handlePortfolio} autoFocus>
                         <Card 
                             variant="outlined"
                             component={PortfolioPage}
@@ -142,7 +147,6 @@ function PortfolioOverview() {
                                     title={`Portfolio : ${elem.Portfolio}`}
                                     subheader={`earnings : ${elem.earnings}`}
                                 />  
-                            <Button onClick={handleCreate} autoFocus>DELETE PORTFOLIO</Button>
                             <CardContent>
                                 <Typography variant="h5" gutterBottom>
                                     Description

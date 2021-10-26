@@ -1,5 +1,7 @@
 import * as React from 'react';
+import { useState } from "react";
 import { DataGrid } from '@mui/x-data-grid';
+import api from "../../api";
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 70 },
@@ -44,7 +46,7 @@ function WatchList() {
       <div>
         <p3>Watchlist</p3>
         <button type="button" class="btn btn-outline-primary ms-5">Add Stock</button>
-            <button type="button" class="btn btn-outline-primary ms-5">Move Stock To Portfolio</button>
+        <button type="button" class="btn btn-outline-primary ms-5">Move Stock To Portfolio</button>
         <button type="button" class="btn btn-outline-primary ms-5">Delete Stock</button>
       </div>
       <div style={{ height: 400, width: '100%' }}>
@@ -61,3 +63,5 @@ function WatchList() {
 }
 
 export default WatchList;
+
+<button type="button" class="btn btn-outline-primary ms-5">Move Stock To Portfolio</button>
