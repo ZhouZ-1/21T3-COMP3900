@@ -142,7 +142,8 @@ function PortfolioOverview() {
                         <Card 
                             variant="outlined"
                             component={PortfolioPage}
-                            to={`portfolio/${elem.id}`}>
+                            to={`portfolio/${elem.id}`}
+                            onClick={localStorage.setItem('id', ${elem.id})}>
                             <CardHeader
                                     title={`Portfolio : ${elem.Portfolio}`}
                                     subheader={`earnings : ${elem.earnings}`}

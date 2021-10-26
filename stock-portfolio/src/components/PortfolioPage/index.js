@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useState } from "react";
+import { useHistory } from "react-router";
 import { 
     Button,  
     TextField,
@@ -60,6 +61,20 @@ const handleDeletePortfolio = () => {
     setOpen(false);
   };
 
+  const deletePortfolio = () => {
+    setOpen(false);
+    api('portfolio/delete', 'DELETE', {
+      token: localStorage.getItem('token'), portfolio_id: localStorage.getItem('id')
+    })
+      .then((res) => {
+        if (res.is_success) {
+          localStorage.removeItem('token');
+        }
+      });
+    history.push('/viewPortfolios');
+
+  };
+
   return (
     <div>
       <Button variant="outlined" onClick={handleClickOpen}>
@@ -81,7 +96,7 @@ const handleDeletePortfolio = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleClose} autoFocus>
+          <Button onClick={deletePortfolio} autoFocus>
             Confirm
           </Button>
         </DialogActions>
