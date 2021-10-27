@@ -1,4 +1,4 @@
-from flask import request, send_file
+from flask import request, send_file, Response
 from flask_restplus import Resource, abort
 from app import api, db
 from util.models import *
@@ -257,14 +257,37 @@ class DeleteHoldings(Resource):
 @portfolio.route('/download', doc={
     "description": "Allows the user to download a csv of the data given the portfolio_id."
 })
+@portfolio.param('token', description="The user's token", type=str, required=True)
+@portfolio.param('portfolio_id', description="The portfolio_id of the portfolio to download", type=str, required=True)
 class DownloadHoldings(Resource):
-    def post(self):
+    def get(self):
         """
-        [Unfinished] Download holdings as a csv.
+        Download holdings as a csv.
         """
-        return {
-            "download_url": "https://google.com"
-        }
+        token = request.args.get('token')
+        portfolio_id = request.args.get('portfolio_id')
+
+        # Check that token is valid.
+        user = db.get_user_by_value("active_token", token)
+        if not user:
+            abort(400, "Token is invalid")
+
+        # Check that user owns the portfolio.
+        portfolio = db.query_portfolio(portfolio_id)
+        if portfolio is None or portfolio["owner"] != user["username"]:
+            abort(400, "User does not own portfolio")
+
+        # Get the holdings.
+        holdings = db.get_holdings(portfolio_id)
+
+        # Query the name of the portfolio from the portfolio_id.
+        portfolio_name = db.query_portfolio(portfolio_id)["portfolio_name"]
+
+        # Convert holdings to csv using holdings_to_csv_string helper function.
+        csv_string = holdings_to_csv_string(holdings)
+
+        # Returns the csv string as a csv mimetype with headers.
+        return Response(csv_string, mimetype='text/csv', headers={'Content-Disposition': f'attachment;filename={portfolio_name}.csv'})
 
 @portfolio.route('/upload', doc={
     "description": "Allows the user to upload a csv of their current holdings. This creates a new portfolio."

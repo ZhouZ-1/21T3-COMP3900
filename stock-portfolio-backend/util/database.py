@@ -225,6 +225,25 @@ def update_holding(holding_id, holding_details):
             cursor.execute(f"UPDATE holdings SET {key}=? WHERE holding_id=?", [holding_details[key], holding_id])
     conn.commit()
 
+def get_holdings(portfolio_id):
+    '''
+    Returns a list of holdings in the portfolio.
+    '''
+    cursor = conn.cursor()
+    cursor.execute("SELECT * from holdings WHERE held_by=?", [portfolio_id])
+
+    return [{
+        "holding_id": holding_id,
+        "symbol": symbol,
+        "value": value,
+        "qty": qty,
+        "type": type,
+        "brokerage": brokerage,
+        "exchange": exchange,
+        "date": date,
+        "currency": currency
+    } for holding_id, symbol, value, qty, type, brokerage, exchange, date, currency, _ in cursor.fetchall()]
+
 """
     Stock table functions
 """
