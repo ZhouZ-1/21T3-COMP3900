@@ -199,6 +199,51 @@ def add_stock(portfolio_id, symbol, value, qty, type, brokerage, exchange, date,
         [symbol, value, qty, type, brokerage, exchange, date, currency, portfolio_id])
     conn.commit()
 
+def get_owner_from_holding(holding_id):
+    '''
+    Returns the username of the owner of the holding. Returns None if the holding does not exist.
+    '''
+    cursor = conn.cursor()
+    cursor.execute("SELECT p.owner FROM holdings h JOIN portfolios p ON h.held_by=p.portfolio_id WHERE holding_id=?", [holding_id])
+    return cursor.fetchone()
+
+def remove_holding(holding_id):
+    '''
+    Removes a holding from the database.
+    '''
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM holdings WHERE holding_id=?", [holding_id])
+    conn.commit()
+
+def update_holding(holding_id, holding_details):
+    '''
+    Update holding details in the database.
+    '''
+    cursor = conn.cursor()
+    for key in holding_details.keys():
+        if key in ['symbol', 'value', 'qty', 'type', 'brokerage', 'exchange', 'date', 'currency']:
+            cursor.execute(f"UPDATE holdings SET {key}=? WHERE holding_id=?", [holding_details[key], holding_id])
+    conn.commit()
+
+def get_holdings(portfolio_id):
+    '''
+    Returns a list of holdings in the portfolio.
+    '''
+    cursor = conn.cursor()
+    cursor.execute("SELECT * from holdings WHERE held_by=?", [portfolio_id])
+
+    return [{
+        "holding_id": holding_id,
+        "symbol": symbol,
+        "value": value,
+        "qty": qty,
+        "type": type,
+        "brokerage": brokerage,
+        "exchange": exchange,
+        "date": date,
+        "currency": currency
+    } for holding_id, symbol, value, qty, type, brokerage, exchange, date, currency, _ in cursor.fetchall()]
+
 """
     Stock table functions
 """
