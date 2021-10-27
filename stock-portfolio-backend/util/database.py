@@ -80,7 +80,7 @@ def create_user(username, first_name, last_name, email, hashed_password, active_
     '''
     cursor = conn.cursor()
     cursor.execute('INSERT INTO users (username, first_name, last_name, email, hashed_password, active_token, watchlist) VALUES (?, ?, ?, ?, ?, ?, ?)',
-        [username, first_name, last_name, email, hashed_password, active_token, []])
+        [username, first_name, last_name, email, hashed_password, active_token, '[]'])
     conn.commit()
 
 def get_user_by_value(field, value):

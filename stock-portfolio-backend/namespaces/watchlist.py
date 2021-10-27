@@ -36,7 +36,8 @@ class Watchlist(Resource):
 class WatchlistAddStocks(Resource):
     @watchlist.expect(watchlist_add_stock_model)
     @watchlist.response(200, 'Success', success_model)
-    @watchlist.response(400, 'Invalid Token!')
+    @watchlist.response(409, 'Invalid Token!')
+    @watchlist.response(400, 'AAPL already exists in the watch list')
     def post(self):
         """
         Function that takes a stock returns the overview details of a particular stock
@@ -57,8 +58,16 @@ class WatchlistAddStocks(Resource):
             abort(400, "Token is invalid")
         
         new_pair = [symbol,stock_name]
-        #   Continue from here
-
+        user["watchlist"] = literal_eval(user["watchlist"])
+        if new_pair not in user["watchlist"]:
+            user["watchlist"].append(new_pair)
+            db.update_user_by_value(user, "watchlist", json.dumps(user["watchlist"]))
+        else:
+            abort(409, f"{stock} already exists in the watch list")
+        
+        return {
+            "is_success": "true"
+        }
 @watchlist.route('/delete', doc={
     "description": "Allows user to delete stocks from their watchlist"
 })
