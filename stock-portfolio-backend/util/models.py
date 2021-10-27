@@ -88,6 +88,11 @@ watchlist_stock_model = api.model("watchlist_stock_model", {
     "stock": fields.String(required=True, example="AAPL"),
 })
 
+watchlist_delete_stock_model = api.model("watchlist_delete_stock_model", {
+    "username": fields.String(required=True, example="JohnSmith123"),
+    "stocks": fields.List(fields.String, required=True, example=["AAPL", "MSFT"])
+})
+
 create_portfolio_model = api.inherit('create_portfolio_model', token_model, {
     "portfolio_name": fields.String(required=True)
 })
