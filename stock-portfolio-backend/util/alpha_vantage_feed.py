@@ -8,6 +8,7 @@ ALPHAVANTAGE_API_KEY = "FVR0K5XNNUQA3HXT"
 
 class DataCollector:
     def __init__(self):
+        # NOTE: MIGHT TRY USING PANDAS
         self.fd = FundamentalData(ALPHAVANTAGE_API_KEY, output_format = 'json')
         self.ts = TimeSeries(ALPHAVANTAGE_API_KEY, output_format = 'json')
 
