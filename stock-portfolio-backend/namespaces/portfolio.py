@@ -1,4 +1,4 @@
-from flask import request, send_file
+from flask import request, send_file, Response
 from flask_restplus import Resource, abort
 from app import api, db
 from util.models import *
@@ -192,10 +192,34 @@ class AddHoldings(Resource):
     "description": "Given a holding_id, allows the user to edit details relating to that holding, such as qty, price, date"
 })
 class EditHoldings(Resource):
+    @portfolio.expect(edit_stock_model)
+    @portfolio.response(200, 'Success', success_model)
+    @portfolio.response(400, 'Invalid token')
     def post(self):
         """
-        [Unfinished] Edit holding details.
+        Edit holding details.
         """
+        body = request.json
+        token = body['token']
+        holding_id = body['holding_id']
+        
+        holding_details = body
+        holding_details.pop('token')
+        holding_details.pop('holding_id')
+
+        # Get username from token
+        user = db.get_user_by_value("active_token", token)
+        if not user:
+            abort(400, "Token is invalid")
+
+        # Check that user owns the holding.
+        owner = db.get_owner_from_holding(holding_id)
+        if owner is None or owner[0] != user['username']:
+            abort(400, "User cannot access this holding.")
+
+        # Update holding details.
+        db.update_holding(holding_id, holding_details)
+
         return {
             "is_success": True
         }
@@ -204,10 +228,28 @@ class EditHoldings(Resource):
     "description": "Removes a holding completly from the portfolio. It's as if the holding was never there."
 })
 class DeleteHoldings(Resource):
+    @portfolio.expect(delete_holding_model)
     def delete(self):
         """
-        [Unfinished] Deletes a holding from the portfolio.
+        Deletes a holding from the portfolio.
         """
+        body = request.json
+        holding_id = body['holding_id']
+        token = body['token']
+
+        # Get username from token
+        user = db.get_user_by_value("active_token", token)
+        if not user:
+            abort(400, "Token is invalid")
+
+        # Check that user owns the holding.
+        owner = db.get_owner_from_holding(holding_id)
+        if owner is None or owner[0] != user['username']:
+            abort(400, "User cannot access this holding.")
+
+        # Delete the holding.
+        db.remove_holding(holding_id)
+
         return {
             "is_success": True
         }
@@ -215,14 +257,37 @@ class DeleteHoldings(Resource):
 @portfolio.route('/download', doc={
     "description": "Allows the user to download a csv of the data given the portfolio_id."
 })
+@portfolio.param('token', description="The user's token", type=str, required=True)
+@portfolio.param('portfolio_id', description="The portfolio_id of the portfolio to download", type=str, required=True)
 class DownloadHoldings(Resource):
-    def post(self):
+    def get(self):
         """
-        [Unfinished] Download holdings as a csv.
+        Download holdings as a csv.
         """
-        return {
-            "download_url": "https://google.com"
-        }
+        token = request.args.get('token')
+        portfolio_id = request.args.get('portfolio_id')
+
+        # Check that token is valid.
+        user = db.get_user_by_value("active_token", token)
+        if not user:
+            abort(400, "Token is invalid")
+
+        # Check that user owns the portfolio.
+        portfolio = db.query_portfolio(portfolio_id)
+        if portfolio is None or portfolio["owner"] != user["username"]:
+            abort(400, "User does not own portfolio")
+
+        # Get the holdings.
+        holdings = db.get_holdings(portfolio_id)
+
+        # Query the name of the portfolio from the portfolio_id.
+        portfolio_name = db.query_portfolio(portfolio_id)["portfolio_name"]
+
+        # Convert holdings to csv using holdings_to_csv_string helper function.
+        csv_string = holdings_to_csv_string(holdings)
+
+        # Returns the csv string as a csv mimetype with headers.
+        return Response(csv_string, mimetype='text/csv', headers={'Content-Disposition': f'attachment;filename={portfolio_name}.csv'})
 
 @portfolio.route('/upload', doc={
     "description": "Allows the user to upload a csv of their current holdings. This creates a new portfolio."
