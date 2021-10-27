@@ -3,6 +3,12 @@ import { useState } from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import { useHistory } from "react-router";
 import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Link
+  } from "react-router-dom";
+import {
     Grid,
     Card,
     CardContent,
@@ -90,6 +96,13 @@ function PortfolioOverview() {
             })
         setOpen(false);
     };
+
+    // const handleRedirect = (id) => {
+    //     component={PortfolioPage}
+    //     history.push(`portfolio/${id}`);
+    //     localStorage.setItem('id', id);
+    //     return PortfolioPage;
+    // };
     
 
     return (
@@ -103,7 +116,6 @@ function PortfolioOverview() {
                         Create Portfolio
                     </Button>
                     <Dialog
-                        fullScreen={fullScreen}
                         open={open}
                         onClose={handleClose}
                         aria-labelledby="responsive-dialog-title"
@@ -119,9 +131,7 @@ function PortfolioOverview() {
                         </DialogContent>                            
                         <br></br>
                         <DialogActions>
-                        <Button autoFocus onClick={handleClose}>
-                            Cancel
-                        </Button>
+                        <Button autoFocus onClick={handleClose}>Cancel</Button>
                         <Button onClick={handleCreate} autoFocus>
                             Confirm
                         </Button>
@@ -139,11 +149,14 @@ function PortfolioOverview() {
             >
                 {data.map(elem => (
                     <Grid item xs={12} sm={6} md={3} key={data.indexOf(elem)} onChange={handlePortfolio} autoFocus>
+                        <Link to={`portfolio/${elem.id}`}>
                         <Card 
                             variant="outlined"
-                            component={PortfolioPage}
-                            to={`portfolio/${elem.id}`}
-                            onClick={localStorage.setItem('id', elem.id)}>
+                            // component={PortfolioPage}
+                            // to={`portfolio/${elem.id}`}
+                            // onClick={handleRedirect}
+                            onClick={PortfolioPage}
+                            >
                             <CardHeader
                                     title={`Portfolio : ${elem.Portfolio}`}
                                     subheader={`earnings : ${elem.earnings}`}
@@ -154,6 +167,7 @@ function PortfolioOverview() {
                                 </Typography>
                             </CardContent>
                         </Card>
+                        </Link>
                      </Grid>
                 ))}
             </Grid>

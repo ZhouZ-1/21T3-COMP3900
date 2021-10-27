@@ -1,6 +1,7 @@
 import * as React from 'react';
 // import { useState } from "react";
 import { useHistory } from "react-router";
+import { useState } from "react";
 import { 
     Button,  
     TextField,
@@ -9,8 +10,6 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
-    useMediaQuery,
-    useTheme
 } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import api from "../../api";
@@ -18,13 +17,6 @@ import api from "../../api";
 const columns = [
   { field: 'id', headerName: 'ID', width: 70 },
   { field: 'code', headerName: 'Code of Stock', width: 130 },
-  { field: 'name', headerName: 'Full name', width: 130 },
-  {
-    field: 'units',
-    headerName: 'Units',
-    type: 'number',
-    width: 90,
-  },
   {
     field: 'fullName',
     headerName: 'Full name',
@@ -35,6 +27,12 @@ const columns = [
       `${params.getValue(params.id, 'name') || ''} ${
         params.getValue(params.id, 'code') || ''
       }`,
+  },
+  {
+    field: 'units',
+    headerName: 'Units',
+    type: 'number',
+    width: 90,
   },
 ];
 
@@ -52,7 +50,9 @@ const rows = [
 
 function PortfolioPage() {
   var history = useHistory();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const [title,setTitle] = useState('');
+  const id = localStorage.getItem('id');
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -65,49 +65,64 @@ function PortfolioPage() {
   const handleDeletePortfolio = () => {
     setOpen(false);
     api('portfolio/delete', 'DELETE', {
-      token: localStorage.getItem('token'), portfolio_id: localStorage.getItem('id')
+      token: localStorage.getItem('token'), portfolio_id: id
     })
       .then((res) => {
         if (res.is_success) {
           localStorage.removeItem('token');
         }
       });
-    history.push('/viewPortfolios');
+    history.push('/viewPortfolio');
+  };
+
+  const handleEdit = () => {
+      //  api call for create new portfolio
+      const token = localStorage.getItem('token');
+      api('portfolio/edit', 'POST', {token, portfolio_name: title, portfolio_id: id}) 
+          .then(res => {
+              if (res.is_success) {
+                  // Success
+                  alert("Successfully update your password!");
+              } else {
+                  // Something went wrong
+                  alert(res);
+              }
+          })
+      setOpen(false);
   };
 
   return (
     <div>
-      <Button variant="outlined" onClick={handleClickOpen}>
-        Delete Portfolio
-      </Button>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {"Use Google's location service?"}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Do You Want To Delete This Portfolio?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleDeletePortfolio} autoFocus>
-            Confirm
-          </Button>
-        </DialogActions>
-      </Dialog>
-
       <div>
         <p3>Portfolio</p3>
-        <Button class="btn btn-outline-primary ms-5">Edit Portfolio</Button>
-        <Button  variant="outlined" onClick={handleDeletePortfolio}>DELETE PORTFOLIO</Button>
-        <Button type="button" class="btn btn-outline-primary ms-5">Add Stock</Button>
-        <Button type="button" class="btn btn-outline-primary ms-5">Delete Stock</Button>
+        <Button class="btn btn-outline-primary ms-5" onClick={handleClickOpen}>
+          Edit Name
+        </Button>
+          <Dialog
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">
+              {"Edit Portfolio Name"}
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                Do You Want To Delete This Portfolio?
+              </DialogContentText>
+              <TextField id="demo-helper-text-misaligned-no-helper" label="Title"  required autofocus onChange={(evt)=>setTitle(evt.target.value)}></TextField>
+              </DialogContent>                            
+              <br></br>
+              <DialogActions>
+              <Button autoFocus onClick={handleClose}>Cancel</Button>
+              <Button onClick={handleEdit} autoFocus>
+                  Confirm
+              </Button>
+              </DialogActions>
+          </Dialog>
+        <Button class="btn btn-outline-primary ms-5">Add Stock</Button>
+        <Button class="btn btn-outline-primary ms-5">Delete Stock</Button>
       </div>
       <div style={{ height: 400, width: '100%' }}>
         <DataGrid
@@ -118,6 +133,30 @@ function PortfolioPage() {
           checkboxSelection
         />
       </div>
+      <Button onClick={handleClickOpen}>
+        Delete Portfolio
+      </Button>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+            {"Delete Portfolio"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Do You Want To Delete This Portfolio?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Cancel</Button>
+            <Button onClick={handleDeletePortfolio} autoFocus>
+              Confirm
+            </Button>
+          </DialogActions>
+        </Dialog>
     </div>
   );
 }
