@@ -22,7 +22,7 @@ function App() {
         <Route exact path='/account' component={AccountPage}/>
         <Route exact path='/resetPassword' component={ForgotMyPassword}/>
         <Route exact path='/stockList' component={StockList}/>
-        <Route exact path='/watchList' component={watchList}/>
+        <Route exact path='/watchList' component={WatchList}/>
       </Switch>
     </Router>
   );

@@ -75,17 +75,18 @@ image_upload_model = api.inherit('image_upload_model', token_model, {
 })
 
 watchlist_request_model = api.model("watchlist_request_model", {
-    "username": fields.String(required=True, example="JohnSmith123"),
+    "token": fields.String(required=True, example="abcd1234!@#$"),
 })
 
 
 watchlist_info_model = api.model("watchlist_info_model", {
-    "stocks": fields.List(fields.String, required=True, example=["AAPL", "MSFT"])
+    "stocks": fields.List(fields.String, required=True, example=[["AAPL","Apple Inc"],["TSLA","Tesla"]])
 })
 
-watchlist_stock_model = api.model("watchlist_stock_model", {
-    "username": fields.String(required=True, example="JohnSmith123"),
-    "stock": fields.String(required=True, example="AAPL"),
+watchlist_add_stock_model = api.model("watchlist_add_stock_model", {
+    "token": fields.String(required=True, example="abcd1234!@#$"),
+    "symbol": fields.String(required=True, example="AAPL"),
+    "stock_name": fields.String(required=True, example="Apple Inc"),
 })
 
 watchlist_delete_stock_model = api.model("watchlist_delete_stock_model", {

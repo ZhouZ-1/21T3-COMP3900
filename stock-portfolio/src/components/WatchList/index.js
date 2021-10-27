@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useState } from "react";
 import { DataGrid } from '@mui/x-data-grid';
 import api from "../../api";
+import NavBar from '../NavBar';
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 70 },
@@ -37,28 +38,32 @@ const rows = [
   { id: 8, code: 'VIAV', name: 'Viavi Solutions Inc', units: 36 },
   { id: 9, code: 'ROST', name: 'Ross Stores Inc', units: 65 },
 ];
+//@TODO:TONY to implement this function.
+// const row = getRow(sessionStorage.getItem('token')); this should have the same format as above.
 
 // net profit
 
 function WatchList() {
   return (
-    <div>
+    <>
+      <NavBar></NavBar>
       <div>
-        <p3>Watchlist</p3>
-        <button type="button" class="btn btn-outline-primary ms-5">Add Stock</button>
-        <button type="button" class="btn btn-outline-primary ms-5">Move Stock To Portfolio</button>
-        <button type="button" class="btn btn-outline-primary ms-5">Delete Stock</button>
+        <div>
+          <p3>Watchlist</p3>
+          <button type="button" class="btn btn-outline-primary ms-5">Move Stock To Portfolio</button>
+          <button type="button" class="btn btn-outline-primary ms-5">Delete Stock</button>
+        </div>
+        <div style={{ height: 400, width: '100%' }}>
+          <DataGrid
+            rows={rows}
+            columns={columns}
+            punitsSize={5}
+            rowsPerPunitsOptions={[5]}
+            checkboxSelection
+          />
+        </div>
       </div>
-      <div style={{ height: 400, width: '100%' }}>
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          punitsSize={5}
-          rowsPerPunitsOptions={[5]}
-          checkboxSelection
-        />
-      </div>
-    </div>
+    </>
   );
 }
 
