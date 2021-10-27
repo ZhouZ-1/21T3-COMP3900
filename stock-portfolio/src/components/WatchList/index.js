@@ -3,6 +3,7 @@ import { useState } from "react";
 import { DataGrid } from '@mui/x-data-grid';
 import api from "../../api";
 import NavBar from '../NavBar';
+import getRow from './getRow';
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 70 },
@@ -42,6 +43,7 @@ const rows = [
 // const row = getRow(sessionStorage.getItem('token')); this should have the same format as above.
 
 // net profit
+getRow(localStorage.getItem('token'));
 
 function WatchList() {
   return (

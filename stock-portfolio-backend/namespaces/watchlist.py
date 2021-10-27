@@ -9,7 +9,7 @@ import json
 
 watchlist = api.namespace('watchlist', description='Watchlist management: Add, remove stocks, retrieve watched stocks')
 
-@watchlist.route('/', doc={
+@watchlist.route('', doc={
     "description": "Allows user to get their watchlist"
 })
 class Watchlist(Resource):
@@ -20,9 +20,7 @@ class Watchlist(Resource):
         """
         Function that takes a stock returns the overview details of a particular stock
         """
-        body = request.json
-        token = body['token']
-
+        token = request.args.get("token")
         user = db.get_user_by_value("active_token", token)
         if not user:
             abort(400, "Token is invalid")
@@ -42,28 +40,28 @@ class WatchlistAddStocks(Resource):
         """
         Function that takes a stock returns the overview details of a particular stock
         """
+        print('here')
         body = request.json
         token = body['token']
         symbol = body['symbol']
         stock_name = body['stock_name']
 
-        # validity checks
-        # make sure it is a string
-        if not isinstance(username, str):
-            abort(409, f"{username} is not a string")
-
         user = db.get_user_by_value("active_token", token)
-
         if not user:
             abort(400, "Token is invalid")
+        # validity checks
+        # make sure it is a string
+        username = user["username"]
+        if not isinstance(username, str):
+            abort(409, f"{username} is not a string")
         
         new_pair = [symbol,stock_name]
         user["watchlist"] = literal_eval(user["watchlist"])
         if new_pair not in user["watchlist"]:
             user["watchlist"].append(new_pair)
-            db.update_user_by_value(user, "watchlist", json.dumps(user["watchlist"]))
+            db.update_user_by_value(username, "watchlist", json.dumps(user["watchlist"]))
         else:
-            abort(409, f"{stock} already exists in the watch list")
+            abort(409, f"{symbol} already exists in the watch list")
         
         return {
             "is_success": "true"
@@ -80,16 +78,10 @@ class WatchlistDeleteStocks(Resource):
         Function that takes a stock returns the overview details of a particular stock
         """
         body = request.json
-        username = body['username']
+        token = body['token']
         stocks_to_delete = body['stocks']
 
-        # validity checks
-        # make sure it is a string
-        if not isinstance(username, str):
-            abort(409, "Unable to process request")
-
-        user = db.get_user_by_value('username', username)
-
+        user = db.get_user_by_value("active_token", token)
         if not user:
             abort(410, "Could not find user")
 
