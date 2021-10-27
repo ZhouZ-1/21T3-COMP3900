@@ -2,7 +2,6 @@
  * API helper file for connecting the frontend to the backend.
  * 
  */
-import React from 'react';
 const url = 'http://localhost:5000'
 const headers = {"Content-Type": "application/json"}
 
@@ -21,6 +20,6 @@ export default async function api(path, method, body = null) {
   if (body) init.body = JSON.stringify(body)
 
   return fetch(resource, init)
-    .then(res => { return res.json()})
+    .then(res => { res.json()})
     .catch((err) => console.warn(`API_ERROR: ${err.message}`));
 }

@@ -33,7 +33,9 @@ function SignUp(){
 
         if(isPasswordOkay && isEmailOkay){
             //  Put user information to database.
-            api('accounts/register', 'POST', {username: userName, password, first_name: firstName, last_name: lastName, email}).then(res => {
+            api('accounts/register', 'POST', {username: userName, password, first_name: firstName, last_name: lastName, email})
+            .then(res => {
+                alert(res);
                 if (res.token) {
                     // Set token and redirects to the main page.
                     localStorage.setItem('token', res.token);
