@@ -4,7 +4,7 @@ import { useHistory } from "react-router";
 import { validatePassword,validateEmail } from './helper';
 import PasswordRuleModal from './PasswordRuleModal';
 import EmailRuleModal from './EmailRuleModal';
-import api from '../../api';
+import api from '../../api'
 import NavBar from '../NavBar/index';
 function SignUp(){
     var history = useHistory();
@@ -33,20 +33,20 @@ function SignUp(){
 
         if(isPasswordOkay && isEmailOkay){
             //  Put user information to database.
-            api('accounts/register', 'POST', {username: userName, password, first_name: firstName, last_name: lastName, email})
-            .then(res => {
-                alert(res);
+            api('accounts/register', 'POST', {username: userName, first_name: firstName, last_name: lastName, email, password}).then(res => {
                 if (res.token) {
                     // Set token and redirects to the main page.
                     localStorage.setItem('token', res.token);
                     history.push('/');
-                } 
+                } else {
+                    // TODO: display error message
+                }
             })
         }
     }
     return(
         // text-center w-50 p-3 offset-md-3
-        <div>
+        <>
             <NavBar/>
             <div class="text-center mx-auto w-50">
                 <h1 class="h3 mt-5 mb-3 font-weight-normal">Sign Up</h1>
@@ -79,7 +79,7 @@ function SignUp(){
                 }
                 <button class="btn btn-lg btn-primary btn-block mt-5" onClick={handleSignUp}>Sign Up</button>
             </div>
-        </div>
+        </>
     );
 }
 
