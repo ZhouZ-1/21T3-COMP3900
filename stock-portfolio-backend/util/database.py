@@ -151,7 +151,7 @@ def query_portfolio(portfolio_id):
     Returns details about a portfolio in the database given the portfolio_id.
     '''
     cursor = conn.cursor()
-    cursor.execute("SELECT * from portfolios WHERE portfolio_id=?", [portfolio_id])
+    cursor.execute("SELECT * from portfolios WHERE portfolio_id=?", '[portfolio_id]')
 
     res = cursor.fetchone()
     if res is None:

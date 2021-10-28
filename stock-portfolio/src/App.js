@@ -9,6 +9,8 @@ import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 import StockDetails from './components/StockDetails';
 import StockList from './components/StockList';
 import WatchList from './components/WatchList';
+import PortfolioOverview from './components/PortfolioOverview';
+import PortfolioPage from './components/PortfolioPage';
 
 function App() {
   return (
@@ -23,6 +25,9 @@ function App() {
         <Route exact path='/resetPassword' component={ForgotMyPassword}/>
         <Route exact path='/stockList' component={StockList}/>
         <Route exact path='/watchList' component={WatchList}/>
+        <Route exact path='/viewPortfolio' component={PortfolioOverview}/>
+        <Route exact path='/portfolio/' component={PortfolioPage}/>
+
       </Switch>
     </Router>
   );
