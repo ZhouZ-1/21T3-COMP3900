@@ -51,7 +51,8 @@ function PortfolioOverview() {
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
     var history = useHistory();
-    const classes = useStyles()
+    const classes = useStyles();
+    const token = localStorage.getItem('token');
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -61,25 +62,28 @@ function PortfolioOverview() {
         setOpen(false);
     };
 
-    const handlePortfolio = () => {
+    // const handlePortfolio = () => {
         //  api call for all the information about portfolios in general
-        const token = localStorage.getItem('token');
-        api('portfolio', 'GET') 
-            .then(res => {
-                if (res.is_success) {
-                    // Success
-                    data = res.portfolios;
-                    const id = data['portfolio_id'];
-                    const name = data['portfolio_name'];
-                    const earnings = 0;
-                } else {
 
-                    // Something went wrong
-                    alert(res.message);
+        // api('portfolio', 'GET') 
+        //     .then(res => {
+        //         if (res.is_success) {
+        //             // Success
+        //             data = res.portfolios;
+        //             const id = data['portfolio_id'];
+        //             const name = data['portfolio_name'];
+        //             const earnings = 0;
+        //         } else {
+
+        //             // Something went wrong
+        //             alert(res.message);
                     
-                }
-            })
-    };
+        //         }
+        //     })
+        // const port = await api(`portfolio?token=${token}`, 'GET');
+    // };
+    const port = await api(`portfolio?token=${token}`, 'GET');
+
 
     const handleCreate = () => {
         //  api call for create new portfolio
@@ -147,6 +151,7 @@ function PortfolioOverview() {
                 justify="flex-start"
                 alignItems="flex-start"
             >
+                {/* {port.portfolio.map(elem => ( */}
                 {data.map(elem => (
                     <Grid item xs={12} sm={6} md={3} key={data.indexOf(elem)} onChange={handlePortfolio} autoFocus>
                         <Link to={`portfolio/${elem.id}`}>
