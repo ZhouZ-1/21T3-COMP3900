@@ -40,7 +40,6 @@ class WatchlistAddStocks(Resource):
         """
         Function that takes a stock returns the overview details of a particular stock
         """
-        print('here')
         body = request.json
         token = body['token']
         symbol = body['symbol']
@@ -72,7 +71,7 @@ class WatchlistAddStocks(Resource):
 class WatchlistDeleteStocks(Resource):
     @watchlist.expect(watchlist_delete_stock_model)
     @watchlist.response(200, 'Success', success_model)
-    @watchlist.response(409, 'Unable to process request')
+    @watchlist.response(409, 'Invalid Token!')
     def delete(self):
         """
         Function that takes a stock returns the overview details of a particular stock
@@ -83,11 +82,10 @@ class WatchlistDeleteStocks(Resource):
 
         user = db.get_user_by_value("active_token", token)
         if not user:
-            abort(410, "Could not find user")
-
+            abort(409, "Token is not valid")
+        username = user["username"]
         user["watchlist"] = literal_eval(user["watchlist"])
-        new_stocks = [x for x in user["watchlist"] if x not in stocks_to_delete]
-
+        new_stocks = [x for x in user["watchlist"] if x[0] not in stocks_to_delete]
         db.update_user_by_value(username, "watchlist", json.dumps(new_stocks))
         
         return { 
