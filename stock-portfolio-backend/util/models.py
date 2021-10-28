@@ -90,7 +90,7 @@ watchlist_add_stock_model = api.model("watchlist_add_stock_model", {
 })
 
 watchlist_delete_stock_model = api.model("watchlist_delete_stock_model", {
-    "username": fields.String(required=True, example="JohnSmith123"),
+    "token": fields.String(required=True, example="abc123!@#"),
     "stocks": fields.List(fields.String, required=True, example=["AAPL", "MSFT"])
 })
 
