@@ -47,3 +47,14 @@ def save_image(image_data, path):
     '''
     with open(f"images/{path}", "wb") as fp:
         fp.write(base64.decodebytes(image_data.encode("utf-8")))
+
+def holdings_to_csv_string(holdings):
+    '''
+    Takes in a list of holding dicts and returns a CSV string.
+    '''
+    csv_string = "holding_id,symbol,value,qty,type,brokerage,exchange,date,currency\n"
+    for holding in holdings:
+        csv_string += f"{holding['holding_id']},{holding['symbol']},{holding['value']},\
+            {holding['qty']},{holding['type']},{holding['brokerage']},{holding['exchange']},\
+            {holding['date']},{holding['currency']}\n"
+    return csv_string
