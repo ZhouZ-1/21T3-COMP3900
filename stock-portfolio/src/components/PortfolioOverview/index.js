@@ -1,11 +1,8 @@
 import React from 'react';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import { useHistory } from "react-router";
 import {
-    BrowserRouter as Router,
-    Switch,
-    Route,
     Link
   } from "react-router-dom";
 import {
@@ -16,18 +13,19 @@ import {
     CardHeader
 } from '@material-ui/core/';
 import { 
-    Button,  
-    TextField,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
+//    Button,  
+//     TextField,
+//     Dialog,
+//     DialogActions,
+//     DialogContent,
+//     DialogContentText,
+//     DialogTitle, 
     useMediaQuery,
     useTheme
 } from '@mui/material';
 import api from "../../api";
 import NavBar from "../NavBar";
+import CreatePortfolio from "../CreatePortfolio";
 import PortfolioPage from "../PortfolioPage";
 
 const useStyles = makeStyles(theme => ({
@@ -47,9 +45,8 @@ function PortfolioOverview() {
     ];
                                 
     const [open, setOpen] = React.useState(false);
-    const [title,setTitle] = useState('');
+    const [port,setPort] = useState();
     const theme = useTheme();
-    const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
     var history = useHistory();
     const classes = useStyles();
     const token = localStorage.getItem('token');
@@ -62,44 +59,31 @@ function PortfolioOverview() {
         setOpen(false);
     };
 
-    // const handlePortfolio = () => {
+    const handlePortfolio = () => {
         //  api call for all the information about portfolios in general
 
-        // api('portfolio', 'GET') 
-        //     .then(res => {
-        //         if (res.is_success) {
-        //             // Success
-        //             data = res.portfolios;
-        //             const id = data['portfolio_id'];
-        //             const name = data['portfolio_name'];
-        //             const earnings = 0;
-        //         } else {
-
-        //             // Something went wrong
-        //             alert(res.message);
-                    
-        //         }
-        //     })
-        // const port = await api(`portfolio?token=${token}`, 'GET');
-    // };
-    const port = await api(`portfolio?token=${token}`, 'GET');
-
-
-    const handleCreate = () => {
-        //  api call for create new portfolio
-        const token = localStorage.getItem('token');
-        api('portfolio/create', 'POST', {token, portfolio_name: title}) 
+        api('portfolio', 'GET') 
             .then(res => {
                 if (res.is_success) {
                     // Success
-                    alert("Successfully update your password!");
+                    data = res.portfolios;
+                    setPort(res);
+                    // const id = data['portfolio_id'];
+                    // const name = data['portfolio_name'];
+                    // const earnings = 0;
                 } else {
+
                     // Something went wrong
                     alert(res.message);
+                    
                 }
             })
-        setOpen(false);
+        // const port = await api(`portfolio?token=${token}`, 'GET');
+        alert(port);
     };
+    // const port = await api(`portfolio?token=${token}`, 'GET');
+
+
 
     // const handleRedirect = (id) => {
     //     component={PortfolioPage}
@@ -113,36 +97,7 @@ function PortfolioOverview() {
         <div className={classes.root}>
             <NavBar/>
             <br></br>
-            <div>
-                <h3>Portfolio Overview</h3>
-                <div>
-                    <Button variant="outlined" onClick={handleClickOpen}>
-                        Create Portfolio
-                    </Button>
-                    <Dialog
-                        open={open}
-                        onClose={handleClose}
-                        aria-labelledby="responsive-dialog-title"
-                    >
-                        <DialogTitle id="responsive-dialog-title">
-                        {"Create Portfolio"}
-                        </DialogTitle>
-                        <DialogContent>
-                        <DialogContentText>
-                            Please enter title of Portfolio:  
-                        </DialogContentText>
-                        <TextField id="demo-helper-text-misaligned-no-helper" label="Title"  required autofocus onChange={(evt)=>setTitle(evt.target.value)}></TextField>
-                        </DialogContent>                            
-                        <br></br>
-                        <DialogActions>
-                        <Button autoFocus onClick={handleClose}>Cancel</Button>
-                        <Button onClick={handleCreate} autoFocus>
-                            Confirm
-                        </Button>
-                        </DialogActions>
-                    </Dialog>
-                </div>
-            </div>
+            <CreatePortfolio />
             <br></br>
             <Grid
                 container
