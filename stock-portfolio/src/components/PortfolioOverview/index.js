@@ -2,6 +2,7 @@ import React from 'react';
 import { useState, useEffect } from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import { useHistory } from "react-router";
+import { useParams } from "react-router-dom";
 import {
     Link
   } from "react-router-dom";
@@ -26,7 +27,7 @@ import {
 import api from "../../api";
 import NavBar from "../NavBar";
 import CreatePortfolio from "../CreatePortfolio";
-import PortfolioPage from "../PortfolioPage";
+import HandlePortfolio from "../HandlePortfolio";
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -45,10 +46,10 @@ function PortfolioOverview() {
     ];
                                 
     const [open, setOpen] = React.useState(false);
-    const [port,setPort] = useState();
     const theme = useTheme();
     var history = useHistory();
     const classes = useStyles();
+    const { port } = useParams();
     const token = localStorage.getItem('token');
 
     const handleClickOpen = () => {
@@ -59,30 +60,38 @@ function PortfolioOverview() {
         setOpen(false);
     };
 
-    const handlePortfolio = () => {
-        //  api call for all the information about portfolios in general
+    // const handlePortfolio = () => {
+    //     //  api call for all the information about portfolios in general
 
-        api('portfolio', 'GET') 
-            .then(res => {
-                if (res.is_success) {
-                    // Success
-                    data = res.portfolios;
-                    setPort(res);
-                    // const id = data['portfolio_id'];
-                    // const name = data['portfolio_name'];
-                    // const earnings = 0;
-                } else {
+    //     api('portfolio', 'GET') 
+    //         .then(res => {
+    //             if (res.is_success) {
+    //                 // Success
+    //                 const handleCreate = useEffect(async() => {
+    //                     setOpen(false);
+    //                     const res = await api('portfolio', 'GET', {token});
+    //                 },[name]);    data = res.portfolios;
+    //                 setPort(res);
+    //                 // const id = data['portfolio_id'];
+    //                 // const name = data['portfolio_name'];
+    //                 // const earnings = 0;
+    //             } else {
 
-                    // Something went wrong
-                    alert(res.message);
+    //                 // Something went wrong
+    //                 alert(res.message);
                     
-                }
-            })
-        // const port = await api(`portfolio?token=${token}`, 'GET');
-        alert(port);
-    };
-    // const port = await api(`portfolio?token=${token}`, 'GET');
+    //             }
+    //         })
+    //     // const port = await api(`portfolio?token=${token}`, 'GET');
+    //     alert(port);
+    // };
+    // const handlePortfolio = useEffect(async() => {
+    //     const portr = await api(`portfolio?token=${token}`, 'GET');
 
+    //     return (
+
+    //     );
+    // },[port]);
 
 
     // const handleRedirect = (id) => {
@@ -91,7 +100,9 @@ function PortfolioOverview() {
     //     localStorage.setItem('id', id);
     //     return PortfolioPage;
     // };
-    
+
+    // Pagination
+    // https://www.freecodecamp.org/news/build-a-custom-pagination-component-in-react/
 
     return (
         <div className={classes.root}>
@@ -99,16 +110,16 @@ function PortfolioOverview() {
             <br></br>
             <CreatePortfolio />
             <br></br>
-            <Grid
+            <HandlePortfolio token={token} />
+            {/* <Grid
                 container
                 spacing={2}
                 direction="row"
                 justify="flex-start"
                 alignItems="flex-start"
             >
-                {/* {port.portfolio.map(elem => ( */}
-                {data.map(elem => (
-                    <Grid item xs={12} sm={6} md={3} key={data.indexOf(elem)} onChange={handlePortfolio} autoFocus>
+                {portr.portfolios.map(p => (
+                    <Grid item xs={12} sm={6} md={3} key={data.indexOf(p)}>
                         <Link to={`portfolio/${elem.id}`}>
                         <Card 
                             variant="outlined"
@@ -118,8 +129,8 @@ function PortfolioOverview() {
                             onClick={PortfolioPage}
                             >
                             <CardHeader
-                                    title={`Portfolio : ${elem.Portfolio}`}
-                                    subheader={`earnings : ${elem.earnings}`}
+                                    title={`Portfolio : ${p.portfolio_name}`}
+                                    // subheader={`earnings : ${elem.earnings}`}
                                 />  
                             <CardContent>
                                 <Typography variant="h5" gutterBottom>
@@ -128,9 +139,9 @@ function PortfolioOverview() {
                             </CardContent>
                         </Card>
                         </Link>
-                     </Grid>
+                    </Grid>
                 ))}
-            </Grid>
+            </Grid> */}
         </div>
         
     )

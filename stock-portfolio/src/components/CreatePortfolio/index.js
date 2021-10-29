@@ -1,6 +1,7 @@
 import React from 'react';
 import { useState, useEffect } from "react";
 import { useHistory } from "react-router";
+import { useParams } from "react-router-dom";
 import { 
     Button,  
     TextField,
@@ -14,9 +15,10 @@ import {
 } from '@mui/material';
 import api from "../../api";
 
-function CreatePortfolio() {
+function CreatePortfolio(props) {
     const [open, setOpen] = React.useState(false);
-    const [title,setTitle] = useState();
+    const [title, setTitle] = React.useState('');
+    const { name } = useParams();
     const theme = useTheme();
     var history = useHistory();
     const token = localStorage.getItem('token');
@@ -29,24 +31,11 @@ function CreatePortfolio() {
         setOpen(false);
     };
 
-    async function HandleCreate() {
-        //  api call for create new portfolio
-        // api('portfolio/create', 'POST', {token, portfolio_name: title}) 
-        //     .then(res => {
-        //         if (res) {
-        //             // Success
-        //             alert("Successfully update your password!");
-        //         } else {
-        //             // Something went wrong
-        //             alert(res);
-        //         }
-        //     })
-        // useEffect(async()=>{
-            const res = await api('portfolio/create', 'POST', {token, portfolio_name: title});
-        // },[title]);
+    const handleCreate = useEffect(async() => {
         setOpen(false);
-        alert(title);
-    };
+        const res = await api('portfolio/create', 'POST', {token, portfolio_name: title});
+    },[name]);
+
 
     return (
         <div>
@@ -72,7 +61,7 @@ function CreatePortfolio() {
                     <br></br>
                     <DialogActions>
                     <Button autoFocus onClick={handleClose}>Cancel</Button>
-                    <Button onClick={HandleCreate} autoFocus>
+                    <Button onClick={handleCreate} autoFocus>
                         Confirm
                     </Button>
                     </DialogActions>
