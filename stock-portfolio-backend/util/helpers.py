@@ -58,3 +58,21 @@ def holdings_to_csv_string(holdings):
             {holding['qty']},{holding['type']},{holding['brokerage']},{holding['exchange']},\
             {holding['date']},{holding['currency']}\n"
     return csv_string
+
+def csv_string_to_holdings(csv_string):
+    '''
+    Takes in a generic CSV string and returns a list of holding dicts.
+    '''
+
+    holdings = []
+
+    # Extract the header
+    header = csv_string.split("\n")[0]
+    headers = header.split(",")
+
+    # Convert rows to dicts
+    holdings = csv_string.split("\n")[1:]
+    holdings = [holding.split(",") for holding in holdings]
+    holdings = [dict(zip(headers, holding)) for holding in holdings]
+
+    return holdings
