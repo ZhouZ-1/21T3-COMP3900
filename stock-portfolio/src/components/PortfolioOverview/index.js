@@ -27,7 +27,7 @@ import {
 import api from "../../api";
 import NavBar from "../NavBar";
 import CreatePortfolio from "../CreatePortfolio";
-import HandlePortfolio from "../HandlePortfolio";
+import PortfolioPage from "../PortfolioPage";
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -39,17 +39,18 @@ const useStyles = makeStyles(theme => ({
 function PortfolioOverview() {
     // comment after it is done
     var data = [
-        { id: 1, Portfolio: 1, earnings: 13000 },
-        { id: 2, Portfolio: 2, earnings: 16500 },
-        { id: 3, Portfolio: 3, earnings: 14250 },
-        { id: 4, Portfolio: 4, earnings: 19000 }
+        { portfolio_id: 1, portfolio_name: 1, earnings: 13000 },
+        { portfolio_id: 2, portfolio_name: 2, earnings: 16500 },
+        { portfolio_id: 3, portfolio_name: 3, earnings: 14250 },
+        { portfolio_id: 4, portfolio_name: 4, earnings: 19000 }
     ];
                                 
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
+    const [portState, setPortState] = useState(false);
     const theme = useTheme();
     var history = useHistory();
     const classes = useStyles();
-    const { port } = useParams();
+    const [port, setPort] = useState([]);
     const token = localStorage.getItem('token');
 
     const handleClickOpen = () => {
@@ -85,13 +86,16 @@ function PortfolioOverview() {
     //     // const port = await api(`portfolio?token=${token}`, 'GET');
     //     alert(port);
     // };
-    // const handlePortfolio = useEffect(async() => {
-    //     const portr = await api(`portfolio?token=${token}`, 'GET');
-
-    //     return (
-
-    //     );
-    // },[port]);
+    const handlePortfolio = useEffect(async(token) => {
+        const portr = await api(`portfolio?token=${token}`, 'GET');
+        { portr.portfolios.map(p => (
+            <p>portfolio: {p}</p>
+        ))};
+        if (portr.portfolios != undefined){
+            setPort(portr.portfolios);
+            setPortState(true);
+        }
+    });
 
 
     // const handleRedirect = (id) => {
@@ -105,43 +109,46 @@ function PortfolioOverview() {
     // https://www.freecodecamp.org/news/build-a-custom-pagination-component-in-react/
 
     return (
-        <div className={classes.root}>
+        <div className={classes.root} onChange={handlePortfolio}>
             <NavBar/>
             <br></br>
             <CreatePortfolio />
             <br></br>
-            <HandlePortfolio token={token} />
-            {/* <Grid
+            <Grid
                 container
                 spacing={2}
                 direction="row"
                 justify="flex-start"
                 alignItems="flex-start"
             >
-                {portr.portfolios.map(p => (
-                    <Grid item xs={12} sm={6} md={3} key={data.indexOf(p)}>
-                        <Link to={`portfolio/${elem.id}`}>
+                {portState && 
+                    port.map(p => (
+                    <Grid item xs={12} sm={6} md={3} key={port.indexOf(p)}>
+                        <Link to={`portfolio/${p.portfolio_id}`}>
                         <Card 
                             variant="outlined"
                             // component={PortfolioPage}
-                            // to={`portfolio/${elem.id}`}
+                            // to={`portfolio/${p.portfolio_id}`}
                             // onClick={handleRedirect}
                             onClick={PortfolioPage}
                             >
                             <CardHeader
                                     title={`Portfolio : ${p.portfolio_name}`}
-                                    // subheader={`earnings : ${elem.earnings}`}
+                                    // subheader={`earnings : ${p.earnings}`}
                                 />  
                             <CardContent>
                                 <Typography variant="h5" gutterBottom>
-                                    Description
+                                    {/* Description */}
                                 </Typography>
                             </CardContent>
                         </Card>
                         </Link>
                     </Grid>
                 ))}
-            </Grid> */}
+                {!portState &&
+                    <p>No Portfolio yet! Please create one</p>
+                }
+            </Grid>
         </div>
         
     )
