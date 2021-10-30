@@ -164,3 +164,14 @@ basic_holding_info = api.model('basic_holding_info', {
 holdings_response_model = api.model('holdings_response_model', {
     "holdings": fields.List(fields.Nested(basic_holding_info))
 })
+
+simple_holding_info = api.model('simple_holding_info', {
+    "symbol": fields.String(example='TSLA'),
+    "qty": fields.Float(example=99.9, description='The amount of stock that was bought/sold'),
+    "average_price": fields.Float(example=1.1, description='The average price of the stock'),
+})
+
+summary_response_model = api.model('summary_response_model', {
+    "summary": fields.List(fields.Nested(simple_holding_info))
+})
+

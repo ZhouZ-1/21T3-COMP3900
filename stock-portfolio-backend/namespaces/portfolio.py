@@ -33,12 +33,33 @@ class GetPortfolios(Resource):
     "description": "Retrieve a summary of all the user's portfolios"
 })
 class Summary(Resource):
+    @portfolio.expect(get_holdings_model)
+    @portfolio.response(200, 'Success', summary_response_model)
+    @portfolio.response(400, 'Invalid token')
     def post(self):
         """
-        [Unfinished] Returns a summary of all the user's portfolio data combined together. 
+        Returns a summary of a user's portfolio data combined together. 
         """
+        body = request.get_json()
+        token = body["token"]
+        portfolio_id = body["portfolio_id"]
+
+        # Get username from token
+        user = db.get_user_by_value("active_token", token)
+        if not user:
+            abort(400, "Token is invalid")
+
+        # Check that user owns the portfolio corresponding to the portfolio_id.
+        portfolio = db.query_portfolio(portfolio_id)
+        if portfolio is None or portfolio["owner"] != user["username"]:
+            abort(400, "User does not own portfolio")
+
+        # Retrieve list of holdings from portfolio.
+        holdings = db.get_holdings(portfolio_id)
+
+        # Return a list of holdings.
         return {
-            "key": "value"
+            "holdings": holdings_summary(holdings)
         }
 
 @portfolio.route('/create', doc={
