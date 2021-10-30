@@ -145,3 +145,8 @@ edit_stock_model = api.inherit('edit_stock_model', delete_holding_model, {
     "date": fields.String(example="19/10/21", description="A string in the format dd/mm/yy"),
     "currency": fields.String(example="USD", description="The currency that is used to buy the stock")
 })
+
+upload_csv_model = api.inherit('upload_csv_model', token_model, {
+    "csv_string": fields.String(required=True, example="symbol,value,qty,type,brokerage,exchange,date,currency\nAAPL,1.1,99.9,buy,9.95,NYSE,19/10/21,USD\nMSFT,1.1,99.9,buy,9.95,NYSE,19/10/21,USD"),
+    "portfolio_name": fields.String(required=True, example="My Portfolio")
+})

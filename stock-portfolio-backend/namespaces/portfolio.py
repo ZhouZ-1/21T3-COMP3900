@@ -293,10 +293,34 @@ class DownloadHoldings(Resource):
     "description": "Allows the user to upload a csv of their current holdings. This creates a new portfolio."
 })
 class UploadHoldings(Resource):
+    @portfolio.expect(upload_csv_model)
+    @portfolio.response(200, 'Success', portfolio_id_model)
     def post(self):
         """
-        [Unfinished] Create a portfolio and populate it with holdings from a csv.
+        Create a portfolio and populate it with holdings from a csv. Note that the frontend will have to send the csv as a string, including headers.
+        Currently only works for csv files with the following headers: symbol, qty, price, date, type, brokerage, exchange, currency. This means that
+        it currently will only work with the csv files that we generate.
         """
+        body = request.json
+        token = body['token']
+        portfolio_name = body['portfolio_name']
+        csv_string = body['csv_string']
+
+        # Check that token is valid.
+        user = db.get_user_by_value("active_token", token)
+        if not user:
+            abort(400, "Token is invalid")
+
+        # Create portfolio.
+        portfolio_id = db.add_portfolio(user["username"], portfolio_name)
+
+        # Parse csv string into holdings.
+        holdings = csv_string_to_holdings(csv_string)
+
+        # Add holdings to portfolio.
+        for holding in holdings:
+            db.add_stock(portfolio_id, holding["symbol"], holding["value"], holding["qty"], holding["type"], holding["brokerage"], holding["exchange"], holding["date"], holding["currency"])
+
         return {
-            "portfolio_id": "1"
+            "portfolio_id": portfolio_id
         }
