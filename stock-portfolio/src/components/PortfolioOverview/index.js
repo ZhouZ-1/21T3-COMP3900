@@ -87,14 +87,26 @@ function PortfolioOverview() {
     //     alert(port);
     // };
     const handlePortfolio = useEffect(async(token) => {
-        const portr = await api(`portfolio?token=${token}`, 'GET');
-        { portr.portfolios.map(p => (
-            <p>portfolio: {p}</p>
-        ))};
-        if (portr.portfolios != undefined){
-            setPort(portr.portfolios);
-            setPortState(true);
-        }
+        // let portr = await api(`portfolio?token=${token}`, 'GET');
+        // useEffect(() => {
+        //     let portr = await api(`portfolio?token=${token}`, 'GET');
+        //     portr = portr.map((dev) => alert(dev));
+        //     // arr.forEach(async (dev) => {
+        //     //     let { data } = await api.get(`/users/${dev}`);
+        //     //     setDevs((devs) => [...devs, data]);
+        //     // })
+        //     setPort([port.portfolios]);
+        //     setPortState(true);
+        // }, [port]);
+        // });
+        // if (port.portfolios != undefined){
+        //     setPort([port.portfolios]);
+        //     setPortState(true);
+        // }
+        const res = await api(`portfolio?token=${localStorage.getItem('token')}`, 'GET');
+        setPort(res.portfolios);
+        setPortState(true);
+    
     });
 
 
@@ -109,7 +121,7 @@ function PortfolioOverview() {
     // https://www.freecodecamp.org/news/build-a-custom-pagination-component-in-react/
 
     return (
-        <div className={classes.root} onChange={handlePortfolio}>
+        <div className={classes.root} onClick={handlePortfolio}>
             <NavBar/>
             <br></br>
             <CreatePortfolio />
