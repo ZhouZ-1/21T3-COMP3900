@@ -76,3 +76,27 @@ def csv_string_to_holdings(csv_string):
     holdings = [dict(zip(headers, holding)) for holding in holdings]
 
     return holdings
+
+def holdings_summary(holdings):
+    # Combine holdings with same symbol together.
+    holdings_summary = {}
+    for holding in holdings:
+        if holding["symbol"] not in holdings_summary:
+            holdings_summary[holding["symbol"]] = {
+                "symbol": holding["symbol"],
+                "qty": holding["qty"], # Assuming the first holding in a portfolio is not a sell order.
+                "average_price": holding["value"]
+            }
+        else:
+            prev_holding = holdings_summary[holding["symbol"]]
+
+            # Update quantity and average price for buy order
+            if holding["type"] == 'buy':
+                prev_holding["average_price"] = (prev_holding["average_price"] * prev_holding["qty"] + holding["value"] * holding["qty"]) / (prev_holding["qty"] + holding["qty"])
+                prev_holding["qty"] += holding["qty"]
+            # Update quantity and average price for sell order
+            elif holding["type"] == 'sell':
+                prev_holding["average_price"] = (prev_holding["average_price"] * prev_holding["qty"] - holding["value"] * holding["qty"]) / (prev_holding["qty"] - holding["qty"])
+                prev_holding["qty"] -= holding["qty"]
+
+    return list(holdings_summary.values())

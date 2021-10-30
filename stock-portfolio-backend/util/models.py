@@ -150,3 +150,34 @@ upload_csv_model = api.inherit('upload_csv_model', token_model, {
     "csv_string": fields.String(required=True, example="symbol,value,qty,type,brokerage,exchange,date,currency\nAAPL,1.1,99.9,buy,9.95,NYSE,19/10/21,USD\nMSFT,1.1,99.9,buy,9.95,NYSE,19/10/21,USD"),
     "portfolio_name": fields.String(required=True, example="My Portfolio")
 })
+
+get_holdings_model = api.inherit('get_holdings_model', token_model, {
+    "portfolio_id": fields.Integer(required=True, example=1)
+})
+
+basic_holding_info = api.model('basic_holding_info', {
+    "holding_id": fields.Integer(required=True, example=1),
+    "symbol": fields.String(example='TSLA'),
+    "value": fields.Float(example=1.1, description='The value of a single stock'),
+    "qty": fields.Float(example=99.9, description='The amount of stock that was bought/sold'),
+    "type": fields.String(example="buy", description="Either 'buy' or 'sell'"),
+    "brokerage": fields.Float(example=9.95, description="The amount of brokerage you paid"),
+    "exchange": fields.String(example='NYSE', description="The name of the exchange that this stock belongs to"),
+    "date": fields.String(example="19/10/21", description="A string in the format dd/mm/yy"),
+    "currency": fields.String(example="USD", description="The currency that is used to buy the stock")
+})
+
+holdings_response_model = api.model('holdings_response_model', {
+    "holdings": fields.List(fields.Nested(basic_holding_info))
+})
+
+simple_holding_info = api.model('simple_holding_info', {
+    "symbol": fields.String(example='TSLA'),
+    "qty": fields.Float(example=99.9, description='The amount of stock that was bought/sold'),
+    "average_price": fields.Float(example=1.1, description='The average price of the stock'),
+})
+
+summary_response_model = api.model('summary_response_model', {
+    "summary": fields.List(fields.Nested(simple_holding_info))
+})
+
