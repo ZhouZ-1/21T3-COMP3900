@@ -139,11 +139,31 @@ class EditPortfolio(Resource):
     "description": "View a list of holdings that is in a portfolio, given the portfolio_id."
 })
 class GetHoldings(Resource):
-    def get(self):
+    @portfolio.expect(get_holdings_model)
+    @portfolio.response(200, 'Success', holdings_response_model)
+    @portfolio.response(400, 'Invalid token')
+    def post(self):
         """
-        [Unfinished] Retrieve holdings from portfolio.
+        Retrieve holdings from portfolio.
         """
-        return [{}]
+        body = request.json
+        token = body['token']
+        portfolio_id = body['portfolio_id']
+
+        # Get username from token
+        user = db.get_user_by_value("active_token", token)
+        if not user:
+            abort(400, "Token is invalid")
+
+        # Check that user owns the portfolio corresponding to the portfolio_id.
+        portfolio = db.query_portfolio(portfolio_id)
+        if portfolio is None or portfolio["owner"] != user["username"]:
+            abort(400, "User does not own portfolio")
+
+        # Retrieve list of holdings from portfolio.
+        holdings = db.get_holdings(portfolio_id)
+
+        return holdings
 
 @portfolio.route('/holdings/add', doc={
     "description": "Given the portfolio_id, add a stock and it's relevant details to the portfolio (qty, price, date, type etc)."
