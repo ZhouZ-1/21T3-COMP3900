@@ -2,6 +2,7 @@ import NavBar from "../NavBar";
 import { useHistory } from "react-router";
 
 function MainPage(){
+    //  Just a comment
     const history = useHistory();
     let isAuthenticated = !!localStorage.getItem("token")
     return (
