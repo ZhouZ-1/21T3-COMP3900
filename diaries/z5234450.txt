@@ -20,4 +20,12 @@ User Password can be changed for users.
 
 # Week 5
 Working for Tabs on account page and account management.
-Intergrate account page with backend.
+Finish update account function and account details.
+
+# Week 6
+Add portfolio overview page.
+Fix my laptop problem with unable to connect to api.
+
+# Week 7
+Finish portfolio overview page and individual portfolio page.
+Make a draft of watchlist page.
