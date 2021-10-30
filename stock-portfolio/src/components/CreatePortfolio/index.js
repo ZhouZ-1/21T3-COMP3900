@@ -33,6 +33,7 @@ function CreatePortfolio(props) {
 
     const handleCreate = useEffect(async() => {
         setOpen(false);
+        if (title == '') return;
         const res = await api('portfolio/create', 'POST', {token, portfolio_name: title});
     },[name]);
 
