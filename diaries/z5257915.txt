@@ -39,3 +39,12 @@ Saturday: We assigned stuff for the next sprint after taking a short break. Also
 Monday: Started brainstorming and creating stub functions and documentation for the portfolio routes. 
 Tuesday: Create schema for the portfolio and holdings tables. Also finished the implementation of a few core routes.
 Wednesday: Finished remove holdings implementation.
+Thursday: Finished edit holdings in the backend.
+Saturday: Did a little bit of work on the portfolio route. Not sure what else we need to do so far. Too many people missing at the meeting so pushed back to Monday
+
+# Week 7
+Monday: Clarified what needed to be done in the 8pm meeting. Not much more time in the day so will work on it later.
+Tuesday: Started working on being able to upload and download portfolios as a csv file.
+Wednesday: Implemented logic for the downloading of the portfolio as a csv file.
+Thursday: Had a maths test today so no 3900 work today.
+Friday: Finished the uploading of the portfolio as a csv file.

@@ -1,7 +1,13 @@
 import React from 'react';
 import NavBar from "../NavBar";
+<<<<<<< HEAD
+=======
+import { useHistory } from "react-router";
+>>>>>>> portfolio-page-backup
 
 function MainPage(){
+    const history = useHistory();
+    let isAuthenticated = !!localStorage.getItem("token")
     return (
         <div>
             <div className="navBar">
@@ -9,7 +15,15 @@ function MainPage(){
             </div>
 
             <div className="mainContents">
-                <p>Some contents here</p>
+                {isAuthenticated ? (
+                    <div>
+                        <button type="button" class="btn btn-warning" onClick={() => history.push('/watchList')}>Go to the watch list</button>
+                        <br></br>
+                        <button type="button" class="btn btn-warning" onClick={() => history.push('/viewPortfolio')}>Go to the Portfolio Page</button>
+                    </div>
+                    ): 
+                    (<p>Some contents here</p>
+                )}
             </div>
 
             <div className="footer">

@@ -63,15 +63,15 @@ function PortfolioPage() {
   };
 
   const handleDeletePortfolio = () => {
-    setOpen(false);
     api('portfolio/delete', 'DELETE', {
       token: localStorage.getItem('token'), portfolio_id: id
     })
       .then((res) => {
         if (res.is_success) {
-          localStorage.removeItem('token');
+          localStorage.removeItem('id');
         }
       });
+    setOpen(false);
     history.push('/viewPortfolio');
   };
 
