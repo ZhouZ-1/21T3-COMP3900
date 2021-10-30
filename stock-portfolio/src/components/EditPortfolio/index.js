@@ -16,6 +16,7 @@ import api from "../../api";
 function EditPortfolio() {
   var history = useHistory();
   const [open, setOpen] = useState(false);
+  const [title, setTitle] = useState('');
   const [stock, setStock] = useState([]);
   const [stockState, setStockState] = useState(false);
   const [isLoading,setIsLoading] = useState(false);

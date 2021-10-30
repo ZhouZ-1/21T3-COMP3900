@@ -4,7 +4,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import NavBar from '../NavBar';
 import getRows from './getRows';
 import api from '../../api';
-import PortfolioModal from './PortfolioModal';
+// import PortfolioModal from './PortfolioModal';
 
 function WatchList() {
   const columns = [
@@ -46,10 +46,10 @@ function WatchList() {
         <div>
           <p3>Watchlist</p3>
           <button type="button" class="btn btn-outline-primary ms-5" onClick={onDeleteClick}>Delete Stock</button>
-          <button type="button" class="btn btn-outline-primary ms-5" data-bs-toggle="modal" data-bs-target="#portfolioModal">
+          {/* <button type="button" class="btn btn-outline-primary ms-5" data-bs-toggle="modal" data-bs-target="#portfolioModal">
             Move stocks to portfolio
           </button>
-          <PortfolioModal/>
+          <PortfolioModal/> */}
         </div>
         <div style={{ height: 400, width: '100%' }}>
           <DataGrid

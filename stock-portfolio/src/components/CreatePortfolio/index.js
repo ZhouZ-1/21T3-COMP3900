@@ -1,7 +1,6 @@
 import React from 'react';
 import { useState, useEffect } from "react";
 import { useHistory } from "react-router";
-import { useParams } from "react-router-dom";
 import { 
     Button,  
     TextField,
@@ -18,8 +17,6 @@ import api from "../../api";
 function CreatePortfolio(props) {
     const [open, setOpen] = React.useState(false);
     const [title, setTitle] = React.useState('');
-    // const { name } = useParams();
-    const theme = useTheme();
     var history = useHistory();
     const token = localStorage.getItem('token');
 
@@ -40,9 +37,7 @@ function CreatePortfolio(props) {
         const res = await api('portfolio/create', 'POST', {token, portfolio_name: title});
         if (res) {
             alert("Successfully Add A New Portfolio!");
-        } else {
-            alert(res);
-        }
+        } 
         setOpen(false);
     });
 

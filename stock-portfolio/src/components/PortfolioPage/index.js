@@ -1,4 +1,6 @@
 import React from 'react';
+import { Component } from 'react';
+import { render } from 'react-dom';
 import { useState, useEffect } from "react";
 import { useHistory } from "react-router";
 import { 
@@ -14,6 +16,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import api from "../../api";
 import DeletePortfolio from "../DeletePortfolio";
 import EditPortfolio from "../EditPortfolio";
+// import moment from "moment";
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 70 },
@@ -79,14 +82,58 @@ function PortfolioPage() {
 
   });
 
+  // const getCurrentDate = () => {
+  //   let currentDate = new Date();
+  //   let date = currentDate.getFullYear() + '-' + (currentDate.getMonth()+1) + '-' + currentDate.getDate() +' '+ currentDate.getHours()+':'+ currentDate.getMinutes()+':'+ currentDate.getSeconds();
+  //   return {date};
+  // };
+
+  const addStock = useEffect(async() => {
+    setIsLoading(true);
+    const res = await api('portfolio/holdings/add', 'POST', {
+      token: localStorage.getItem('token'), 
+      holding_id: localStorage.getItem('id'),
+      symbol: "TSLA",
+      value: "1.1",
+      qty: "1.1",
+      type: "buy",
+      brokerage: "9.95",
+      exchange: "NYSE",
+      date: "10/10/2021",
+      // date: `${getCurrentDate}`,
+      currency: "USD"
+    });
+
+    if (res != undefined) {
+        setStock(res.holdings);
+        setStockState(true);
+        setIsLoading(false);
+    } 
+
+  });
+
+  const deleteStock = useEffect(async() => {
+    setIsLoading(true);
+    const res = await api('portfolio/holdings/delete', 'DELETE', {
+      token: localStorage.getItem('token'), 
+      holding_id: localStorage.getItem('id')
+    });
+
+    if (res != undefined) {
+        setStock(res.holdings);
+        setStockState(true);
+        setIsLoading(false);
+    } 
+
+  });
 
   return (
     <div onClick={fetchStock}>
       <div>
         <p3>Portfolio</p3>
         <EditPortfolio/>
-        <Button class="btn btn-outline-primary ms-5">Add Stock</Button>
-        <Button class="btn btn-outline-primary ms-5">Delete Stock</Button>
+        <Button class="btn btn-outline-primary ms-5" onClick="addStock">Add Stock</Button>
+        <Button class="btn btn-outline-primary ms-5" onClick="deleteStock">Delete Stock</Button>
       </div>
       <div style={{ height: 400, width: '100%' }}>
         <DataGrid

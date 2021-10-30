@@ -37,8 +37,8 @@ function PortfolioOverview() {
     const fetchPortfolio = useEffect(async() => {
         setIsLoading(true);
         const res = await api(`portfolio?token=${localStorage.getItem('token')}`, 'GET');
-        console.log(res, res.portfolios);
         if (res) {
+            console.log(res);
             setPort(res.portfolios);
             setPortState(true);
             setIsLoading(false);
@@ -48,7 +48,7 @@ function PortfolioOverview() {
             )
         }
         setIsLoading(false);
-    });
+    }, [port]);
 
 
     const handleRedirect = (id) => {
