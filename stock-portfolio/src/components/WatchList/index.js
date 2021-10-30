@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { useState,useEffect } from "react";
 import { DataGrid } from '@mui/x-data-grid';
 import NavBar from '../NavBar';
@@ -40,7 +40,7 @@ function WatchList() {
     setRows(newRows);
   }
   return (
-    <>
+    <div>
       <NavBar></NavBar>
       <div>
         <div>
@@ -67,7 +67,7 @@ function WatchList() {
         </div>
         
       </div>      
-    </>
+    </div>
   );
 }
 

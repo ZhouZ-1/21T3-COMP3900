@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import api from "../../api";
 import NavBar from "../NavBar";
+import Loader from "../Loader";
 import CreatePortfolio from "../CreatePortfolio";
 import PortfolioPage from "../PortfolioPage";
 
@@ -25,19 +26,28 @@ const useStyles = makeStyles(theme => ({
 }))
 
 function PortfolioOverview() {
-    const [portState, setPortState] = useState(false);
     const theme = useTheme();
     var history = useHistory();
     const classes = useStyles();
     const [port, setPort] = useState([]);
+    const [portState, setPortState] = useState(false);
+    const [isLoading,setIsLoading] = useState(false);
 
 
-    const handlePortfolio = useEffect(async() => {
+    const fetchPortfolio = useEffect(async() => {
+        setIsLoading(true);
         const res = await api(`portfolio?token=${localStorage.getItem('token')}`, 'GET');
-        // if (res != undefined) {
+        console.log(res, res.portfolios);
+        if (res) {
             setPort(res.portfolios);
             setPortState(true);
-        // }
+            setIsLoading(false);
+        } else {
+            return (
+                <p>No Portfolio yet! Please create one</p>
+            )
+        }
+        setIsLoading(false);
     });
 
 
@@ -50,7 +60,7 @@ function PortfolioOverview() {
     // https://www.freecodecamp.org/news/build-a-custom-pagination-component-in-react/
 
     return (
-        <div className={classes.root} onClick={handlePortfolio}>
+        <div className={classes.root} onClick={fetchPortfolio}>
             <NavBar/>
             <br></br>
             <CreatePortfolio />
@@ -62,6 +72,9 @@ function PortfolioOverview() {
                 justify="flex-start"
                 alignItems="flex-start"
             >
+                { isLoading && 
+                    (<Loader></Loader>)
+                }
                 {portState && 
                     <div>
                         <p>Display Portfolio</p>
@@ -86,9 +99,6 @@ function PortfolioOverview() {
                         </Grid>
                     ))}
                     </div>
-                }
-                {!portState &&
-                    <p>No Portfolio yet! Please create one</p>
                 }
             </Grid>
         </div>

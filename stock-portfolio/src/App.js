@@ -1,15 +1,10 @@
 import React from 'react';
 import './App.css';
+import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 import MainPage from './components/MainPage/index';
 import SignIn from './components/SignIn/index';
 import SignUp from './components/SignUp/index';
 import AccountPage from './components/AccountPage/index';
-import ForgotMyPassword from './components/ForgotMyPassword';
-import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
-import MainPage from './components/MainPage';
-import SignIn from './components/SignIn';
-import SignUp from './components/SignUp';
-import AccountPage from './components/AccountPage';
 import ForgotMyPassword from './components/ForgotMyPassword';
 import StockDetails from './components/StockDetails';
 import StockList from './components/StockList';

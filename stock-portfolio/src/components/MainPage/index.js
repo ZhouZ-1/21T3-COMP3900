@@ -1,9 +1,6 @@
 import React from 'react';
 import NavBar from "../NavBar";
-<<<<<<< HEAD
-=======
 import { useHistory } from "react-router";
->>>>>>> portfolio-page-backup
 
 function MainPage(){
     const history = useHistory();

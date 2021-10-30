@@ -18,7 +18,7 @@ import api from "../../api";
 function CreatePortfolio(props) {
     const [open, setOpen] = React.useState(false);
     const [title, setTitle] = React.useState('');
-    const { name } = useParams();
+    // const { name } = useParams();
     const theme = useTheme();
     var history = useHistory();
     const token = localStorage.getItem('token');
@@ -32,10 +32,19 @@ function CreatePortfolio(props) {
     };
 
     const handleCreate = useEffect(async() => {
-        setOpen(false);
-        if (title == '') return;
+        // if (title == '') {
+        //     alert("Please Enter A Title.");
+        //     setOpen(false);
+        //     return;
+        // } 
         const res = await api('portfolio/create', 'POST', {token, portfolio_name: title});
-    },[name]);
+        if (res) {
+            alert("Successfully Add A New Portfolio!");
+        } else {
+            alert(res);
+        }
+        setOpen(false);
+    });
 
 
     return (
