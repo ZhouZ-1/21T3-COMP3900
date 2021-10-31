@@ -50,30 +50,30 @@ function PortfolioOverview() {
         setOpen(false);
     };
 
-
-    const fetchPortfolio = useEffect(async() => {
+    useEffect(() => {
         setIsLoading(true);
-        const res = await api(`portfolio?token=${localStorage.getItem('token')}`, 'GET');
-        if (res) {
-            setPort(res.portfolios);
-            if (port != []) {
-                setPortState(true);
-            }
-        } 
+        api(`portfolio?token=${localStorage.getItem('token')}`, 'GET')
+            .then(res => {
+                if (res) {
+                    setPort(res.portfolios);
+                    if (port != []) {
+                        setPortState(true);
+                    }
+                } 
+            })
         setIsLoading(false);
-    });
+    }, []);
 
-    const handleCreate = useEffect(async() => {
-        // handleClose();
+    const handleCreate = async () => {
         if (title != '') {
             const res = await api('portfolio/create', 'POST', {token: localStorage.getItem('token'), portfolio_name: title});
             if (res) {
                 alert("Successfully Add A New Portfolio!");
-                history.push('/viewPortfolio');
+                history.go(0);
             } 
         } 
         handleClose();
-    });
+    };
 
 
     const handleRedirect = (id) => {
@@ -107,7 +107,7 @@ function PortfolioOverview() {
                         <DialogContentText id="alert-dialog-description">
                             Please enter title of Portfolio:
                         </DialogContentText>
-                        <TextField id="demo-helper-text-misaligned-no-helper" label="Title"  required onMouseUp={(evt)=>setTitle(evt.target.value)}></TextField>
+                        <TextField id="demo-helper-text-misaligned-no-helper" label="Title"  required onChange={(evt)=>setTitle(evt.target.value)}></TextField>
                         </DialogContent>
                         <DialogActions>
                         <Button onClick={handleClose}>Cancel</Button>
@@ -128,7 +128,6 @@ function PortfolioOverview() {
                 direction="row"
                 justify="flex-start"
                 alignItems="flex-start"
-                component={fetchPortfolio}
             >
                 {!isLoading && portState && port.map(p => (
                         <Grid item xs={12} sm={6} md={3} key={port.indexOf(p)}>
