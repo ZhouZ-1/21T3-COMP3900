@@ -16,3 +16,16 @@ Started making basic components (NavBar, Sign in and signup page)
 # Week4
 Completed implementation of authentication (front end)
 Completed validation of email, password and added rules.
+
+# Week5
+Added dynamic searching in NavBar
+Implemented a page that shows information of a list of stocks.
+
+# Week6
+Implemented frontend work for Stock detail page (statistics, graphs for time variants).
+Started frontend work for watchlist.
+
+# Week7
+Refactored backend logic for watchlist epic.
+Still in progress of frontend work for watchlist(moving stocks from watchlist to selected portfolio).
+Started Frontend work for CSV import/export
