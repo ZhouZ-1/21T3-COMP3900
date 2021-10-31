@@ -2,28 +2,34 @@ import { useEffect, useState } from "react";
 import api from "../../api";
 import Loader from "../Loader";
 
-function PortfolioModal(){
+function ExportModal(){
     const [isPortfolioLoading,setIsPortfolioLoading] = useState(true);
     const [portfolios,setPortfolios]=useState(<div class="list-group"></div>);
+    const [selectedPortfolioId,setSelectedPortfolioId] = useState();
     useEffect(async ()=>{
         const token = localStorage.getItem('token');
         const response = await api(`portfolio?token=${token}`, 'GET');
         if(response.portfolios.length === 0){
             setPortfolios(<button type="button" class="list-group-item list-group-item-action">You have no Portfolio</button>)
         }else{
-            // const portfolioList = response.portfolios.map((item) => {
-            //     <button type="button" class="list-group-item list-group-item-action">{item.portfolio_name}</button>
-            // });
             const portfolioList = response.portfolios.map(function(item){
-                return <button type="button" class="list-group-item list-group-item-action">{item.portfolio_name}</button>
+                return <button type="button" class="list-group-item list-group-item-action" onClick={()=>onPortfolioClick(item.portfolio_id)}>{item.portfolio_name}</button>
             });
             setPortfolios(portfolioList);
         }
         setIsPortfolioLoading(false);
-    },[])
+    },[]);
+
+    const onPortfolioClick = async (portFolioId) => {
+        console.log(portFolioId);
+        const token = localStorage.getItem('token');
+        console.log(token);
+        const response = await api(`portfolio/download?portfolio_id=${portFolioId}&token=${token}`,'GET');
+        console.log(response);
+    }
     
     return (
-        <div class="modal fade" id="portfolioModal" tabindex="-1" role="dialog" aria-labelledby="portfolioModalLabel" aria-hidden="true">
+        <div class="modal fade" id="exportModal" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                 <div class="modal-header">
@@ -37,11 +43,10 @@ function PortfolioModal(){
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Proceed</button>
                 </div>
                 </div>
             </div>
         </div>
     );
 }
-export default PortfolioModal;
+export default ExportModal;

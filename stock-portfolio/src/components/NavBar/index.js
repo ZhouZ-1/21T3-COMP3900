@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useHistory } from "react-router";
 import api from "../../api";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import ExportModal from "./ExportModal";
 function NavBar(){
     var history = useHistory();
     let isAuthenticated = !!localStorage.getItem("token")
@@ -45,6 +46,10 @@ function NavBar(){
         document.getElementById("searchBar").value = '';
         history.push(`/stockDetails/${symbol}`);
     }
+    const onImportClick = () => {
+        //  Get information from csv
+        //  Pass it in API.
+    }
     
     return(
         <nav class="navbar navbar-light bg-light justify-content-around">
@@ -68,6 +73,15 @@ function NavBar(){
             </form>
             {isAuthenticated ?
                 [(<button type="button" class="btn btn-danger" onClick={() => handleLogout()}>Logout</button>),
+                    (<div>
+                        <button type="button" class="btn btn-outline-primary ms-5" onClick={onImportClick}>Import Portfolio</button>
+                    </div>
+                ),   
+                    (<div>
+                        <button type="button" class="btn btn-outline-primary ms-5" data-bs-toggle="modal" data-bs-target="#exportModal">Export Portfolio</button>
+                        <ExportModal/>
+                    </div>
+                ),
                 (<button type="button" class="btn btn-outline-dark" onClick={()=>history.push('/account')}><AccountCircleIcon/>Account</button>)]:
                 (<button type="button" class="btn btn-outline-dark" onClick={()=>history.push('/signIn')}>Sign in</button>)
             }

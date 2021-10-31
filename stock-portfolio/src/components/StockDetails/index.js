@@ -41,23 +41,19 @@ function StockDetails(){
     }
 
     const onWatchListIconClick = async () => {
-        console.log("is in watchlist?",isInWatchList);
         if(isInWatchList===true){
             console.log('deleting stock');
             const response = await api('watchlist/delete','DELETE', {
                 token: localStorage.getItem('token'),
                 stocks: [symbol]
             });
-            console.log(response);
             setIsInWatchList(false);
         }else{
-            console.log('adding stock')
             const response = await api('watchlist/add','POST', {
                 token: localStorage.getItem('token'),
                 symbol: symbol,
                 stock_name: stockDetails.name
             });
-            console.log('response');
             setIsInWatchList(true);
         }
     }
