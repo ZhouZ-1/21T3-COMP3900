@@ -139,3 +139,18 @@ edit_stock_model = api.inherit('edit_stock_model', delete_holding_model, {
     "date": fields.String(example="19/10/21", description="A string in the format dd/mm/yy"),
     "currency": fields.String(example="USD", description="The currency that is used to buy the stock")
 })
+
+portfolio_performance_model = api.model("portfolio_performance_model", {
+    "portfolio_id": fields.Integer(required=True, example=1),
+})
+
+basic_performance_info = api.model('basic_performance_info', {
+    'orig_price': fields.Float(example=99.9, description='The price of the stock that was originally bought'),
+    'curr_price': fields.Float(example=99.9, description='The price of the stock currently'),
+    'change_val': fields.Float(example=99.9, description='The change in prices'),
+    'change-percent': fields.Float(example=99.9, description='The percentage change')
+})
+
+portfolio_performance_response_model = api.model('portfolio_response_model', {
+    "symbol": fields.Nested(basic_performance_info)
+})
