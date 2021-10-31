@@ -81,9 +81,6 @@ function PortfolioOverview() {
         history.push(`portfolio/${id}`);
     };
 
-    // Pagination
-    // https://www.freecodecamp.org/news/build-a-custom-pagination-component-in-react/
-
     return (
         <div className={classes.root}>
             <NavBar/>
