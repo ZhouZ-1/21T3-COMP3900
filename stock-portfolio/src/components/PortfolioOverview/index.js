@@ -10,12 +10,19 @@ import {
     CardHeader
 } from '@material-ui/core/';
 import { 
+    Button,  
+    TextField,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle, 
     useTheme
 } from '@mui/material';
 import api from "../../api";
 import NavBar from "../NavBar";
 import Loader from "../Loader";
-import CreatePortfolio from "../CreatePortfolio";
+// import CreatePortfolio from "../CreatePortfolio";
 import PortfolioPage from "../PortfolioPage";
 
 const useStyles = makeStyles(theme => ({
@@ -29,9 +36,19 @@ function PortfolioOverview() {
     const theme = useTheme();
     var history = useHistory();
     const classes = useStyles();
+    const [title, setTitle] = React.useState('');
     const [port, setPort] = useState([]);
     const [portState, setPortState] = useState(false);
     const [isLoading,setIsLoading] = useState(false);
+    const [open, setOpen] = React.useState(false);
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+    
+    const handleClose = () => {
+        setOpen(false);
+    };
 
 
     const fetchPortfolio = useEffect(async() => {
@@ -50,6 +67,17 @@ function PortfolioOverview() {
         setIsLoading(false);
     }, [port]);
 
+    const handleCreate = useEffect(async() => {
+        handleClose();
+        if (title != '') {
+            const res = await api('portfolio/create', 'POST', {token: localStorage.getItem('token'), portfolio_name: title});
+            if (res) {
+                alert("Successfully Add A New Portfolio!");
+                history.push('/viewPortfolio');
+            } 
+        } 
+    });
+
 
     const handleRedirect = (id) => {
         localStorage.setItem('id', id);
@@ -60,25 +88,52 @@ function PortfolioOverview() {
     // https://www.freecodecamp.org/news/build-a-custom-pagination-component-in-react/
 
     return (
-        <div className={classes.root} onClick={fetchPortfolio}>
+        <div className={classes.root}>
             <NavBar/>
             <br></br>
-            <CreatePortfolio />
+            <div>
+                <h3>Portfolio Overview</h3>
+                <div>
+                    <Button variant="outlined" onClick={handleClickOpen}>
+                        Create Portfolio
+                    </Button>
+                    <Dialog
+                        open={open}
+                        onClose={handleClose}
+                        aria-labelledby="alert-dialog-title"
+                        aria-describedby="alert-dialog-description"
+                    >
+                        <DialogTitle id="alert-dialog-title">
+                        {"Create Porfolio"}
+                        </DialogTitle>
+                        <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            Please enter title of Portfolio:
+                        </DialogContentText>
+                        <TextField id="demo-helper-text-misaligned-no-helper" label="Title"  required onMouseUp={(evt)=>setTitle(evt.target.value)}></TextField>
+                        </DialogContent>
+                        <DialogActions>
+                        <Button onClick={handleClose}>Cancel</Button>
+                        <Button onClick={handleCreate} autoFocus>
+                            Confirm
+                        </Button>
+                        </DialogActions>
+                    </Dialog>
+                    </div>
+            </div>
             <br></br>
+            { isLoading && 
+                (<Loader></Loader>)
+            }
             <Grid
                 container
                 spacing={2}
                 direction="row"
                 justify="flex-start"
                 alignItems="flex-start"
+                component={fetchPortfolio}
             >
-                { isLoading && 
-                    (<Loader></Loader>)
-                }
-                {portState && 
-                    <div>
-                        <p>Display Portfolio</p>
-                        {port.map(p => (
+                {!isLoading && portState && port.map(p => (
                         <Grid item xs={12} sm={6} md={3} key={port.indexOf(p)}>
                             <Card 
                                 variant="outlined"
@@ -88,6 +143,7 @@ function PortfolioOverview() {
                                 >
                                 <CardHeader
                                         title={`Portfolio : ${p.portfolio_name}`}
+                                        subheader={`id : ${p.portfolio_id}`}
                                         // subheader={`earnings : ${p.earnings}`}
                                     />  
                                 <CardContent>
@@ -98,8 +154,6 @@ function PortfolioOverview() {
                             </Card>
                         </Grid>
                     ))}
-                    </div>
-                }
             </Grid>
         </div>
         
