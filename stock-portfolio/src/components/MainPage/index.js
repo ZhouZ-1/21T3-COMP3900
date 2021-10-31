@@ -11,7 +11,13 @@ function MainPage(){
             </div>
 
             <div className="mainContents">
-                {isAuthenticated ? (<button type="button" class="btn btn-warning" onClick={() => history.push('/watchList')}>Go to the watch list</button>): (<p>Some contents here</p>)}
+                {isAuthenticated ? 
+                (<div>
+                    <button type="button" class="btn btn-warning" onClick={() => history.push('/watchList')}>Go to the watch list</button>
+                    <br></br>
+                    <button type="button" class="btn btn-warning" onClick={() => history.push('/viewPortfolio')}>Go to the Portfolio</button>
+                </div>): 
+                (<p>Some contents here</p>)}
             </div>
 
             <div className="footer">
