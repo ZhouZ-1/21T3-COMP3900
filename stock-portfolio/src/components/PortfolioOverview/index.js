@@ -56,18 +56,18 @@ function PortfolioOverview() {
             .then(res => {
                 if (res) {
                     setPort(res.portfolios);
-                    if (port != []) {
+                    if (port !== []) {
                         setPortState(true);
                     }
                 } 
             })
-        setIsLoading(false);
     }, []);
 
     const handleCreate = async () => {
-        if (title != '') {
+        if (title !== '') {
+            setIsLoading(true);
             const res = await api('portfolio/create', 'POST', {token: localStorage.getItem('token'), portfolio_name: title});
-            if (res) {
+            if (res.portfolios) {
                 alert("Successfully Add A New Portfolio!");
                 history.go(0);
             } 
@@ -116,7 +116,7 @@ function PortfolioOverview() {
                     </div>
             </div>
             <br></br>
-            { isLoading && 
+            { isLoading && !portState &&
                 (<Loader></Loader>)
             }
             <Grid
@@ -126,7 +126,7 @@ function PortfolioOverview() {
                 justify="flex-start"
                 alignItems="flex-start"
             >
-                {!isLoading && portState && port.map(p => (
+                {portState && port.map(p => (
                         <Grid item xs={12} sm={6} md={3} key={port.indexOf(p)}>
                             <Card 
                                 variant="outlined"
