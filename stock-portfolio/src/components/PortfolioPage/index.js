@@ -81,14 +81,16 @@ function PortfolioPage() {
 
   const handleEdit = async () => {
     if (title !== '') {
-        const res = await api('portfolio/edit', 'POST', {
+      const res = await api('portfolio/edit', 'POST', {
         token: localStorage.getItem('token'), 
         portfolio_name: title, 
         portfolio_d: localStorage.getItem('id')
       }); 
-      if (res) {
+      if (!res) {
+        alert(res);
+      } else if (res.is_success) {
         alert("Successfully Update Your Portfolio Name!");
-      }
+      } 
     }
     handleCloseEdit();
   };
