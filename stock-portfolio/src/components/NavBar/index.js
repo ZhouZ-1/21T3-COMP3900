@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router";
 import api from "../../api";
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+// import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 function NavBar(){
     var history = useHistory();
     let isAuthenticated = !!localStorage.getItem("token")
@@ -68,7 +68,8 @@ function NavBar(){
             </form>
             {isAuthenticated ?
                 [(<button type="button" class="btn btn-danger" onClick={() => handleLogout()}>Logout</button>),
-                (<button type="button" class="btn btn-outline-dark" onClick={()=>history.push('/account')}><AccountCircleIcon/>Account</button>)]:
+                // (<button type="button" class="btn btn-outline-dark" onClick={()=>history.push('/account')}><AccountCircleIcon/>Account</button>)]:
+                (<button type="button" class="btn btn-outline-dark" onClick={()=>history.push('/account')}>Account</button>)]:
                 (<button type="button" class="btn btn-outline-dark" onClick={()=>history.push('/signIn')}>Sign in</button>)
             }
         </nav>
