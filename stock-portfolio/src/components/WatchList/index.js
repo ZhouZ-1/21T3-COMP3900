@@ -7,6 +7,7 @@ import api from '../../api';
 import PortfolioModal from './PortfolioModal';
 
 function WatchList() {
+  const token = localStorage.getItem('token');
   const columns = [
     { field: 'id', headerName: 'ID', width: 100 },
     { field: 'code', headerName: 'Stock Code', width: 200 },
@@ -16,28 +17,33 @@ function WatchList() {
   const [rows,setRows] = useState([
       { id: 0, code: 'N/A', name: 'RENDERING WATCHLIST.... PLEASE WAIT'}
   ]);
-  const [select, setSelection] = useState([]);
+  const [selectedStocks, setSelectedStocks] = useState([]);
   
   useEffect(async ()=>{
-    const row2 = await getRows(localStorage.getItem('token'));
-    setRows(row2);
+    const newRow = await getRows(token);
+    setRows(newRow);
   },[]);
 
   const onDeleteClick = async () => {
     let stockToRemove = [];
     rows.map((item)=>{
-      select.map((idx)=>{
+      selectedStocks.map((idx)=>{
         if(idx === item.id){
           stockToRemove.push(item.code);
         }
       })
     });
-    const newRows = rows.filter(item=> !select.includes(item.id));
+    const newRows = rows.filter(item=> !selectedStocks.includes(item.id));
     await api('watchlist/delete','DELETE',{
-      token: localStorage.getItem('token'),
+      token: token,
       stocks: stockToRemove
     });
     setRows(newRows);
+  }
+
+  const onMoveStocksClick = async () => {
+    const newRow = await getRows(token);
+    setRows(newRow);
   }
   return (
     <>
@@ -49,7 +55,7 @@ function WatchList() {
           <button type="button" class="btn btn-outline-primary ms-5" data-bs-toggle="modal" data-bs-target="#portfolioModal">
             Move stocks to portfolio
           </button>
-          <PortfolioModal/>
+          <PortfolioModal selectedStocks={selectedStocks} allStocks={rows} onProceedClick={onMoveStocksClick}/>
         </div>
         <div style={{ height: 400, width: '100%' }}>
           <DataGrid
@@ -58,14 +64,9 @@ function WatchList() {
             punitsSize={5}
             rowsPerPunitsOptions={[5]}
             checkboxSelection
-            onSelectionModelChange={(ids) => setSelection(ids)}
+            onSelectionModelChange={(ids) => setSelectedStocks(ids)}
           />
         </div>
-        
-        <div class="btn-group-vertical">
-          ...
-        </div>
-        
       </div>      
     </>
   );
