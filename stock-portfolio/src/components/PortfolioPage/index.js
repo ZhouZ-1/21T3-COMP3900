@@ -40,11 +40,17 @@ function PortfolioPage() {
   var history = useHistory();
   const [openEdit, setOpenEdit] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
+  const [openAdd, setOpenAdd] = useState(false);
+  const [openDS, setOpenDS] = useState(false);
   const [title,setTitle] = useState('');
   const [symbol,setSymbol] = useState([]);
   const [stock, setStock] = useState([]);
   const [stockState, setStockState] = useState(false);
   const [isLoading,setIsLoading] = useState(false);
+  const [keywords,setKeyWords] = useState('');
+  const [showAllStocks,setShowAllStocks] = useState(true);
+  const [stocks, setStocks] = useState();
+  const [showDropDown,setShowDropDown] = useState(false);
 
   const handleClickOpenEdit = () => {
     setOpenEdit(true);
@@ -52,6 +58,22 @@ function PortfolioPage() {
 
   const handleCloseEdit = () => {
     setOpenEdit(false);
+  };
+
+  const handleClickOpenAdd = () => {
+    setOpenAdd(true);
+  };
+
+  const handleCloseAdd = () => {
+    setOpenAdd(false);
+  };
+
+  const handleClickOpenDS = () => {
+    setOpenDS(true);
+  };
+
+  const handleCloseDS = () => {
+    setOpenDS(false);
   };
 
   const handleClickOpenDelete = () => {
@@ -102,8 +124,41 @@ function PortfolioPage() {
     return date;
   };
 
+  const findAddStock = async () => {
+    if(keywords === ''){
+      setShowAllStocks(true);
+    }
+  }
+
+  const onSearchFocus = () => {
+    setShowDropDown(true);
+  }
+
+  const onKeywordChange = async (e) => {
+    setKeyWords(e.target.value);
+    if (keywords === ''){
+      setShowAllStocks(true);
+    }else{
+      setShowAllStocks(false);
+    }
+    const response = await api(`stocks?query=${keywords}&limit=${10}&offset=${2}`,'GET');
+    const stockResults = response.map(function(item,idx){
+      return <li key={idx} onMouseDown={() => onStockClick(item.symbol)}>{item.symbol} {item.name}</li>;
+    });
+    setStocks(stockResults);
+  }
+
+  const onStockClick = (symbol) => {
+    setShowAllStocks(true);
+    setShowDropDown(false);
+    setKeyWords('');
+    document.getElementById("searchBar").value = '';
+    alert(`/stockDetails/${symbol}`);
+  }
+
   const addStock = async () => {
     setIsLoading(true);
+    findAddStock();
     const res = await api('portfolio/holdings/add', 'POST', {
       token: localStorage.getItem('token'), 
       holding_id: localStorage.getItem('id'),
@@ -207,8 +262,65 @@ function PortfolioPage() {
               </Button>
               </DialogActions>
           </Dialog>
+
           <Button class="btn btn-outline-primary ms-5" onClick={addStock}>Add Stock</Button>
+          <Dialog
+              open={openAdd}
+              onClose={handleCloseAdd}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+          >
+              <DialogTitle id="alert-dialog-title">
+              {"Add Stock"}
+              </DialogTitle>
+              <DialogContent>
+                <form class="form-inline" onSubmit={(e) => e.preventDefault()}>
+                  <input id="searchBar" class="form-control me-2" type="search" placeholder="Search" aria-label="Search" onBlur={()=>setShowDropDown(false)} onFocus={onSearchFocus} onChange={(e) => onKeywordChange(e)} data-bs-toggle="collapse" data-bs-target="#stockList" aria-expanded="false"/>
+                    {showDropDown ? (
+                      showAllStocks ? (
+                        <ul id = "stockList" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                          <li onMouseDown={() => history.push('/stockList')}>Please tap here to search all stocks</li>
+                        </ul>):(
+                        <ul id = "stockList" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                          {stocks}
+                        </ul>
+                        )
+                    ):(null)
+                  }
+          </form>
+
+              </DialogContent>
+              <DialogActions>
+              <Button onClick={handleCloseAdd}>Cancel</Button>
+              <Button onClick={addStock} autoFocus>
+                  Confirm
+              </Button>
+              </DialogActions>
+          </Dialog>
+
           <Button class="btn btn-outline-primary ms-5" onClick={deleteStock}>Delete Stock</Button>
+          <Dialog
+              open={openDS}
+              onClose={handleCloseDS}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+          >
+              <DialogTitle id="alert-dialog-title">
+              {"Delete Stock"}
+              </DialogTitle>
+              <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                  Do you want to Delete These stock(s)?
+              </DialogContentText>
+              <TextField id="demo-helper-text-misaligned-no-helper" label="Title" required onChange={(evt)=>setTitle(evt.target.value)}></TextField>
+              </DialogContent>
+              <DialogActions>
+              <Button onClick={handleCloseDS}>Cancel</Button>
+              <Button onClick={deleteStock} autoFocus>
+                  Confirm
+              </Button>
+              </DialogActions>
+          </Dialog>
         </div>
       </div>
       <div style={{ height: 400, width: '100%' }}>
