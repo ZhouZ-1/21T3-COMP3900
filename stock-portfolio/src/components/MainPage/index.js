@@ -1,5 +1,9 @@
 import NavBar from "../NavBar";
+import { useHistory } from "react-router";
+
 function MainPage(){
+    const history = useHistory();
+    let isAuthenticated = !!localStorage.getItem("token")
     return (
         <div>
             <div className="navBar">
@@ -7,7 +11,7 @@ function MainPage(){
             </div>
 
             <div className="mainContents">
-                <p>Some contents here</p>
+                {isAuthenticated ? (<button type="button" class="btn btn-warning" onClick={() => history.push('/watchList')}>Go to the watch list</button>): (<p>Some contents here</p>)}
             </div>
 
             <div className="footer">

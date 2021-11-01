@@ -33,12 +33,33 @@ class GetPortfolios(Resource):
     "description": "Retrieve a summary of all the user's portfolios"
 })
 class Summary(Resource):
+    @portfolio.expect(get_holdings_model)
+    @portfolio.response(200, 'Success', summary_response_model)
+    @portfolio.response(400, 'Invalid token')
     def post(self):
         """
-        [Unfinished] Returns a summary of all the user's portfolio data combined together. 
+        Returns a summary of a user's portfolio data combined together. 
         """
+        body = request.get_json()
+        token = body["token"]
+        portfolio_id = body["portfolio_id"]
+
+        # Get username from token
+        user = db.get_user_by_value("active_token", token)
+        if not user:
+            abort(400, "Token is invalid")
+
+        # Check that user owns the portfolio corresponding to the portfolio_id.
+        portfolio = db.query_portfolio(portfolio_id)
+        if portfolio is None or portfolio["owner"] != user["username"]:
+            abort(400, "User does not own portfolio")
+
+        # Retrieve list of holdings from portfolio.
+        holdings = db.get_holdings(portfolio_id)
+
+        # Return a list of holdings.
         return {
-            "key": "value"
+            "holdings": holdings_summary(holdings)
         }
 
 @portfolio.route('/create', doc={
@@ -139,11 +160,31 @@ class EditPortfolio(Resource):
     "description": "View a list of holdings that is in a portfolio, given the portfolio_id."
 })
 class GetHoldings(Resource):
-    def get(self):
+    @portfolio.expect(get_holdings_model)
+    @portfolio.response(200, 'Success', holdings_response_model)
+    @portfolio.response(400, 'Invalid token')
+    def post(self):
         """
-        [Unfinished] Retrieve holdings from portfolio.
+        Retrieve holdings from portfolio.
         """
-        return [{}]
+        body = request.json
+        token = body['token']
+        portfolio_id = body['portfolio_id']
+
+        # Get username from token
+        user = db.get_user_by_value("active_token", token)
+        if not user:
+            abort(400, "Token is invalid")
+
+        # Check that user owns the portfolio corresponding to the portfolio_id.
+        portfolio = db.query_portfolio(portfolio_id)
+        if portfolio is None or portfolio["owner"] != user["username"]:
+            abort(400, "User does not own portfolio")
+
+        # Retrieve list of holdings from portfolio.
+        holdings = db.get_holdings(portfolio_id)
+
+        return holdings
 
 @portfolio.route('/holdings/add', doc={
     "description": "Given the portfolio_id, add a stock and it's relevant details to the portfolio (qty, price, date, type etc)."
@@ -293,10 +334,34 @@ class DownloadHoldings(Resource):
     "description": "Allows the user to upload a csv of their current holdings. This creates a new portfolio."
 })
 class UploadHoldings(Resource):
+    @portfolio.expect(upload_csv_model)
+    @portfolio.response(200, 'Success', portfolio_id_model)
     def post(self):
         """
-        [Unfinished] Create a portfolio and populate it with holdings from a csv.
+        Create a portfolio and populate it with holdings from a csv. Note that the frontend will have to send the csv as a string, including headers.
+        Currently only works for csv files with the following headers: symbol, qty, price, date, type, brokerage, exchange, currency. This means that
+        it currently will only work with the csv files that we generate.
         """
+        body = request.json
+        token = body['token']
+        portfolio_name = body['portfolio_name']
+        csv_string = body['csv_string']
+
+        # Check that token is valid.
+        user = db.get_user_by_value("active_token", token)
+        if not user:
+            abort(400, "Token is invalid")
+
+        # Create portfolio.
+        portfolio_id = db.add_portfolio(user["username"], portfolio_name)
+
+        # Parse csv string into holdings.
+        holdings = csv_string_to_holdings(csv_string)
+
+        # Add holdings to portfolio.
+        for holding in holdings:
+            db.add_stock(portfolio_id, holding["symbol"], holding["value"], holding["qty"], holding["type"], holding["brokerage"], holding["exchange"], holding["date"], holding["currency"])
+
         return {
-            "portfolio_id": "1"
+            "portfolio_id": portfolio_id
         }

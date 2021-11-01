@@ -75,17 +75,23 @@ image_upload_model = api.inherit('image_upload_model', token_model, {
 })
 
 watchlist_request_model = api.model("watchlist_request_model", {
-    "username": fields.String(required=True, example="JohnSmith123"),
+    "token": fields.String(required=True, example="abcd1234!@#$"),
 })
 
 
 watchlist_info_model = api.model("watchlist_info_model", {
-    "stocks": fields.List(fields.String, required=True, example=["AAPL", "MSFT"])
+    "stocks": fields.List(fields.String, required=True, example=[["AAPL","Apple Inc"],["TSLA","Tesla"]])
 })
 
-watchlist_stock_model = api.model("watchlist_stock_model", {
-    "username": fields.String(required=True, example="JohnSmith123"),
-    "stock": fields.String(required=True, example="AAPL"),
+watchlist_add_stock_model = api.model("watchlist_add_stock_model", {
+    "token": fields.String(required=True, example="abcd1234!@#$"),
+    "symbol": fields.String(required=True, example="AAPL"),
+    "stock_name": fields.String(required=True, example="Apple Inc"),
+})
+
+watchlist_delete_stock_model = api.model("watchlist_delete_stock_model", {
+    "token": fields.String(required=True, example="abc123!@#"),
+    "stocks": fields.List(fields.String, required=True, example=["AAPL", "MSFT"])
 })
 
 create_portfolio_model = api.inherit('create_portfolio_model', token_model, {
@@ -154,3 +160,39 @@ basic_performance_info = api.model('basic_performance_info', {
 portfolio_performance_response_model = api.model('portfolio_response_model', {
     "symbol": fields.Nested(basic_performance_info)
 })
+
+upload_csv_model = api.inherit('upload_csv_model', token_model, {
+    "csv_string": fields.String(required=True, example="symbol,value,qty,type,brokerage,exchange,date,currency\nAAPL,1.1,99.9,buy,9.95,NYSE,19/10/21,USD\nMSFT,1.1,99.9,buy,9.95,NYSE,19/10/21,USD"),
+    "portfolio_name": fields.String(required=True, example="My Portfolio")
+})
+
+get_holdings_model = api.inherit('get_holdings_model', token_model, {
+    "portfolio_id": fields.Integer(required=True, example=1)
+})
+
+basic_holding_info = api.model('basic_holding_info', {
+    "holding_id": fields.Integer(required=True, example=1),
+    "symbol": fields.String(example='TSLA'),
+    "value": fields.Float(example=1.1, description='The value of a single stock'),
+    "qty": fields.Float(example=99.9, description='The amount of stock that was bought/sold'),
+    "type": fields.String(example="buy", description="Either 'buy' or 'sell'"),
+    "brokerage": fields.Float(example=9.95, description="The amount of brokerage you paid"),
+    "exchange": fields.String(example='NYSE', description="The name of the exchange that this stock belongs to"),
+    "date": fields.String(example="19/10/21", description="A string in the format dd/mm/yy"),
+    "currency": fields.String(example="USD", description="The currency that is used to buy the stock")
+})
+
+holdings_response_model = api.model('holdings_response_model', {
+    "holdings": fields.List(fields.Nested(basic_holding_info))
+})
+
+simple_holding_info = api.model('simple_holding_info', {
+    "symbol": fields.String(example='TSLA'),
+    "qty": fields.Float(example=99.9, description='The amount of stock that was bought/sold'),
+    "average_price": fields.Float(example=1.1, description='The average price of the stock'),
+})
+
+summary_response_model = api.model('summary_response_model', {
+    "summary": fields.List(fields.Nested(simple_holding_info))
+})
+
