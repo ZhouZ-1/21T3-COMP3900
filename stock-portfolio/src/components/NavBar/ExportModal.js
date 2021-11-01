@@ -3,11 +3,11 @@ import api from "../../api";
 import Loader from "../Loader";
 
 function ExportModal(){
+    const token = localStorage.getItem('token');
     const [isPortfolioLoading,setIsPortfolioLoading] = useState(true);
     const [portfolios,setPortfolios]=useState(<div class="list-group"></div>);
     const [selectedPortfolioId,setSelectedPortfolioId] = useState();
     useEffect(async ()=>{
-        const token = localStorage.getItem('token');
         const response = await api(`portfolio?token=${token}`, 'GET');
         if(response.portfolios.length === 0){
             setPortfolios(<button type="button" class="list-group-item list-group-item-action">You have no Portfolio</button>)
@@ -24,8 +24,6 @@ function ExportModal(){
     },[]);
 
     const onPortfolioClick = async (portFolioId) => {
-        console.log(portFolioId);
-        const token = localStorage.getItem('token');
         // console.log('sending download request with following portfolio_id and token',portFolioId,token);
         // const response = await api(`portfolio/download?portfolio_id=${portFolioId}&token=${token}`,'GET');
         // console.log('response',response);

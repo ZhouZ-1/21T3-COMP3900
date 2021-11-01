@@ -44,7 +44,6 @@ function StockDetails(){
 
     const onWatchListIconClick = async () => {
         if(isInWatchList===true){
-            console.log('deleting stock');
             const response = await api('watchlist/delete','DELETE', {
                 token: localStorage.getItem('token'),
                 stocks: [symbol]

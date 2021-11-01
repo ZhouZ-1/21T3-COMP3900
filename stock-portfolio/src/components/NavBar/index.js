@@ -78,7 +78,6 @@ function NavBar(){
                                 data=data.concat(',');
                             }
                         }
-                        console.log(data);
                         if (count==lines.length-2){
                             csv_string = csv_string.concat(data);
                         }else{
@@ -87,15 +86,13 @@ function NavBar(){
                         }
                         
                     }
-                    console.log(csv_string);
                 }
                 myReader.readAsText(theFile.files[0]);
-                const response = await api('portfolio/upload','POST',{
+                await api('portfolio/upload','POST',{
                     token: token,
                     csv_string: csv_string,
                     portfolio_name: "new Portfolio - testing"
                 });
-                console.log(response);
             }else {
                 alert("This browser does not support HTML5.");
             }
