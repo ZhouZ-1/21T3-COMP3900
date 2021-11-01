@@ -119,7 +119,6 @@ function PortfolioPage() {
   const getCurr = () => {
     let curr = new Date();
     let date = curr.getDate() + '/' + (curr.getMonth()+1) + '/' + curr.getFullYear();
-    // console.log(`date: ${date}`);
     return date;
   };
   
