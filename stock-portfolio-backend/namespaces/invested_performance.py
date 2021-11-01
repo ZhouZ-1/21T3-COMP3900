@@ -10,12 +10,13 @@ import json
 invested_performance = api.namespace('invested_performance', description='Stats on performance of overall invested stocks')
 
 @invested_performance.route('/', doc={
-    "description": "Allows user to retrieve their performance stats"
+    "description": "Allows user to retrieve their performance stats across all portfolios"
 })
+@invested_performance.param('username', description="The user's name", type=str, required=True)
 class GetInvestedPerformance(Resource):
     def get(self):
         """
-        Returns a JSON object containing the performance stats of the user's invested stocks
+        Returns a JSON object containing the performance stats of the user's invested stocks from time of adding to portfolio
         """
 
         username = request.args.get("username")
@@ -32,23 +33,39 @@ class GetInvestedPerformance(Resource):
         # Remove duplicates
         all_holdings = list(dict.fromkeys(all_holdings))
 
+        total_gains = 0
+        pct_performance = 0
+        curr_price = 0
+        old_price = 0
+
+        for holding in all_holdings:
+            # Get the current price of the stock
+            curr_price += dc.ts.get_quote_endpoint(holding['symbol'])[0]['price']
+            # Get the old price of the stock
+            old_price += holding['price']
+
+            # Calculate the performance of the stock
+            pct_performance = (curr_price - old_price) / old_price
+            total_gains += (curr_price - old_price) * holding['qty']
+
         return {
-            'test': all_holdings,
+            'total_gains': total_gains,
+            'pct_performance': pct_performance,
         }
 
 @invested_performance.route('/portfolio', doc={
     "description": "Allows user to retrieve their performance stats for a particular portfolio"
 })
+@invested_performance.param('portfolio', description="Portfolio ID", type=str, required=True)
 class GetPortfolioPerformance(Resource):
-    @invested_performance.expect(portfolio_performance_model)
     @invested_performance.response(200, 'Success', portfolio_performance_response_model)
     def get(self):
         """
         Returns a JSON object containing the performance stats of the user's invested stocks
         """
         body = request.json
-        portfolio_id = body['portfolio']
-    
+        portfolio_id = request.args.get['portfolio']
+
         # Get holdings for the particular portfolio
         portfolio_holdings = get_holdings(portfolio_id)
 
@@ -76,7 +93,7 @@ class GetPortfolioPerformance(Resource):
 
         # calculate overall change
         overall_delta = curr_overall - orig_overall
-        
+
         perf_results['overall'] = {
             'orig_price': orig_overall,
             'curr_price': curr_overall,
