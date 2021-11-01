@@ -46,9 +46,40 @@ function NavBar(){
         document.getElementById("searchBar").value = '';
         history.push(`/stockDetails/${symbol}`);
     }
-    const onImportClick = () => {
-        //  Get information from csv
-        //  Pass it in API.
+    
+    const processFile = () => {
+        var theFile = document.getElementById("myFile");
+        var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.csv|.txt)$/;
+        //check if file is CSV
+        if (regex.test(theFile.value.toLowerCase())) {
+        //check if browser support FileReader
+            if (typeof (FileReader) != "undefined") {
+                var myReader = new FileReader();
+                myReader.onload = function(e) {
+                    var content = myReader.result;
+                    var lines = content.split("\n");
+                    for (var count = 0; count < lines.length; count++) {
+                        if(count == 0){
+                            continue;
+                        }
+                        // var row = document.createElement("tr");
+                        var rowContent = lines[count].split(",");
+                        //loop throw all columns of a row
+                        let data='';
+                        for (var i = 0; i < rowContent.length; i++) {
+                        //create td element
+                        data=data.concat(rowContent[i].trim()); 
+                        }
+                        console.log(data);
+                    }
+                }
+                myReader.readAsText(theFile.files[0]);
+            }else {
+                alert("This browser does not support HTML5.");
+            }
+        }else{
+            alert("Please upload a valid CSV file.");
+        }
     }
     
     return(
@@ -74,7 +105,9 @@ function NavBar(){
             {isAuthenticated ?
                 [(<button type="button" class="btn btn-danger" onClick={() => handleLogout()}>Logout</button>),
                     (<div>
-                        <button type="button" class="btn btn-outline-primary ms-5" onClick={onImportClick}>Import Portfolio</button>
+                        <input type="file" id="myFile"/>
+                        <button onClick={processFile}>Process</button>
+                        <table id="myTable"></table>
                     </div>
                 ),   
                     (<div>

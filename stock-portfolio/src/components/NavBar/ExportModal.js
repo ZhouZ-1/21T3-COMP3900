@@ -13,19 +13,24 @@ function ExportModal(){
             setPortfolios(<button type="button" class="list-group-item list-group-item-action">You have no Portfolio</button>)
         }else{
             const portfolioList = response.portfolios.map(function(item){
+                // const link = `portfolio/download?portfolio_id=${item.portfolio_id}&token=${token}`
+                // return <a href={link}>{item.portfolio_name}</a>
                 return <button type="button" class="list-group-item list-group-item-action" onClick={()=>onPortfolioClick(item.portfolio_id)}>{item.portfolio_name}</button>
             });
             setPortfolios(portfolioList);
         }
+         {/* <button type="button" class="list-group-item list-group-item-action" onClick={()=>onPortfolioClick(item.portfolio_id)}>{item.portfolio_name}</button> */}
         setIsPortfolioLoading(false);
     },[]);
 
     const onPortfolioClick = async (portFolioId) => {
         console.log(portFolioId);
         const token = localStorage.getItem('token');
-        console.log(token);
-        const response = await api(`portfolio/download?portfolio_id=${portFolioId}&token=${token}`,'GET');
-        console.log(response);
+        // console.log('sending download request with following portfolio_id and token',portFolioId,token);
+        // const response = await api(`portfolio/download?portfolio_id=${portFolioId}&token=${token}`,'GET');
+        // console.log('response',response);
+        // await api(`portfolio/download?portfolio_id=${portFolioId}&token=${token}`,'GET');
+        window.location.replace(`portfolio/download?portfolio_id=${portFolioId}&token=${token}`);
     }
     
     return (
