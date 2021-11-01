@@ -127,7 +127,7 @@ function PortfolioPage() {
     setIsLoading(true);
     const res = await api('portfolio/holdings/add', 'POST', {
       token: localStorage.getItem('token'), 
-      holding_id: localStorage.getItem('id'),
+      portfolio_id: localStorage.getItem('id'),
       symbol: symbol,
       value: "1.1",
       qty: qty,
