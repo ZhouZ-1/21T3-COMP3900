@@ -1,7 +1,7 @@
 from flask import request
 from flask_restplus import Resource, abort
 from app import api, db
-from util.models import watchlist_info_model, watchlist_request_model, watchlist_stock_model, portfolio_performance_model, portfolio_performance_response_model
+from util.models import portfolio_performance_model, portfolio_performance_response_model
 from util.database import *
 from util.alpha_vantage_feed import dc
 
@@ -12,37 +12,45 @@ invested_performance = api.namespace('invested_performance', description='Stats 
 @invested_performance.route('/', doc={
     "description": "Allows user to retrieve their performance stats across all portfolios"
 })
-@invested_performance.param('username', description="The user's name", type=str, required=True)
+@invested_performance.param('token', description="The user's token", type=str, required=True)
 class GetInvestedPerformance(Resource):
     def get(self):
         """
         Returns a JSON object containing the performance stats of the user's invested stocks from time of adding to portfolio
         """
 
-        username = request.args.get("username")
+        token = request.args.get("token")
 
         # Find user
-        user = get_user_by_value("username", username)
+        user = get_user_by_value("active_token", token)
         # Get the user's invested stocks
-        all_portfolios = all_portfolios_from_user(username)
-        all_portfolio_ids = [portfolio.id for portfolio in all_portfolios]
+        all_portfolios = all_portfolios_from_user(user['username'])
 
         # Get all of user's holdings
-        all_holdings = [get_holdings(portfolio.id) for portfolio in all_portfolios]
+        all_holdings = []
+        for portfolio in all_portfolios:
+            holdings = get_holdings(portfolio['portfolio_id'])
 
-        # Remove duplicates
-        all_holdings = list(dict.fromkeys(all_holdings))
+            for holding in holdings:
+                if holding not in all_holdings:
+                    all_holdings.append(holding)
 
         total_gains = 0
         pct_performance = 0
         curr_price = 0
         old_price = 0
 
+        print(user)
+        print(all_portfolios)
+        print(all_holdings)
+
         for holding in all_holdings:
+            print(holding)
             # Get the current price of the stock
-            curr_price += dc.ts.get_quote_endpoint(holding['symbol'])[0]['price']
+            curr_price += float(dc.ts.get_quote_endpoint(holding['symbol'])[0]['05. price'])
+
             # Get the old price of the stock
-            old_price += holding['price']
+            old_price += holding['value']
 
             # Calculate the performance of the stock
             pct_performance = (curr_price - old_price) / old_price
