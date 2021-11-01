@@ -127,25 +127,25 @@ function PortfolioOverview() {
                 alignItems="flex-start"
             >
                 {portState && port.map(p => (
-                        <Grid item xs={12} sm={6} md={3} key={port.indexOf(p)}>
-                            <Card 
-                                variant="outlined"
-                                // component={PortfolioPage}
-                                // to={`portfolio/${p.portfolio_id}`}
-                                onClick={(e) => handleRedirect(`${p.portfolio_id}`, e)}
-                                >
-                                <CardHeader
-                                        title={`Portfolio : ${p.portfolio_name}`}
-                                        subheader={`id : ${p.portfolio_id}`}
-                                        // subheader={`earnings : ${p.earnings}`}
-                                    />  
-                                <CardContent>
-                                    <Typography variant="h5" gutterBottom>
-                                        {/* Description */}
-                                    </Typography>
-                                </CardContent>
-                            </Card>
-                        </Grid>
+                    <Grid item xs={12} sm={6} md={3} key={port.indexOf(p)}>
+                        <Card 
+                            variant="outlined"
+                            // component={PortfolioPage}
+                            // to={`portfolio/${p.portfolio_id}`}
+                            onClick={(e) => handleRedirect(`${p.portfolio_id}`, e)}
+                            >
+                            <CardHeader
+                                    title={`Portfolio : ${p.portfolio_name}`}
+                                    subheader={`earnings : ${p.earnings}`}
+                                    subheader={`earnings : 10000`}
+                                />  
+                            <CardContent>
+                                <Typography variant="h5" gutterBottom>
+                                    {/* Description */}
+                                </Typography>
+                            </CardContent>
+                        </Card>
+                    </Grid>
                     ))}
             </Grid>
             {!isLoading && !portState && 
