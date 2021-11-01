@@ -4,8 +4,10 @@ import api from "../../api";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ExportModal from "./ExportModal";
 function NavBar(){
+    const token = localStorage.getItem('token');
     var history = useHistory();
-    let isAuthenticated = !!localStorage.getItem("token")
+    // let isAuthenticated = !!localStorage.getItem("token")
+    let isAuthenticated = !!token;
 
     const [keywords,setKeyWords] = useState('');
     const [showAllStocks,setShowAllStocks] = useState(true);
@@ -47,8 +49,9 @@ function NavBar(){
         history.push(`/stockDetails/${symbol}`);
     }
     
-    const processFile = () => {
+    const processFile = async () => {
         var theFile = document.getElementById("myFile");
+        let csv_string = '';
         var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.csv|.txt)$/;
         //check if file is CSV
         if (regex.test(theFile.value.toLowerCase())) {
@@ -58,7 +61,7 @@ function NavBar(){
                 myReader.onload = function(e) {
                     var content = myReader.result;
                     var lines = content.split("\n");
-                    for (var count = 0; count < lines.length; count++) {
+                    for (var count = 0; count < lines.length-1; count++) {
                         if(count == 0){
                             continue;
                         }
@@ -68,12 +71,31 @@ function NavBar(){
                         let data='';
                         for (var i = 0; i < rowContent.length; i++) {
                         //create td element
-                        data=data.concat(rowContent[i].trim()); 
+                            if(i==rowContent.length-1){
+                                data=data.concat(rowContent[i].trim());
+                            }else{
+                                data=data.concat(rowContent[i].trim());
+                                data=data.concat(',');
+                            }
                         }
                         console.log(data);
+                        if (count==lines.length-2){
+                            csv_string = csv_string.concat(data);
+                        }else{
+                            csv_string = csv_string.concat(data);
+                            csv_string = csv_string.concat('\n');
+                        }
+                        
                     }
+                    console.log(csv_string);
                 }
                 myReader.readAsText(theFile.files[0]);
+                const response = await api('portfolio/upload','POST',{
+                    token: token,
+                    csv_string: csv_string,
+                    portfolio_name: "new Portfolio - testing"
+                });
+                console.log(response);
             }else {
                 alert("This browser does not support HTML5.");
             }
