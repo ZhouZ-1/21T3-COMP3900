@@ -1,6 +1,5 @@
 import React from 'react';
 // import { Component } from 'react';
-import { render } from 'react-dom';
 import { useState, useEffect } from "react";
 import { useHistory } from "react-router";
 import { 
@@ -46,11 +45,13 @@ function PortfolioPage() {
   const [qty,setQty] = useState(0);
   const [stocks, setStocks] = useState([]);
   const [select, setSelect] = useState([]);
+  const [balance, setBalance] = useState(0);
   const [isLoading,setIsLoading] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
     let arr = [];
+
     api('portfolio/holdings', 'POST', {
       token: localStorage.getItem('token'), portfolio_id: localStorage.getItem('id')
     })
@@ -68,6 +69,27 @@ function PortfolioPage() {
           setStocks(arr);
         } 
       })
+
+    setIsLoading(false);
+  }, []);
+      
+  useEffect(async () => {
+    setIsLoading(true);
+    let sum = 0;
+    const res = await api('portfolio/summary', 'POST', {  
+      token: localStorage.getItem('token'), 
+      portfolio_id: localStorage.getItem('id')
+    })  
+    
+    Promise.all(res.holdings.map(async(s) => {
+      let price = await searchStock(s.symbol);
+      if (price){
+        const curr = (price - s.average_price) * s.qty;
+        sum += curr;
+        console.log(price, s.average_price, s.qty);
+      }
+    }));
+    setBalance(sum);
     setIsLoading(false);
   }, []);
 
@@ -94,7 +116,6 @@ function PortfolioPage() {
   const handleCloseDelete = () => {
     setOpenDelete(false);
   };
-
 
   const getCurrDate = () => {
     let curr = new Date();
@@ -128,6 +149,11 @@ function PortfolioPage() {
       return;
     }
 
+    if (qty > 0) {
+      alert("Quantity cannot be less than 1.");
+      return;
+    }
+
     const res = await api('portfolio/holdings/add', 'POST', {
       token: localStorage.getItem('token'), 
       portfolio_id: localStorage.getItem('id'),
@@ -141,7 +167,6 @@ function PortfolioPage() {
       currency: "USD"
     });
 
-    // console.log(`${value}, res: ${res}`);
     if (res.is_success) {
         alert("Successfully Add Stock!");
     } 
@@ -150,16 +175,6 @@ function PortfolioPage() {
     history.push(`/portfolio/${localStorage.getItem('id')}`);
   };
   
-  // const selectRows = (select) => {
-  //   console.log(`sleect: ${select}`);
-  //   let arr = [];
-  //   select.map(s => {
-  //     arr.push(s);
-  //   })
-  //   setStocks(arr);
-  //   console.log(`arr: ${stocks}`);
-  // };
-
   const deleteStock = async () => {
     setIsLoading(true);
 
@@ -188,7 +203,6 @@ function PortfolioPage() {
     const res = await api('portfolio/delete', 'DELETE', {
       token: localStorage.getItem('token'), portfolio_id: localStorage.getItem('id')
     });
-    console.log(res);
 
     if (res) {
       alert("Successfully Delete The Portfolio.");
@@ -203,6 +217,9 @@ function PortfolioPage() {
     <div>
       <div>
         <h1>Portfolio: {localStorage.getItem('name')}</h1>
+        { !isLoading &&
+          (<p>Balance: {balance}</p>)
+          }
         <br></br>
         <div>
           <Button class="btn btn-outline-primary ms-5" onClick={handleClickOpenAdd}>Add Stock</Button>

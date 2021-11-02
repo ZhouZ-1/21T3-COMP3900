@@ -62,11 +62,10 @@ function PortfolioOverview() {
 
     const handleCreate = async () => {
         if (title !== '') {
-            setIsLoading(true);
             const res = await api('portfolio/create', 'POST', {token: localStorage.getItem('token'), portfolio_name: title});
             if (res.portfolios) {
                 alert("Successfully Add A New Portfolio!");
-                history.push('/viewPortfolio');
+                history.go(0);
             } 
         } 
         handleClose();
