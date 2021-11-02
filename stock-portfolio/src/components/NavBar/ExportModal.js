@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import api from "../../api";
 import Loader from "../Loader";
 
-function ExportModal(){
+function ExportModal(props){
+    const { trigger } = props;
     const token = localStorage.getItem('token');
     const [isPortfolioLoading,setIsPortfolioLoading] = useState(true);
     const [portfolios,setPortfolios]=useState(<div class="list-group"></div>);
-    const [selectedPortfolioId,setSelectedPortfolioId] = useState();
+    // const [selectedPortfolioId,setSelectedPortfolioId] = useState();
     useEffect(async ()=>{
         const response = await api(`portfolio?token=${token}`, 'GET');
         if(response.portfolios.length === 0){
@@ -21,7 +22,7 @@ function ExportModal(){
         }
          {/* <button type="button" class="list-group-item list-group-item-action" onClick={()=>onPortfolioClick(item.portfolio_id)}>{item.portfolio_name}</button> */}
         setIsPortfolioLoading(false);
-    },[]);
+    },[trigger]);
 
     const onPortfolioClick = async (portFolioId) => {
         window.open(`http://localhost:5000/portfolio/download?portfolio_id=${portFolioId}&token=${token}`, '_blank');

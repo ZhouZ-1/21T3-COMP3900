@@ -6,13 +6,13 @@ import ExportModal from "./ExportModal";
 function NavBar(){
     const token = localStorage.getItem('token');
     var history = useHistory();
-    // let isAuthenticated = !!localStorage.getItem("token")
     let isAuthenticated = !!token;
 
     const [keywords,setKeyWords] = useState('');
     const [showAllStocks,setShowAllStocks] = useState(true);
     const [stocks, setStocks] = useState();
     const [showDropDown,setShowDropDown] = useState(false);
+    const [exportTrigger,setExportTrigger] = useState(false);
     const handleLogout = () => {
         localStorage.removeItem("token");
         history.push('/');
@@ -133,8 +133,8 @@ function NavBar(){
                     </div>
                 ),   
                     (<div>
-                        <button type="button" class="btn btn-outline-primary ms-5" data-bs-toggle="modal" data-bs-target="#exportModal">Export Portfolio</button>
-                        <ExportModal/>
+                        <button type="button" class="btn btn-outline-primary ms-5" data-bs-toggle="modal" data-bs-target="#exportModal" onClick={()=>setExportTrigger(!exportTrigger)}>Export Portfolio</button>
+                        <ExportModal trigger={exportTrigger}/>
                     </div>
                 ),
                 (<button type="button" class="btn btn-outline-dark" onClick={()=>history.push('/account')}><AccountCircleIcon/>Account</button>)]:
