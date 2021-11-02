@@ -1,5 +1,4 @@
 import React from 'react';
-// import { Component } from 'react';
 import { useState, useEffect } from "react";
 import { useHistory } from "react-router";
 import { 
@@ -21,20 +20,11 @@ const columns = [
   { field: 'symbol', headerName: 'Symbol', width: 125 },
   { field: 'value', headerName: 'Value', width: 120 },
   { field: 'qty', headerName: 'Quantity', width: 130 },
-  { field: 'date', headerName: 'Date', width: 130 }
+  { field: 'date', headerName: 'Date', width: 130 },
+  { field: 'perform', headerName: 'Performance', width: 150 }
 ];
 
-const rows = [
-  // { id: 1, symbol: 'STX', name: 'Seagate Technology PLC', qty: 35 },      // buy price, balance, market price
-  // { id: 2, symbol: 'DFS', name: 'DIscover Financial Services', qty: 42 },
-  // { id: 3, symbol: 'LSTR', name: 'Landstar System Inc', qty: 45 },
-  // { id: 4, symbol: 'SWKS', name: 'Skyworks Solutions Inc', qty: 16 },
-  // { id: 5, symbol: 'SNPS', name: 'Synopsys Inc', qty: 133 },
-  // { id: 6, symbol: 'NSC', name: 'Norfolk Southern Corporation', qty: 150 },
-  // { id: 7, symbol: 'CSCO', name: 'Cisco Systems', qty: 44 },
-  // { id: 8, symbol: 'VIAV', name: 'Viavi Solutions Inc', qty: 36 },
-  // { id: 9, symbol: 'ROST', name: 'Ross Stores Inc', qty: 65 },
-];
+
 
 function PortfolioPage() {
   var history = useHistory();
@@ -44,6 +34,7 @@ function PortfolioPage() {
   const [symbol,setSymbol] = useState('');
   const [qty,setQty] = useState(0);
   const [stocks, setStocks] = useState([]);
+  const [perform, setPerform] = useState(0);
   const [select, setSelect] = useState([]);
   const [balance, setBalance] = useState(0);
   const [isLoading,setIsLoading] = useState(false);
@@ -73,25 +64,25 @@ function PortfolioPage() {
     setIsLoading(false);
   }, []);
       
-  // useEffect(async () => {
-  //   setIsLoading(true);
-  //   let sum = 0;
-  //   const res = await api('portfolio/summary', 'POST', {  
-  //     token: localStorage.getItem('token'), 
-  //     portfolio_id: localStorage.getItem('id')
-  //   })  
+  useEffect(async () => {
+    setIsLoading(true);
+    let sum = 0;
+    const res = await api('portfolio/summary', 'POST', {  
+      token: localStorage.getItem('token'), 
+      portfolio_id: localStorage.getItem('id')
+    })  
     
-  //   Promise.all(res.holdings.map(async(s) => {
-  //     let price = await searchStock(s.symbol);
-  //     if (price){
-  //       const curr = (price - s.average_price) * s.qty;
-  //       sum += curr;
-  //       console.log(price, s.average_price, s.qty);
-  //     }
-  //   }));
-  //   setBalance(sum);
-  //   setIsLoading(false);
-  // }, []);
+    Promise.all(res.holdings.map(async(s) => {
+      let price = await searchStock(s.symbol);
+      if (price){
+        const curr = (price - s.average_price) * s.qty;
+        sum += curr;
+        console.log(price, s.average_price, s.qty);
+      }
+    }));
+    setBalance(sum);
+    setIsLoading(false);
+  }, []);
 
   const handleClickOpenAdd = () => {
     setOpenAdd(true);
