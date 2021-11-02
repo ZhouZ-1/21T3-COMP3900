@@ -73,26 +73,25 @@ function PortfolioPage() {
     setIsLoading(false);
   }, []);
       
-  useEffect(async () => {
-    setIsLoading(true);
-    let sum = 0;
-    const res = await api('portfolio/summary', 'POST', {  
-      token: localStorage.getItem('token'), 
-      portfolio_id: localStorage.getItem('id')
-    })  
+  // useEffect(async () => {
+  //   setIsLoading(true);
+  //   let sum = 0;
+  //   const res = await api('portfolio/summary', 'POST', {  
+  //     token: localStorage.getItem('token'), 
+  //     portfolio_id: localStorage.getItem('id')
+  //   })  
     
-    Promise.all(res.holdings.map(async(s) => {
-      let price = 0;
-      // let price = await searchStock(s.symbol);
-      if (price){
-        const curr = (price - s.average_price) * s.qty;
-        sum += curr;
-        console.log(price, s.average_price, s.qty);
-      }
-    }));
-    setBalance(sum);
-    setIsLoading(false);
-  }, []);
+  //   Promise.all(res.holdings.map(async(s) => {
+  //     let price = await searchStock(s.symbol);
+  //     if (price){
+  //       const curr = (price - s.average_price) * s.qty;
+  //       sum += curr;
+  //       console.log(price, s.average_price, s.qty);
+  //     }
+  //   }));
+  //   setBalance(sum);
+  //   setIsLoading(false);
+  // }, []);
 
   const handleClickOpenAdd = () => {
     setOpenAdd(true);
@@ -144,16 +143,16 @@ function PortfolioPage() {
       return;
     }
 
-    // if (value == -1) {
-    //   alert("Stock Symbol not exist.");
-    //   handleCloseAdd();
-    //   return;
-    // }
+    if (value == -1) {
+      alert("Stock Symbol not exist.");
+      handleCloseAdd();
+      return;
+    }
 
-    // if (qty < 1) {
-    //   alert("Quantity cannot be less than 1.");
-    //   return;
-    // }
+    if (qty < 1) {
+      alert("Quantity cannot be less than 1.");
+      return;
+    }
 
     const res = await api('portfolio/holdings/add', 'POST', {
       token: localStorage.getItem('token'), 
