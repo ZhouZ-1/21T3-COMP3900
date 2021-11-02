@@ -3,7 +3,6 @@ import { useState,useEffect } from "react";
 import { DataGrid } from '@mui/x-data-grid';
 import NavBar from '../NavBar';
 import getRows from './getRows';
-import getRealTimeRow from './getRealTimeRow';
 import api from '../../api';
 import PortfolioModal from './PortfolioModal';
 
@@ -13,13 +12,12 @@ function WatchList() {
     { field: 'id', headerName: 'ID', width: 100 },
     { field: 'code', headerName: 'Stock Code', width: 200 },
     { field: 'name', headerName: 'Stock Name', width: 200 },
-    { field: 'change_percentage', headerName: 'change_percentage', width: 250 },
-    { field: 'Price', headerName: 'Price', width: 200 },
+    { field: 'price', headerName: 'Price', width: 200 },
+    { field: 'change_percent', headerName: 'Daily changes', width: 250 }
   ];
-  const initialRow = [{ id: 0, code: 'N/A', name: 'RENDERING WATCHLIST.... PLEASE WAIT', change_percentage: 'Loading', price: 'Loading'}];
+  const initialRow = [{ id: 0, code: 'N/A', name: 'RENDERING WATCHLIST.... PLEASE WAIT', price: 'Loading', change_percent: 'Loading'}];
   const [rows,setRows] = useState(initialRow);
   const [selectedStocks, setSelectedStocks] = useState([]);
-  const [realTimeRow,setRealTimeRow]= useState('');
   
   useEffect(async ()=>{
     const newRow = await getRows(token);

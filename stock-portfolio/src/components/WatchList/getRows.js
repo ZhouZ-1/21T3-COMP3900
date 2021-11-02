@@ -1,34 +1,30 @@
-import { getGridDateOperators } from "@mui/x-data-grid";
 import api from "../../api";
 
 async function getRows(token){
     const response = await api(`watchlist?token=${token}`, 'GET');    //  Get stocks in the watchlist
     let row = [];
+    var i = -1;
+    console.log('in watch list,', response);
 
-    response.watchList.map(
+    const realData = response.watchList.map(
         async (item,idx)=>{
-            row.push({
+            const realTimeData = await api('stocks/search','POST',{
+                symbol: item[0]
+            });
+            console.log('processing: ',item[0]);
+            console.log('realTime data: ',realTimeData);
+            return {
                 id: idx,
                 code: item[0],
                 name: item[1],
-            });
+                price: realTimeData.price,
+                change_percent: realTimeData.change_percent
+            }
         }
     );
-    const clonedArray = row.map(a => {return {...a}});
-    var i = 0;
-    console.log(clonedArray);
-    row.map((item)=>{
-        api('stocks/search','POST',{
-            symbol: item.code
-        }).then((res)=>{
-                console.log(res);
-                clonedArray[i].price = res.price
-            }
-        );
-        i += 1;
-    });
-    console.log(clonedArray);
-
-    return row;
+    const result = await Promise.all(realData);
+    console.log('results is',result);
+    
+    return result;
 }
 export default getRows;
