@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router";
 import api from "../../api";
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+// import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ExportModal from "./ExportModal";
 function NavBar(){
     const token = localStorage.getItem('token');
@@ -134,7 +134,8 @@ function NavBar(){
                         <ExportModal/>
                     </div>
                 ),
-                (<button type="button" class="btn btn-outline-dark" onClick={()=>history.push('/account')}><AccountCircleIcon/>Account</button>)]:
+                (<button type="button" class="btn btn-outline-dark" onClick={()=>history.push('/account')}>Account</button>)]:
+                // (<button type="button" class="btn btn-outline-dark" onClick={()=>history.push('/account')}><AccountCircleIcon/>Account</button>)]:
                 (<button type="button" class="btn btn-outline-dark" onClick={()=>history.push('/signIn')}>Sign in</button>)
             }
         </nav>

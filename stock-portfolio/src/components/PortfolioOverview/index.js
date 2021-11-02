@@ -94,8 +94,9 @@ function PortfolioOverview() {
         handleCloseEdit();
     };
 
-    const handleRedirect = (id) => {
+    const handleRedirect = (id, name) => {
         localStorage.setItem('id', id);
+        localStorage.setItem('name', name);
         history.push(`portfolio/${id}`);
     };
 
@@ -150,7 +151,7 @@ function PortfolioOverview() {
                             variant="outlined"
                             >
                             <CardHeader
-                                onClick={(e) => handleRedirect(`${p.portfolio_id}`, e)}
+                                onClick={(e) => handleRedirect(`${p.portfolio_id}`, `${p.portfolio_name}`, e)}
                                 title={`Portfolio : ${p.portfolio_name}`}
                                 subheader={`earnings : ${p.earnings}`}
                                 subheader={`earnings : 10000`}

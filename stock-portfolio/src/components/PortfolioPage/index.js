@@ -144,11 +144,10 @@ function PortfolioPage() {
     // console.log(`${value}, res: ${res}`);
     if (res.is_success) {
         alert("Successfully Add Stock!");
-        history.push(`/portfolio/${localStorage.getItem('id')}`);
     } 
-    history.push(`/portfolio/${localStorage.getItem('id')}`);
     handleCloseAdd();
     setIsLoading(false);
+    history.push(`/portfolio/${localStorage.getItem('id')}`);
   };
   
   // const selectRows = (select) => {
@@ -181,28 +180,29 @@ function PortfolioPage() {
           setIsLoading(false);
         }});
     handleCloseDS();
+    history.push(`/portfolio/${localStorage.getItem('id')}`);
   };
 
   const handleDelete = async () => {
-    if (symbol !== '') {
-        setIsLoading(true);
-        const res = await api('portfolio/delete', 'DELETE', {
-          token: localStorage.getItem('token'), portfolio_id: localStorage.getItem('id')
-        });
-        // console.log(res);
-        if (res) {
-          localStorage.removeItem('id');
-          alert("Successfully Delete The Portfolio.");
-          history.push('/viewPortfolio');
-        }
-    } 
+    setIsLoading(true);
+    const res = await api('portfolio/delete', 'DELETE', {
+      token: localStorage.getItem('token'), portfolio_id: localStorage.getItem('id')
+    });
+    console.log(res);
+
+    if (res) {
+      alert("Successfully Delete The Portfolio.");
+      localStorage.removeItem('id');
+      history.push('/viewPortfolio');
+    }
+    setIsLoading(false);
     handleCloseDelete();
   };
 
   return (
     <div>
       <div>
-        <h1>Portfolio Page</h1>
+        <h1>Portfolio: {localStorage.getItem('name')}</h1>
         <br></br>
         <div>
           <Button class="btn btn-outline-primary ms-5" onClick={handleClickOpenAdd}>Add Stock</Button>
@@ -224,12 +224,9 @@ function PortfolioPage() {
               </DialogContent>
               <DialogActions>
               <Button onClick={handleCloseAdd}>Cancel</Button>
-              <Button onClick={addStock} autoFocus>
-                  Confirm
-              </Button>
+              <Button onClick={addStock} autoFocus>Confirm</Button>
               </DialogActions>
           </Dialog>
-
           <Button class="btn btn-outline-primary ms-5" onClick={handleClickOpenDS}>Delete Stock</Button>
           <Dialog
               open={openDS}
@@ -247,9 +244,7 @@ function PortfolioPage() {
               </DialogContent>
               <DialogActions>
               <Button onClick={handleCloseDS}>Cancel</Button>
-              <Button onClick={deleteStock} autoFocus>
-                  Confirm
-              </Button>
+              <Button onClick={deleteStock} autoFocus>Confirm</Button>
               </DialogActions>
           </Dialog>
         </div>
@@ -292,13 +287,11 @@ function PortfolioPage() {
               </DialogContentText>
             </DialogContent>
             <DialogActions>
-              <Button onClick={handleDelete} autoFocus>
               <Button onClick={handleCloseDelete}>Cancel</Button>
-                Confirm
-              </Button>
+              <Button onClick={handleDelete} autoFocus>Confirm</Button>
             </DialogActions>
         </Dialog>
-        </div>
+      </div>
     </div>
   );
 }
