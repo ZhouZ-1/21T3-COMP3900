@@ -45,6 +45,7 @@ function PortfolioPage() {
   const [symbol,setSymbol] = useState('');
   const [qty,setQty] = useState(0);
   const [stocks, setStocks] = useState([]);
+  const [select, setSelect] = useState([]);
   const [isLoading,setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -94,40 +95,38 @@ function PortfolioPage() {
     setOpenDelete(false);
   };
 
+
   const getCurrDate = () => {
     let curr = new Date();
     let date = curr.getDate() + '/' + (curr.getMonth()+1) + '/' + curr.getFullYear();
     return date;
   };
   
-  const searchStock = async() => {
+  const searchStock = async(s) => {
     let value = -1;
-    const res = await api(`stocks/search?symbol`, 'POST'); 
-    if (res) {
-      value = res.price;
-      console.log(`price in if: ${value}`);
+    const res = await api(`stocks/search`, 'POST', {symbol: s}); 
+    if (res.price) {
+      return res.price;
     } 
-    console.log(`price: ${value}`);
-
     return value;
   };
   
-
   const addStock = async () => {
     setIsLoading(true);
     const date = getCurrDate();
-    const value = searchStock();
+    const value = await searchStock(symbol);
 
     if (!(symbol && qty)) {
       alert("Missing Symbol/Quantity field.");
       handleCloseAdd();
+      return;
     }
 
     if (value == -1) {
       alert("Stock Symbol not exist.");
       handleCloseAdd();
+      return;
     }
-    // console.log(`price: ${value}`);
 
     const res = await api('portfolio/holdings/add', 'POST', {
       token: localStorage.getItem('token'), 
@@ -147,21 +146,23 @@ function PortfolioPage() {
         alert("Successfully Add Stock!");
         history.push(`/portfolio/${localStorage.getItem('id')}`);
     } 
-    history.push(`portfolio/${localStorage.getItem('id')}`);
+    history.push(`/portfolio/${localStorage.getItem('id')}`);
+    handleCloseAdd();
+    setIsLoading(false);
   };
   
-  const selectRows = (select) => {
-    let arr = [];
-    select.map(s => {
-      arr.push(s);
-    })
-    return arr;
-  };
+  // const selectRows = (select) => {
+  //   console.log(`sleect: ${select}`);
+  //   let arr = [];
+  //   select.map(s => {
+  //     arr.push(s);
+  //   })
+  //   setStocks(arr);
+  //   console.log(`arr: ${stocks}`);
+  // };
 
   const deleteStock = async () => {
     setIsLoading(true);
-    const select = selectRows;
-    console.log(select);
 
     if (select.length == 0) {
       alert("You have not select any stocks.");
@@ -173,12 +174,12 @@ function PortfolioPage() {
         token: localStorage.getItem('token'), 
         holding_id: id
       })
-        .then(res => {
-          if (res !== undefined) {
-            alert("Successfully Delete Stock(s)!");
-            setIsLoading(false);
-          }})
-    }));
+    }))
+      .then(res => {
+        if (res !== undefined) {
+          alert("Successfully Delete Stock(s)!");
+          setIsLoading(false);
+        }});
     handleCloseDS();
   };
 
@@ -188,7 +189,7 @@ function PortfolioPage() {
         const res = await api('portfolio/delete', 'DELETE', {
           token: localStorage.getItem('token'), portfolio_id: localStorage.getItem('id')
         });
-        console.log(res);
+        // console.log(res);
         if (res) {
           localStorage.removeItem('id');
           alert("Successfully Delete The Portfolio.");
@@ -255,28 +256,22 @@ function PortfolioPage() {
         <br></br>
       </div>
       <div style={{ height: 400, width: '100%' }}>
-        { isLoading &&
-          (<Loader></Loader>)
-          }
         <DataGrid
           rows={stocks}
-          // rows={rows}
           columns={columns}
           pagination
           checkboxSelection
-          // pageSize={7}
-          // rowCount={100}
-          paginationMode="server"
-          onSelectionModelChange={selectRows}
-          // onPageChange={(newPage) => {
-          //   prevSelectionModel.current = selectionModel;
-          //   setPage(newPage);
-          // }}
-          // onSelectionModelChange={(newSelectionModel) => {
-          //   setSelectionModel(newSelectionModel);
-          // }}
-          // selectionModel={selectionModel}
+          pageSize={7}
+          rowCount={100}
+          // paginationMode="server"
+          onSelectionModelChange={(newModel) => {
+            setSelect(newModel);
+          }}
+          selectionModel={select}
         />
+        { isLoading &&
+          (<Loader></Loader>)
+          }
       </div>
       <div>
         <Button onClick={handleClickOpenDelete}>
