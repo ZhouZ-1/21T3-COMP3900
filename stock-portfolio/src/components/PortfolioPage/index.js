@@ -82,7 +82,8 @@ function PortfolioPage() {
     })  
     
     Promise.all(res.holdings.map(async(s) => {
-      let price = await searchStock(s.symbol);
+      let price = 0;
+      // let price = await searchStock(s.symbol);
       if (price){
         const curr = (price - s.average_price) * s.qty;
         sum += curr;
@@ -143,16 +144,16 @@ function PortfolioPage() {
       return;
     }
 
-    if (value == -1) {
-      alert("Stock Symbol not exist.");
-      handleCloseAdd();
-      return;
-    }
+    // if (value == -1) {
+    //   alert("Stock Symbol not exist.");
+    //   handleCloseAdd();
+    //   return;
+    // }
 
-    if (qty > 0) {
-      alert("Quantity cannot be less than 1.");
-      return;
-    }
+    // if (qty < 1) {
+    //   alert("Quantity cannot be less than 1.");
+    //   return;
+    // }
 
     const res = await api('portfolio/holdings/add', 'POST', {
       token: localStorage.getItem('token'), 
