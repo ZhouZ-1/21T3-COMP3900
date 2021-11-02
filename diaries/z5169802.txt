@@ -21,3 +21,13 @@ Finish logout, change password feature for accounts
 
 # Week 5
 Finish frontend of delete account
+
+# Week 6
+Start endpoints for watchlist
+
+# Week 7
+Finish watchlist apis
+Start performance data api
+
+# Week 8
+Finish calculations for performance data

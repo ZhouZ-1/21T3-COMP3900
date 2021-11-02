@@ -169,7 +169,7 @@ def all_portfolios_from_user(username):
     Returns a list of all portfolio in the user's account in the database.
     '''
     cursor = conn.cursor()
-    cursor.execute("SELECT * from portfolios WHERE owner=?", [username])
+    cursor.execute("SELECT * FROM portfolios WHERE owner=?", [username])
 
     return [{"portfolio_id": portfolio_id, "portfolio_name": portfolio_name} for portfolio_id, _, portfolio_name in cursor.fetchall()]
 
