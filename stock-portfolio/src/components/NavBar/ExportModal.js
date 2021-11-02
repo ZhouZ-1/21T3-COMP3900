@@ -24,11 +24,7 @@ function ExportModal(){
     },[]);
 
     const onPortfolioClick = async (portFolioId) => {
-        // console.log('sending download request with following portfolio_id and token',portFolioId,token);
-        // const response = await api(`portfolio/download?portfolio_id=${portFolioId}&token=${token}`,'GET');
-        // console.log('response',response);
-        // await api(`portfolio/download?portfolio_id=${portFolioId}&token=${token}`,'GET');
-        window.location.replace(`portfolio/download?portfolio_id=${portFolioId}&token=${token}`);
+        window.open(`http://localhost:5000/portfolio/download?portfolio_id=${portFolioId}&token=${token}`, '_blank');
     }
     
     return (
