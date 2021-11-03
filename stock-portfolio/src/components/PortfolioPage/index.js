@@ -42,9 +42,9 @@ function PortfolioPage() {
 
   useEffect(async() => {
     setIsLoading(true);
-    const perform = await api(`invested_performance/portfolio?portfolio=${localStorage.getItem('id')}`, 'GET');
+    // const perform = await api(`invested_performance/portfolio?portfolio=${localStorage.getItem('id')}`, 'GET');
     // setPerformance(perform);
-    console.log(perform);
+    // console.log(perform);
 
     let rows = [];
 
@@ -52,7 +52,7 @@ function PortfolioPage() {
       token: localStorage.getItem('token'), portfolio_id: localStorage.getItem('id')
     })
       .then(res => {
-        const price = handleBalance();
+        // const price = handleBalance();
 
         if (res) {
           res.map(s => {
@@ -72,13 +72,13 @@ function PortfolioPage() {
     setIsLoading(false);
   }, []);
       
-  const handleBalance = async () => {
-    const res = await api(`invested_performance?${localStorage.getItem('token')}`, 'GET')
-    // if (res) {
-    console.log(`res:${res}`);  
-        // setBalance(res.portfolios);
-    // }
-  };
+  // const handleBalance = async () => {
+  //   const res = await api(`invested_performance?${localStorage.getItem('token')}`, 'GET')
+  //   // if (res) {
+  //   console.log(`res:${res}`);  
+  //       // setBalance(res.portfolios);
+  //   // }
+  // };
 
   // const handleBalance = async () => {
     // let sum = 0;
@@ -227,7 +227,7 @@ function PortfolioPage() {
       <div>
         <h1>Portfolio: {localStorage.getItem('name')}</h1>
         { !isLoading &&
-          (<p onClick={handleBalance}>Balance: {balance}</p>)
+          (<p>Balance: {balance}</p>)
           }
         <br></br>
         <div>
