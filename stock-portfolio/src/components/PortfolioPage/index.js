@@ -10,13 +10,20 @@ import {
     DialogContentText,
     DialogTitle,
 } from '@mui/material';
+import {
+    List,
+    ListItem,
+    ListItemText,
+    ListSubheader
+} from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import api from "../../api";
 import moment from "moment";
 import Loader from "../Loader";
 
+
 const columns = [
-  { field: 'id', headerName: 'id', width: 100 },
+  // { field: 'id', headerName: 'id', width: 100 },
   { field: 'symbol', headerName: 'Symbol', width: 125 },
   { field: 'value', headerName: 'Value', width: 120 },
   { field: 'qty', headerName: 'Quantity', width: 130 },
@@ -31,13 +38,18 @@ function PortfolioPage() {
   const [openDS, setOpenDS] = useState(false);
   const [symbol,setSymbol] = useState('');
   const [qty,setQty] = useState(0);
-  const [stocks, setStocks] = useState([]);
-  const [perform, setPerform] = useState(0);
+  const [stocks, setStocks] = useState([
+    { id: 0, symbol: 'RENDERING', value: '....', qty: 'PLEASE WAIT', date: 'N/A'}
+  ]);
   const [select, setSelect] = useState([]);
   const [balance, setBalance] = useState(0);
   const [isLoading,setIsLoading] = useState(false);
+  const [refresh, setRefresh] = useState(0);
+  const [performance, setPerformance] = useState([]);
+  const [performS, setPerformS] = useState(true);
 
-  useEffect(() => {
+
+  useEffect(async() => {
     setIsLoading(true);
     let arr = [];
 
@@ -61,29 +73,70 @@ function PortfolioPage() {
           setStocks(arr);
         } 
       })
-
+    stockPerform();
     setIsLoading(false);
-  }, []);
+  }, [refresh]);
       
-  // useEffect(async () => {
-  //   setIsLoading(true);
-  //   let sum = 0;
+  // const handleBalance = async () => {
+  //   const res = await fetch(`http://localhost:5000/invested_performance?token=${localStorage.getItem('token')}`, {method: 'GET', mode: 'same-origin', headers: {"Content-Type": "application/json"}})
+  //   .then((res) => res.json)
+  //   .then((res) => {
+  //     console.log(`res:${res}`); 
+  //   })
+  //   .catch((err) => console.warn(`API_ERROR: ${err.message}`));
+    
+  //   const res = await api(`invested_performance?${localStorage.getItem('token')}`, 'GET')
+  //   // if (res) {
+  //   console.log(`res:${res}`);  
+  //       // setBalance(res.portfolios);
+  //   // }
+  // };
+
+  // const handleBalance = async () => {
   //   const res = await api('portfolio/summary', 'POST', {  
   //     token: localStorage.getItem('token'), 
   //     portfolio_id: localStorage.getItem('id')
   //   })  
-    
-  //   Promise.all(res.holdings.map(async(s) => {
-  //     let price = await searchStock(s.symbol);
-  //     if (price){
-  //       const curr = (price - s.average_price) * s.qty;
-  //       sum += curr;
-  //       console.log(price, s.average_price, s.qty);
-  //     }
-  //   }));
-  //   setBalance(sum);
-  //   setIsLoading(false);
-  // }, []);
+  //   console.log(res);
+  //   // Promise.all(res.holdings.map(async(s) => {
+  //   //   let price = await searchStock(s.symbol);
+  //   //   if (price){
+  //   //     const curr = (price - s.average_price) * s.qty;
+  //   //     sum += curr;
+  //   //     console.log(price, s.average_price, s.qty);
+  //   //   }
+  //   // }));
+  //   // setBalance(sum);
+  //   return res.summary;
+  // };
+  const stockPerform = async() => {
+    setIsLoading(true);
+    let sum = 0;
+    let rows = [];
+
+    const res = await api('portfolio/summary', 'POST', {
+      token: localStorage.getItem('token'), portfolio_id: localStorage.getItem('id')
+    })
+      .then(async(res) => {
+        res.holdings.map(async(s) => {
+          const curr = await searchStock(s.symbol);
+          const b = (s.value - curr);
+          sum += b;
+          let temp = [];
+          temp['symbol'] = s.symbol;
+          temp['value'] = s.average_price;
+          temp['qty'] = s.qty;
+          temp['balance'] = b;
+          temp['percentage'] = 
+            Math.round((curr-s.average_price)/s.average_price);
+        })
+        setPerformance(rows);
+        setBalance(sum);
+        console.log('p', performance);
+      })
+    console.log(performance);
+    setIsLoading(false);
+  };
 
   const handleClickOpenAdd = () => {
     setOpenAdd(true);
@@ -108,6 +161,7 @@ function PortfolioPage() {
   const handleCloseDelete = () => {
     setOpenDelete(false);
   };
+  
 
   const getCurrDate = () => {
     let curr = new Date();
@@ -118,7 +172,7 @@ function PortfolioPage() {
   const searchStock = async(s) => {
     let value = -1;
     const res = await api(`stocks/search`, 'POST', {symbol: s}); 
-    if (res.price) {
+    if (res) {
       return res.price;
     } 
     return value;
@@ -135,36 +189,35 @@ function PortfolioPage() {
       return;
     }
 
-    if (value == -1) {
-      alert("Stock Symbol not exist.");
-      handleCloseAdd();
-      return;
-    }
-
     if (qty < 1) {
       alert("Quantity cannot be less than 1.");
       return;
     }
 
-    const res = await api('portfolio/holdings/add', 'POST', {
-      token: localStorage.getItem('token'), 
-      portfolio_id: localStorage.getItem('id'),
-      symbol: symbol,
-      value: value,
-      qty: qty,
-      type: "buy",
-      brokerage: "9.95",
-      exchange: "NYSE",
-      date: date,
-      currency: "USD"
-    });
+    if (value != -1) {
+      const res = await api('portfolio/holdings/add', 'POST', {
+        token: localStorage.getItem('token'), 
+        portfolio_id: localStorage.getItem('id'),
+        symbol: symbol.toUpperCase(),
+        value: value,
+        qty: qty,
+        type: "buy",
+        brokerage: "9.95",
+        exchange: "NYSE",
+        date: date,
+        currency: "USD"
+      });
 
-    if (res.is_success) {
+      if (res.is_success) {
         alert("Successfully Add Stock!");
-    } 
+        setRefresh(r => r +1);
+      } 
+    } else {
+      alert("Symbol is not valided");
+    }
+
     handleCloseAdd();
     setIsLoading(false);
-    history.push(`/portfolio/${localStorage.getItem('id')}`);
   };
   
   const deleteStock = async () => {
@@ -175,6 +228,7 @@ function PortfolioPage() {
       return;
     }
 
+    
     Promise.all(select.map((id) => {
       const res = api('portfolio/holdings/delete', 'DELETE', {
         token: localStorage.getItem('token'), 
@@ -184,10 +238,10 @@ function PortfolioPage() {
       .then(res => {
         if (res !== undefined) {
           alert("Successfully Delete Stock(s)!");
-          setIsLoading(false);
+          setRefresh(r => r +1);
         }});
+    setIsLoading(false);
     handleCloseDS();
-    history.push(`/portfolio/${localStorage.getItem('id')}`);
   };
 
   const handleDelete = async () => {
@@ -260,22 +314,24 @@ function PortfolioPage() {
         <br></br>
       </div>
       <div style={{ height: 400, width: '100%' }}>
-        <DataGrid
-          rows={stocks}
-          columns={columns}
-          pagination
-          checkboxSelection
-          pageSize={7}
-          rowCount={100}
-          // paginationMode="server"
-          onSelectionModelChange={(newModel) => {
-            setSelect(newModel);
-          }}
-          selectionModel={select}
-        />
+        {!isLoading && 
+          <DataGrid
+            rows={stocks}
+            columns={columns}
+            pagination
+            checkboxSelection
+            pageSize={10}
+            rowsPerPageOptions={[5]}
+            rowCount={100}
+            onSelectionModelChange={(newModel) => {
+              setSelect(newModel);
+            }}
+            selectionModel={select}
+            />
+        }
         { isLoading &&
-          (<Loader></Loader>)
-          }
+        (<Loader></Loader>)
+        }
       </div>
       <div>
         <Button onClick={handleClickOpenDelete}>
@@ -301,9 +357,42 @@ function PortfolioPage() {
             </DialogActions>
         </Dialog>
       </div>
+      <div>
+        <List
+          // component="stockPerform"
+          sx={{
+            width: '100%',
+            maxWidth: 360,
+            bgcolor: 'background.paper',
+            position: 'relative',
+            overflow: 'auto',
+            maxHeight: 300,
+            '& ul': { padding: 0 },
+          }}
+          subheader={<li />}
+        >
+          {/* {performance.map((p) => ( */}
+          {/* <li key={'Overall Profit'}> */}
+          {performance.map((p) => (
+            <ul>
+              <li key={`Overall Balance-${balance}`}>
+                <ListSubheader>{`${p.symbol}`}</ListSubheader>
+                  <ListItem key={`item-${p.symbol}-${p.qty}`}>
+                    <ListItemText primary={`Price ${p.average_price}`} />
+                </ListItem>
+              </li>
+            </ul>
+          ))}
+          
+          {/* ))} */}
+        </List>
+      </div>
     </div>
   );
 }
 
 export default PortfolioPage;
+
+
+
 
