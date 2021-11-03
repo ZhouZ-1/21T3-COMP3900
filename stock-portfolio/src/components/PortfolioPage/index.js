@@ -21,7 +21,7 @@ const columns = [
   { field: 'value', headerName: 'Value', width: 120 },
   { field: 'qty', headerName: 'Quantity', width: 130 },
   { field: 'date', headerName: 'Date', width: 130 },
-  { field: 'perform', headerName: 'Performance', width: 150 }
+  { field: 'change_percent', headerName: 'Changes', width: 250 }
 ];
 
 function PortfolioPage() {
@@ -44,8 +44,11 @@ function PortfolioPage() {
     api('portfolio/holdings', 'POST', {
       token: localStorage.getItem('token'), portfolio_id: localStorage.getItem('id')
     })
-      .then(res => {
+      .then(async(res) => {
         if (res) {
+          const change = await api(`portfolio?token=${localStorage.getItem('token')}`, 'GET');
+          console.log(res.portfolios);
+
           res.map(s => {
             let fil = [];
             fil['id'] = s.holding_id;
