@@ -10,11 +10,17 @@ import {
     DialogContentText,
     DialogTitle,
 } from '@mui/material';
+import {
+    List,
+    ListItem,
+    ListItemText,
+    ListSubheader
+} from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import api from "../../api";
 import moment from "moment";
 import Loader from "../Loader";
-import fetchPortfolio from './fetchPortfolio';
+
 
 const columns = [
   // { field: 'id', headerName: 'id', width: 100 },
@@ -22,7 +28,6 @@ const columns = [
   { field: 'value', headerName: 'Value', width: 120 },
   { field: 'qty', headerName: 'Quantity', width: 130 },
   { field: 'date', headerName: 'Date', width: 130 },
-  { field: 'performance', headerName: 'Performance', width: 150 }
 ];
 
 function PortfolioPage() {
@@ -33,46 +38,49 @@ function PortfolioPage() {
   const [symbol,setSymbol] = useState('');
   const [qty,setQty] = useState(0);
   const [stocks, setStocks] = useState([
-    { id: 0, symbol: 'N/A', value: 'N/A', qty: 'N/A', date: 'N/A', performance: 'RENDERING.... PLEASE WAIT'}
+    { id: 0, symbol: 'RENDERING', value: '....', qty: 'PLEASE WAIT', date: 'N/A'}
   ]);
-  const [performance, setPerformance] = useState(0);
   const [select, setSelect] = useState([]);
   const [balance, setBalance] = useState(0);
   const [isLoading,setIsLoading] = useState(false);
+  const [refresh, setRefresh] = useState(0);
+  const [performance, setPerformance] = useState([]);
+  const [performS, setPerformS] = useState(true);
+
 
   useEffect(async() => {
     setIsLoading(true);
-    // const perform = await api(`invested_performance/portfolio?portfolio=${localStorage.getItem('id')}`, 'GET');
-    // setPerformance(perform);
-    // console.log(perform);
-
-    let rows = [];
+    let arr = [];
 
     api('portfolio/holdings', 'POST', {
       token: localStorage.getItem('token'), portfolio_id: localStorage.getItem('id')
     })
       .then(res => {
-        // const price = handleBalance();
-
         if (res) {
           res.map(s => {
-            rows.push({
-              id: s.holding_id,
-              symbol: s.symbol,
-              value: s.value,
-              qty: s.qty,
-              date: s.date,
-              performance: performance
-            })
+            let fil = [];
+            fil['id'] = s.holding_id;
+            fil['symbol'] = s.symbol;
+            fil['value'] = s.value;
+            fil['qty'] = s.qty;
+            fil['date'] = s.date;
+            arr.push(fil);
           })
-          setStocks(rows);
+          setStocks(arr);
         } 
       })
-
+    stockPerform();
     setIsLoading(false);
-  }, []);
+  }, [refresh]);
       
   // const handleBalance = async () => {
+  //   const res = await fetch(`http://localhost:5000/invested_performance?token=${localStorage.getItem('token')}`, {method: 'GET', mode: 'same-origin', headers: {"Content-Type": "application/json"}})
+  //   .then((res) => res.json)
+  //   .then((res) => {
+  //     console.log(`res:${res}`); 
+  //   })
+  //   .catch((err) => console.warn(`API_ERROR: ${err.message}`));
+    
   //   const res = await api(`invested_performance?${localStorage.getItem('token')}`, 'GET')
   //   // if (res) {
   //   console.log(`res:${res}`);  
@@ -81,22 +89,50 @@ function PortfolioPage() {
   // };
 
   // const handleBalance = async () => {
-    // let sum = 0;
-    // const res = await api('portfolio/summary', 'POST', {  
-    //   token: localStorage.getItem('token'), 
-    //   portfolio_id: localStorage.getItem('id')
-    // })  
-    // console.log(res);
-    // Promise.all(res.holdings.map(async(s) => {
-    //   let price = await searchStock(s.symbol);
-    //   if (price){
-    //     const curr = (price - s.average_price) * s.qty;
-    //     sum += curr;
-    //     console.log(price, s.average_price, s.qty);
-    //   }
-    // }));
-    // setBalance(sum);
+  //   const res = await api('portfolio/summary', 'POST', {  
+  //     token: localStorage.getItem('token'), 
+  //     portfolio_id: localStorage.getItem('id')
+  //   })  
+  //   console.log(res);
+  //   // Promise.all(res.holdings.map(async(s) => {
+  //   //   let price = await searchStock(s.symbol);
+  //   //   if (price){
+  //   //     const curr = (price - s.average_price) * s.qty;
+  //   //     sum += curr;
+  //   //     console.log(price, s.average_price, s.qty);
+  //   //   }
+  //   // }));
+  //   // setBalance(sum);
+  //   return res.summary;
   // };
+  const stockPerform = async() => {
+    setIsLoading(true);
+    let sum = 0;
+    let rows = [];
+
+    const res = await api('portfolio/summary', 'POST', {
+      token: localStorage.getItem('token'), portfolio_id: localStorage.getItem('id')
+    })
+      .then(async(res) => {
+        res.holdings.map(async(s) => {
+          const curr = await searchStock(s.symbol);
+          const b = (s.value - curr);
+          sum += b;
+          let temp = [];
+          temp['symbol'] = s.symbol;
+          temp['value'] = s.average_price;
+          temp['qty'] = s.qty;
+          temp['balance'] = b;
+          temp['percentage'] = 
+            Math.round((curr-s.average_price)/s.average_price);
+        })
+        setPerformance(rows);
+        setBalance(sum);
+        console.log('p', performance);
+      })
+    console.log(performance);
+    setIsLoading(false);
+  };
 
   const handleClickOpenAdd = () => {
     setOpenAdd(true);
@@ -132,7 +168,7 @@ function PortfolioPage() {
   const searchStock = async(s) => {
     let value = -1;
     const res = await api(`stocks/search`, 'POST', {symbol: s}); 
-    if (res.price) {
+    if (res) {
       return res.price;
     } 
     return value;
@@ -170,9 +206,7 @@ function PortfolioPage() {
 
       if (res.is_success) {
         alert("Successfully Add Stock!");
-        // const item = [symbol, value, qty, date, performance];
-        // const s = stocks.push(item);
-        // setStocks(s);
+        setRefresh(r => r +1);
       } 
     } else {
       alert("Symbol is not valided");
@@ -200,8 +234,7 @@ function PortfolioPage() {
       .then(res => {
         if (res !== undefined) {
           alert("Successfully Delete Stock(s)!");
-          const newStocks = stocks.filter(item=> !select.includes(item.id));
-          setStocks(newStocks);
+          setRefresh(r => r +1);
         }});
     setIsLoading(false);
     handleCloseDS();
@@ -283,7 +316,8 @@ function PortfolioPage() {
             columns={columns}
             pagination
             checkboxSelection
-            pageSize={7}
+            pageSize={10}
+            rowsPerPageOptions={[5]}
             rowCount={100}
             onSelectionModelChange={(newModel) => {
               setSelect(newModel);
@@ -319,11 +353,42 @@ function PortfolioPage() {
             </DialogActions>
         </Dialog>
       </div>
+      <div>
+        <List
+          // component="stockPerform"
+          sx={{
+            width: '100%',
+            maxWidth: 360,
+            bgcolor: 'background.paper',
+            position: 'relative',
+            overflow: 'auto',
+            maxHeight: 300,
+            '& ul': { padding: 0 },
+          }}
+          subheader={<li />}
+        >
+          {/* {performance.map((p) => ( */}
+          {/* <li key={'Overall Profit'}> */}
+          {performance.map((p) => (
+            <ul>
+              <li key={`Overall Balance-${balance}`}>
+                <ListSubheader>{`${p.symbol}`}</ListSubheader>
+                  <ListItem key={`item-${p.symbol}-${p.qty}`}>
+                    <ListItemText primary={`Price ${p.average_price}`} />
+                </ListItem>
+              </li>
+            </ul>
+          ))}
+          
+          {/* ))} */}
+        </List>
+      </div>
     </div>
   );
 }
 
 export default PortfolioPage;
+
 
 
 
