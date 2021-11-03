@@ -14,14 +14,15 @@ import { DataGrid } from '@mui/x-data-grid';
 import api from "../../api";
 import moment from "moment";
 import Loader from "../Loader";
+import fetchPortfolio from './fetchPortfolio';
 
 const columns = [
-  { field: 'id', headerName: 'id', width: 100 },
+  // { field: 'id', headerName: 'id', width: 100 },
   { field: 'symbol', headerName: 'Symbol', width: 125 },
   { field: 'value', headerName: 'Value', width: 120 },
   { field: 'qty', headerName: 'Quantity', width: 130 },
   { field: 'date', headerName: 'Date', width: 130 },
-  { field: 'perform', headerName: 'Performance', width: 150 }
+  { field: 'performance', headerName: 'Performance', width: 150 }
 ];
 
 function PortfolioPage() {
@@ -31,56 +32,71 @@ function PortfolioPage() {
   const [openDS, setOpenDS] = useState(false);
   const [symbol,setSymbol] = useState('');
   const [qty,setQty] = useState(0);
-  const [stocks, setStocks] = useState([]);
-  const [perform, setPerform] = useState(0);
+  const [stocks, setStocks] = useState([
+    { id: 0, symbol: 'N/A', value: 'N/A', qty: 'N/A', date: 'N/A', performance: 'RENDERING.... PLEASE WAIT'}
+  ]);
+  const [performance, setPerformance] = useState(0);
   const [select, setSelect] = useState([]);
   const [balance, setBalance] = useState(0);
   const [isLoading,setIsLoading] = useState(false);
 
-  useEffect(() => {
+  useEffect(async() => {
     setIsLoading(true);
-    let arr = [];
+    const perform = await api(`invested_performance/portfolio?portfolio=${localStorage.getItem('id')}`, 'GET');
+    // setPerformance(perform);
+    console.log(perform);
+
+    let rows = [];
 
     api('portfolio/holdings', 'POST', {
       token: localStorage.getItem('token'), portfolio_id: localStorage.getItem('id')
     })
       .then(res => {
+        const price = handleBalance();
+
         if (res) {
           res.map(s => {
-            let fil = [];
-            fil['id'] = s.holding_id;
-            fil['symbol'] = s.symbol;
-            fil['value'] = s.value;
-            fil['qty'] = s.qty;
-            fil['date'] = s.date;
-            arr.push(fil);
+            rows.push({
+              id: s.holding_id,
+              symbol: s.symbol,
+              value: s.value,
+              qty: s.qty,
+              date: s.date,
+              performance: performance
+            })
           })
-          setStocks(arr);
+          setStocks(rows);
         } 
       })
 
     setIsLoading(false);
   }, []);
       
-  // useEffect(async () => {
-  //   setIsLoading(true);
-  //   let sum = 0;
-  //   const res = await api('portfolio/summary', 'POST', {  
-  //     token: localStorage.getItem('token'), 
-  //     portfolio_id: localStorage.getItem('id')
-  //   })  
-    
-  //   Promise.all(res.holdings.map(async(s) => {
-  //     let price = await searchStock(s.symbol);
-  //     if (price){
-  //       const curr = (price - s.average_price) * s.qty;
-  //       sum += curr;
-  //       console.log(price, s.average_price, s.qty);
-  //     }
-  //   }));
-  //   setBalance(sum);
-  //   setIsLoading(false);
-  // }, []);
+  const handleBalance = async () => {
+    const res = await api(`invested_performance?${localStorage.getItem('token')}`, 'GET')
+    // if (res) {
+    console.log(`res:${res}`);  
+        // setBalance(res.portfolios);
+    // }
+  };
+
+  // const handleBalance = async () => {
+    // let sum = 0;
+    // const res = await api('portfolio/summary', 'POST', {  
+    //   token: localStorage.getItem('token'), 
+    //   portfolio_id: localStorage.getItem('id')
+    // })  
+    // console.log(res);
+    // Promise.all(res.holdings.map(async(s) => {
+    //   let price = await searchStock(s.symbol);
+    //   if (price){
+    //     const curr = (price - s.average_price) * s.qty;
+    //     sum += curr;
+    //     console.log(price, s.average_price, s.qty);
+    //   }
+    // }));
+    // setBalance(sum);
+  // };
 
   const handleClickOpenAdd = () => {
     setOpenAdd(true);
@@ -105,6 +121,7 @@ function PortfolioPage() {
   const handleCloseDelete = () => {
     setOpenDelete(false);
   };
+  
 
   const getCurrDate = () => {
     let curr = new Date();
@@ -132,36 +149,37 @@ function PortfolioPage() {
       return;
     }
 
-    if (value == -1) {
-      alert("Stock Symbol not exist.");
-      handleCloseAdd();
-      return;
-    }
-
     if (qty < 1) {
       alert("Quantity cannot be less than 1.");
       return;
     }
 
-    const res = await api('portfolio/holdings/add', 'POST', {
-      token: localStorage.getItem('token'), 
-      portfolio_id: localStorage.getItem('id'),
-      symbol: symbol,
-      value: value,
-      qty: qty,
-      type: "buy",
-      brokerage: "9.95",
-      exchange: "NYSE",
-      date: date,
-      currency: "USD"
-    });
+    if (value != -1) {
+      const res = await api('portfolio/holdings/add', 'POST', {
+        token: localStorage.getItem('token'), 
+        portfolio_id: localStorage.getItem('id'),
+        symbol: symbol.toUpperCase(),
+        value: value,
+        qty: qty,
+        type: "buy",
+        brokerage: "9.95",
+        exchange: "NYSE",
+        date: date,
+        currency: "USD"
+      });
 
-    if (res.is_success) {
+      if (res.is_success) {
         alert("Successfully Add Stock!");
-    } 
+        // const item = [symbol, value, qty, date, performance];
+        // const s = stocks.push(item);
+        // setStocks(s);
+      } 
+    } else {
+      alert("Symbol is not valided");
+    }
+
     handleCloseAdd();
     setIsLoading(false);
-    history.push(`/portfolio/${localStorage.getItem('id')}`);
   };
   
   const deleteStock = async () => {
@@ -172,6 +190,7 @@ function PortfolioPage() {
       return;
     }
 
+    
     Promise.all(select.map((id) => {
       const res = api('portfolio/holdings/delete', 'DELETE', {
         token: localStorage.getItem('token'), 
@@ -181,10 +200,11 @@ function PortfolioPage() {
       .then(res => {
         if (res !== undefined) {
           alert("Successfully Delete Stock(s)!");
-          setIsLoading(false);
+          const newStocks = stocks.filter(item=> !select.includes(item.id));
+          setStocks(newStocks);
         }});
+    setIsLoading(false);
     handleCloseDS();
-    history.push(`/portfolio/${localStorage.getItem('id')}`);
   };
 
   const handleDelete = async () => {
@@ -207,7 +227,7 @@ function PortfolioPage() {
       <div>
         <h1>Portfolio: {localStorage.getItem('name')}</h1>
         { !isLoading &&
-          (<p>Balance: {balance}</p>)
+          (<p onClick={handleBalance}>Balance: {balance}</p>)
           }
         <br></br>
         <div>
@@ -257,22 +277,23 @@ function PortfolioPage() {
         <br></br>
       </div>
       <div style={{ height: 400, width: '100%' }}>
-        <DataGrid
-          rows={stocks}
-          columns={columns}
-          pagination
-          checkboxSelection
-          pageSize={7}
-          rowCount={100}
-          // paginationMode="server"
-          onSelectionModelChange={(newModel) => {
-            setSelect(newModel);
-          }}
-          selectionModel={select}
-        />
+        {!isLoading && 
+          <DataGrid
+            rows={stocks}
+            columns={columns}
+            pagination
+            checkboxSelection
+            pageSize={7}
+            rowCount={100}
+            onSelectionModelChange={(newModel) => {
+              setSelect(newModel);
+            }}
+            selectionModel={select}
+            />
+        }
         { isLoading &&
-          (<Loader></Loader>)
-          }
+        (<Loader></Loader>)
+        }
       </div>
       <div>
         <Button onClick={handleClickOpenDelete}>
@@ -303,4 +324,6 @@ function PortfolioPage() {
 }
 
 export default PortfolioPage;
+
+
 
