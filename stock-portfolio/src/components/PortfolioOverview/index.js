@@ -22,7 +22,6 @@ import {
 import api from "../../api";
 import NavBar from "../NavBar";
 import Loader from "../Loader";
-// import CreatePortfolio from "../CreatePortfolio";
 import PortfolioPage from "../PortfolioPage";
 
 const useStyles = makeStyles(theme => ({
@@ -38,8 +37,8 @@ function PortfolioOverview() {
     const classes = useStyles();
     const [title, setTitle] = React.useState('');
     const [port, setPort] = useState([]);
-    const [portState, setPortState] = useState(false);
     const [isLoading,setIsLoading] = useState(false);
+    const [openEdit, setOpenEdit] = useState(false);
     const [open, setOpen] = React.useState(false);
 
     const handleClickOpen = () => {
@@ -56,16 +55,13 @@ function PortfolioOverview() {
             .then(res => {
                 if (res) {
                     setPort(res.portfolios);
-                    if (port !== []) {
-                        setPortState(true);
-                    }
                 } 
             })
+        setIsLoading(false);
     }, []);
 
     const handleCreate = async () => {
         if (title !== '') {
-            setIsLoading(true);
             const res = await api('portfolio/create', 'POST', {token: localStorage.getItem('token'), portfolio_name: title});
             if (res.portfolios) {
                 alert("Successfully Add A New Portfolio!");
@@ -75,9 +71,31 @@ function PortfolioOverview() {
         handleClose();
     };
 
+    const handleClickOpenEdit = () => {
+        setOpenEdit(true);
+    };
 
-    const handleRedirect = (id) => {
+    const handleCloseEdit = () => {
+        setOpenEdit(false);
+    };
+
+    const handleEdit = async () => {
+        if (title !== '') {
+          const res = await api('portfolio/edit', 'POST', {
+            token: localStorage.getItem('token'), 
+            portfolio_name: title, 
+            portfolio_id: localStorage.getItem('id')
+          }); 
+          if (res.is_success) {
+            alert("Successfully Update Your Portfolio Name!");
+          } 
+        }
+        handleCloseEdit();
+    };
+
+    const handleRedirect = (id, name) => {
         localStorage.setItem('id', id);
+        localStorage.setItem('name', name);
         history.push(`portfolio/${id}`);
     };
 
@@ -116,7 +134,7 @@ function PortfolioOverview() {
                     </div>
             </div>
             <br></br>
-            { isLoading && !portState &&
+            { isLoading &&
                 (<Loader></Loader>)
             }
             <Grid
@@ -126,31 +144,49 @@ function PortfolioOverview() {
                 justify="flex-start"
                 alignItems="flex-start"
             >
-                {portState && port.map(p => (
-                        <Grid item xs={12} sm={6} md={3} key={port.indexOf(p)}>
-                            <Card 
-                                variant="outlined"
-                                // component={PortfolioPage}
-                                // to={`portfolio/${p.portfolio_id}`}
-                                onClick={(e) => handleRedirect(`${p.portfolio_id}`, e)}
+                {port.map(p => (
+                    <Grid item xs={12} sm={6} md={3} key={port.indexOf(p)}>
+                        <Card 
+                            variant="outlined"
+                            >
+                            <CardHeader
+                                onClick={(e) => handleRedirect(`${p.portfolio_id}`, `${p.portfolio_name}`, e)}
+                                title={`Portfolio : ${p.portfolio_name}`}
+                                subheader={`earnings : ${p.earnings}`}
+                                subheader={`earnings : 10000`}
+                                />  
+                            <CardContent>
+                                <Typography variant="h5" gutterBottom>
+                                    {/* Description */}
+                                </Typography>
+                                <Button class="btn btn-outline-primary ms-5" onClick={handleClickOpenEdit}>Edit Name</Button>
+                                <Dialog
+                                    open={openEdit}
+                                    onClose={handleCloseEdit}
+                                    aria-labelledby="alert-dialog-title"
+                                    aria-describedby="alert-dialog-description"
                                 >
-                                <CardHeader
-                                        title={`Portfolio : ${p.portfolio_name}`}
-                                        subheader={`id : ${p.portfolio_id}`}
-                                        // subheader={`earnings : ${p.earnings}`}
-                                    />  
-                                <CardContent>
-                                    <Typography variant="h5" gutterBottom>
-                                        {/* Description */}
-                                    </Typography>
-                                </CardContent>
-                            </Card>
-                        </Grid>
+                                    <DialogTitle id="alert-dialog-title">
+                                    {"Edit Porfolio"}
+                                    </DialogTitle>
+                                    <DialogContent>
+                                    <DialogContentText id="alert-dialog-description">
+                                        Please update the title of Portfolio:
+                                    </DialogContentText>
+                                    <TextField id="demo-helper-text-misaligned-no-helper" label="Title" required onChange={(evt)=>setTitle(evt.target.value)}></TextField>
+                                    </DialogContent>
+                                    <DialogActions>
+                                    <Button onClick={handleCloseEdit}>Cancel</Button>
+                                    <Button onClick={handleEdit} autoFocus>
+                                        Confirm
+                                    </Button>
+                                    </DialogActions>
+                                </Dialog>
+                            </CardContent>
+                        </Card>
+                    </Grid>
                     ))}
             </Grid>
-            {!isLoading && !portState && 
-                <p>No Portfolio yet.</p>
-            }
         </div>
         
     )

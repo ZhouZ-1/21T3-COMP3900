@@ -9,7 +9,6 @@ async function isStockInWatchList(symbol){
             isInWatchList=true;
         }
     });
-    console.log("is it in watch list?",isInWatchList);
     return isInWatchList;
 }
 export default isStockInWatchList;

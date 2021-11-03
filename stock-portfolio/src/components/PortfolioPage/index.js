@@ -1,6 +1,4 @@
 import React from 'react';
-// import { Component } from 'react';
-import { render } from 'react-dom';
 import { useState, useEffect } from "react";
 import { useHistory } from "react-router";
 import { 
@@ -15,43 +13,89 @@ import {
 import { DataGrid } from '@mui/x-data-grid';
 import api from "../../api";
 import moment from "moment";
+import Loader from "../Loader";
 
 const columns = [
-  { field: 'id', headerName: 'ID', width: 70 },
-  { field: 'symbol', headerName: 'Symbol', width: 130 },
-  { field: 'value', headerName: 'Value', width: 90, type: 'number' },
-  { field: 'qty', headerName: 'Quantity', width: 90, type: 'number' },
-  { field: 'date', headerName: 'Date', width: 130 }
-];
-
-const rows = [
-  { id: 1, symbol: 'STX', name: 'Seagate Technology PLC', qty: 35 },      // buy price, balance, market price
-  { id: 2, symbol: 'DFS', name: 'DIscover Financial Services', qty: 42 },
-  { id: 3, symbol: 'LSTR', name: 'Landstar System Inc', qty: 45 },
-  { id: 4, symbol: 'SWKS', name: 'Skyworks Solutions Inc', qty: 16 },
-  { id: 5, symbol: 'SNPS', name: 'Synopsys Inc', qty: 133 },
-  { id: 6, symbol: 'NSC', name: 'Norfolk Southern Corporation', qty: 150 },
-  { id: 7, symbol: 'CSCO', name: 'Cisco Systems', qty: 44 },
-  { id: 8, symbol: 'VIAV', name: 'Viavi Solutions Inc', qty: 36 },
-  { id: 9, symbol: 'ROST', name: 'Ross Stores Inc', qty: 65 },
+  { field: 'id', headerName: 'id', width: 100 },
+  { field: 'symbol', headerName: 'Symbol', width: 125 },
+  { field: 'value', headerName: 'Value', width: 120 },
+  { field: 'qty', headerName: 'Quantity', width: 130 },
+  { field: 'date', headerName: 'Date', width: 130 },
+  { field: 'perform', headerName: 'Performance', width: 150 }
 ];
 
 function PortfolioPage() {
   var history = useHistory();
-  const [openEdit, setOpenEdit] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
-  const [title,setTitle] = useState('');
-  const [symbol,setSymbol] = useState([]);
-  const [stock, setStock] = useState([]);
-  const [stockState, setStockState] = useState(false);
+  const [openAdd, setOpenAdd] = useState(false);
+  const [openDS, setOpenDS] = useState(false);
+  const [symbol,setSymbol] = useState('');
+  const [qty,setQty] = useState(0);
+  const [stocks, setStocks] = useState([]);
+  const [perform, setPerform] = useState(0);
+  const [select, setSelect] = useState([]);
+  const [balance, setBalance] = useState(0);
   const [isLoading,setIsLoading] = useState(false);
 
-  const handleClickOpenEdit = () => {
-    setOpenEdit(true);
+  useEffect(() => {
+    setIsLoading(true);
+    let arr = [];
+
+    api('portfolio/holdings', 'POST', {
+      token: localStorage.getItem('token'), portfolio_id: localStorage.getItem('id')
+    })
+      .then(res => {
+        if (res) {
+          res.map(s => {
+            let fil = [];
+            fil['id'] = s.holding_id;
+            fil['symbol'] = s.symbol;
+            fil['value'] = s.value;
+            fil['qty'] = s.qty;
+            fil['date'] = s.date;
+            arr.push(fil);
+          })
+          setStocks(arr);
+        } 
+      })
+
+    setIsLoading(false);
+  }, []);
+      
+  // useEffect(async () => {
+  //   setIsLoading(true);
+  //   let sum = 0;
+  //   const res = await api('portfolio/summary', 'POST', {  
+  //     token: localStorage.getItem('token'), 
+  //     portfolio_id: localStorage.getItem('id')
+  //   })  
+    
+  //   Promise.all(res.holdings.map(async(s) => {
+  //     let price = await searchStock(s.symbol);
+  //     if (price){
+  //       const curr = (price - s.average_price) * s.qty;
+  //       sum += curr;
+  //       console.log(price, s.average_price, s.qty);
+  //     }
+  //   }));
+  //   setBalance(sum);
+  //   setIsLoading(false);
+  // }, []);
+
+  const handleClickOpenAdd = () => {
+    setOpenAdd(true);
   };
 
-  const handleCloseEdit = () => {
-    setOpenEdit(false);
+  const handleCloseAdd = () => {
+    setOpenAdd(false);
+  };
+
+  const handleClickOpenDS = () => {
+    setOpenDS(true);
+  };
+
+  const handleCloseDS = () => {
+    setOpenDS(false);
   };
 
   const handleClickOpenDelete = () => {
@@ -62,165 +106,173 @@ function PortfolioPage() {
     setOpenDelete(false);
   };
 
-
-  useEffect(() => {
-    setIsLoading(true);
-    api('portfolio/holdings', 'POST', {
-      token: localStorage.getItem('token'), portfolio_id: localStorage.getItem('id')
-    })
-      .then(res => {
-        if (res) {
-          setStock(res.holdings);
-          if (res.holdings !== []) {
-              setStockState(true);
-          }
-        } 
-      })
-    setIsLoading(false);
-  }, []);
-
-  const handleEdit = async () => {
-    if (title !== '') {
-      const res = await api('portfolio/edit', 'POST', {
-        token: localStorage.getItem('token'), 
-        portfolio_name: title, 
-        portfolio_d: localStorage.getItem('id')
-      }); 
-      if (!res) {
-        alert(res);
-      } else if (res.is_success) {
-        alert("Successfully Update Your Portfolio Name!");
-      } 
-    }
-    handleCloseEdit();
-  };
-
-  const getCurr = () => {
+  const getCurrDate = () => {
     let curr = new Date();
-    let date = curr.getFullYear() + '/' + (curr.getMonth()+1) + '/' + curr.getDate();
-    console.log(`date: ${date}`);
+    let date = curr.getDate() + '/' + (curr.getMonth()+1) + '/' + curr.getFullYear();
     return date;
   };
-
+  
+  const searchStock = async(s) => {
+    let value = -1;
+    const res = await api(`stocks/search`, 'POST', {symbol: s}); 
+    if (res.price) {
+      return res.price;
+    } 
+    return value;
+  };
+  
   const addStock = async () => {
     setIsLoading(true);
+    const date = getCurrDate();
+    const value = await searchStock(symbol);
+
+    if (!(symbol && qty)) {
+      alert("Missing Symbol/Quantity field.");
+      handleCloseAdd();
+      return;
+    }
+
+    if (value == -1) {
+      alert("Stock Symbol not exist.");
+      handleCloseAdd();
+      return;
+    }
+
+    if (qty < 1) {
+      alert("Quantity cannot be less than 1.");
+      return;
+    }
+
     const res = await api('portfolio/holdings/add', 'POST', {
       token: localStorage.getItem('token'), 
-      holding_id: localStorage.getItem('id'),
-      symbol: "TSLA",
-      value: "1.1",
-      qty: "1.1",
+      portfolio_id: localStorage.getItem('id'),
+      symbol: symbol,
+      value: value,
+      qty: qty,
       type: "buy",
       brokerage: "9.95",
       exchange: "NYSE",
-      // date: "10/10/2021",
-      date: `${getCurr}`,
+      date: date,
       currency: "USD"
     });
 
-    if (res !== undefined) {
-        setStock(res.holdings);
-        setStockState(true);
-        setIsLoading(false);
+    if (res.is_success) {
+        alert("Successfully Add Stock!");
     } 
-
-  };
-
-  const selectRows = (e) => {
-    // // prints correct indexes of selected rows
-    // console.log(e.selectionModel);
-    
-    // // missing the first row selected
-    // setSelection(e.selectionModel);
-    console.log(e);
-    // const isSelected = e.selectionModel.includes(stock.id);
-    // console.log(isSelected, e.selectionModel);
-
-
-    // return 
-    // const selectedSym = new 
-    // Array(ids);
-    // const selectedRowData = rows.filter((row) =>
-    //   selectedSym.has(row.id.toString());
-    // );
-    // console.log(`Symbol: ${selectedRowData}`);
+    handleCloseAdd();
+    setIsLoading(false);
+    history.push(`/portfolio/${localStorage.getItem('id')}`);
   };
   
   const deleteStock = async () => {
-    const res = await api('portfolio/holdings/delete', 'DELETE', {
-      token: localStorage.getItem('token'), 
-      holding_id: localStorage.getItem('id')
-    });
+    setIsLoading(true);
 
-    if (res !== undefined) {
-        setStock(res.holdings);
-        setStockState(true);
-        setIsLoading(false);
-    } 
+    if (select.length == 0) {
+      alert("You have not select any stocks.");
+      return;
+    }
 
+    Promise.all(select.map((id) => {
+      const res = api('portfolio/holdings/delete', 'DELETE', {
+        token: localStorage.getItem('token'), 
+        holding_id: id
+      })
+    }))
+      .then(res => {
+        if (res !== undefined) {
+          alert("Successfully Delete Stock(s)!");
+          setIsLoading(false);
+        }});
+    handleCloseDS();
+    history.push(`/portfolio/${localStorage.getItem('id')}`);
   };
 
   const handleDelete = async () => {
-    if (title !== '') {
-        setIsLoading(true);
-        const res = await api('portfolio/delete', 'DELETE', {
-          token: localStorage.getItem('token'), portfolio_id: localStorage.getItem('id')
-        });
-    
-        if (res) {
-          localStorage.removeItem('id');
-          alert("Successfully Delete The Portfolio.");
-          history.push('/viewPortfolio');
-        }
-    } 
+    setIsLoading(true);
+    const res = await api('portfolio/delete', 'DELETE', {
+      token: localStorage.getItem('token'), portfolio_id: localStorage.getItem('id')
+    });
+
+    if (res) {
+      alert("Successfully Delete The Portfolio.");
+      localStorage.removeItem('id');
+      history.push('/viewPortfolio');
+    }
+    setIsLoading(false);
     handleCloseDelete();
   };
 
   return (
     <div>
       <div>
-        <h1>Portfolio Page</h1>
+        <h1>Portfolio: {localStorage.getItem('name')}</h1>
+        { !isLoading &&
+          (<p>Balance: {balance}</p>)
+          }
         <br></br>
         <div>
-          <Button class="btn btn-outline-primary ms-5" onClick={handleClickOpenEdit}>
-            Edit Name
-          </Button>
+          <Button class="btn btn-outline-primary ms-5" onClick={handleClickOpenAdd}>Add Stock</Button>
           <Dialog
-              open={openEdit}
-              onClose={handleCloseEdit}
+              open={openAdd}
+              onClose={handleCloseAdd}
               aria-labelledby="alert-dialog-title"
               aria-describedby="alert-dialog-description"
           >
               <DialogTitle id="alert-dialog-title">
-              {"Edit Porfolio"}
+              {"Add Stock"}
               </DialogTitle>
               <DialogContent>
               <DialogContentText id="alert-dialog-description">
-                  Please update the title of Portfolio:
+                  Please Enter the Symbol of Stock:
               </DialogContentText>
-              <TextField id="demo-helper-text-misaligned-no-helper" label="Title" required onChange={(evt)=>setTitle(evt.target.value)}></TextField>
+              <TextField id="demo-helper-text-misaligned-no-helper" label="symbol" required onChange={(evt)=>setSymbol(evt.target.value)}></TextField>
+              <TextField id="demo-helper-text-misaligned-no-helper" label="Quantity" required onChange={(evt)=>setQty(evt.target.value)}></TextField>
               </DialogContent>
               <DialogActions>
-              <Button onClick={handleCloseEdit}>Cancel</Button>
-              <Button onClick={handleEdit} autoFocus>
-                  Confirm
-              </Button>
+              <Button onClick={handleCloseAdd}>Cancel</Button>
+              <Button onClick={addStock} autoFocus>Confirm</Button>
               </DialogActions>
           </Dialog>
-          <Button class="btn btn-outline-primary ms-5" onClick={addStock}>Add Stock</Button>
-          <Button class="btn btn-outline-primary ms-5" onClick={deleteStock}>Delete Stock</Button>
+          <Button class="btn btn-outline-primary ms-5" onClick={handleClickOpenDS}>Delete Stock</Button>
+          <Dialog
+              open={openDS}
+              onClose={handleCloseDS}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+          >
+              <DialogTitle id="alert-dialog-title">
+              {"Delete Stock"}
+              </DialogTitle>
+              <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                Do You Want To Delete These Stock(s)?
+              </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+              <Button onClick={handleCloseDS}>Cancel</Button>
+              <Button onClick={deleteStock} autoFocus>Confirm</Button>
+              </DialogActions>
+          </Dialog>
         </div>
+        <br></br>
       </div>
       <div style={{ height: 400, width: '100%' }}>
         <DataGrid
-          // rows={stock}
-          rows={rows}
+          rows={stocks}
           columns={columns}
-          punitsSize={5}
-          rowsPerPunitsOptions={[5]}
+          pagination
           checkboxSelection
-          onSelectionModelChange={selectRows}
+          pageSize={7}
+          rowCount={100}
+          // paginationMode="server"
+          onSelectionModelChange={(newModel) => {
+            setSelect(newModel);
+          }}
+          selectionModel={select}
         />
+        { isLoading &&
+          (<Loader></Loader>)
+          }
       </div>
       <div>
         <Button onClick={handleClickOpenDelete}>
@@ -241,15 +293,14 @@ function PortfolioPage() {
               </DialogContentText>
             </DialogContent>
             <DialogActions>
-              <Button onClick={handleDelete} autoFocus>
               <Button onClick={handleCloseDelete}>Cancel</Button>
-                Confirm
-              </Button>
+              <Button onClick={handleDelete} autoFocus>Confirm</Button>
             </DialogActions>
         </Dialog>
-        </div>
+      </div>
     </div>
   );
 }
 
 export default PortfolioPage;
+

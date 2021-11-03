@@ -27,5 +27,4 @@ Add portfolio overview page.
 Fix my laptop problem with unable to connect to api.
 
 # Week 7
-Finish portfolio overview page and individual portfolio page.
-Make a draft of watchlist page.
+Finish the connecting the API of portfolio overview page and individual portfolio page.
