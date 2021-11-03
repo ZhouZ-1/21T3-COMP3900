@@ -58,8 +58,8 @@ function PortfolioPage() {
     })
       .then(async(res) => {
         if (res) {
-          const change = await api(`portfolio?token=${localStorage.getItem('token')}`, 'GET');
-          console.log(res.portfolios);
+          const change = await api(`invested_performance?token=${localStorage.getItem('token')}`, 'GET');
+          console.log(res);
 
           res.map(s => {
             let fil = [];
