@@ -48,18 +48,21 @@ function PortfolioPage() {
   const [performance, setPerformance] = useState([]);
   const [performS, setPerformS] = useState(true);
 
-
-  useEffect(async() => {
+  useEffect(() => {
     setIsLoading(true);
     let arr = [];
+
+    const change = api(`invested_performance?token=${localStorage.getItem('token')}`, 'GET');
+    console.log(`change ${change[0]}`);
+
 
     api('portfolio/holdings', 'POST', {
       token: localStorage.getItem('token'), portfolio_id: localStorage.getItem('id')
     })
       .then(async(res) => {
         if (res) {
-          const change = await api(`invested_performance?token=${localStorage.getItem('token')}`, 'GET');
-          console.log(res);
+          // const change = await api(`invested_performance?token=${localStorage.getItem('token')}`, 'GET');
+          // console.log(change);
 
           res.map(s => {
             let fil = [];
@@ -119,7 +122,8 @@ function PortfolioPage() {
     })
       .then(async(res) => {
         res.holdings.map(async(s) => {
-          const curr = await searchStock(s.symbol);
+          // const curr = await searchStock(s.symbol);
+          let curr = 0;
           const b = (s.value - curr);
           sum += b;
           let temp = [];
@@ -132,9 +136,8 @@ function PortfolioPage() {
         })
         setPerformance(rows);
         setBalance(sum);
-        console.log('p', performance);
       })
-    console.log(performance);
+    // console.log(performance);
     setIsLoading(false);
   };
 
