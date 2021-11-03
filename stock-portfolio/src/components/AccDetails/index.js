@@ -11,7 +11,6 @@ import {
   CardMedia,
   Typography,
 } from '@mui/material';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { validateEmail } from '../SignUp/helper';
 
 function AccDetails() {
@@ -93,7 +92,6 @@ function AccDetails() {
   return (
     <div class='text-center w-100 p-3'>
       <form>
-        {/* <svg data-testid="AccountCircleIcon"></svg> */}
 
         <h1>
           Personal Information
