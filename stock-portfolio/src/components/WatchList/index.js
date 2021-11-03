@@ -11,12 +11,12 @@ function WatchList() {
   const columns = [
     { field: 'id', headerName: 'ID', width: 100 },
     { field: 'code', headerName: 'Stock Code', width: 200 },
-    { field: 'name', headerName: 'Stock Name', width: 200 }
+    { field: 'name', headerName: 'Stock Name', width: 200 },
+    { field: 'price', headerName: 'Price', width: 200 },
+    { field: 'change_percent', headerName: 'Daily changes', width: 250 }
   ];
-
-  const [rows,setRows] = useState([
-      { id: 0, code: 'N/A', name: 'RENDERING WATCHLIST.... PLEASE WAIT'}
-  ]);
+  const initialRow = [{ id: 0, code: 'N/A', name: 'RENDERING WATCHLIST.... PLEASE WAIT', price: 'Loading', change_percent: 'Loading'}];
+  const [rows,setRows] = useState(initialRow);
   const [selectedStocks, setSelectedStocks] = useState([]);
   
   useEffect(async ()=>{
@@ -24,6 +24,7 @@ function WatchList() {
     setRows(newRow);
   },[]);
 
+  
   const onDeleteClick = async () => {
     let stockToRemove = [];
     rows.map((item)=>{
