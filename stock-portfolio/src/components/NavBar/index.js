@@ -6,13 +6,13 @@ import ExportModal from "./ExportModal";
 function NavBar(){
     const token = localStorage.getItem('token');
     var history = useHistory();
-    // let isAuthenticated = !!localStorage.getItem("token")
     let isAuthenticated = !!token;
 
     const [keywords,setKeyWords] = useState('');
     const [showAllStocks,setShowAllStocks] = useState(true);
     const [stocks, setStocks] = useState();
     const [showDropDown,setShowDropDown] = useState(false);
+    const [exportTrigger,setExportTrigger] = useState(false);
     const handleLogout = () => {
         localStorage.removeItem("token");
         history.push('/');
@@ -58,13 +58,13 @@ function NavBar(){
         //check if browser support FileReader
             if (typeof (FileReader) != "undefined") {
                 var myReader = new FileReader();
-                myReader.onload = function(e) {
+                myReader.onload = async function(e) {
                     var content = myReader.result;
                     var lines = content.split("\n");
                     for (var count = 0; count < lines.length-1; count++) {
-                        if(count == 0){
-                            continue;
-                        }
+                        // if(count == 0){
+                        //     continue;
+                        // }
                         // var row = document.createElement("tr");
                         var rowContent = lines[count].split(",");
                         //loop throw all columns of a row
@@ -78,21 +78,24 @@ function NavBar(){
                                 data=data.concat(',');
                             }
                         }
+                        
                         if (count==lines.length-2){
                             csv_string = csv_string.concat(data);
                         }else{
                             csv_string = csv_string.concat(data);
                             csv_string = csv_string.concat('\n');
                         }
-                        
                     }
+                    console.log('csv string:');
+                    console.log(csv_string);
+                    await api('portfolio/upload','POST',{
+                        token: token,
+                        csv_string: csv_string,
+                        portfolio_name: "new Portfolio - testing"
+                    });
                 }
                 myReader.readAsText(theFile.files[0]);
-                await api('portfolio/upload','POST',{
-                    token: token,
-                    csv_string: csv_string,
-                    portfolio_name: "new Portfolio - testing"
-                });
+                
             }else {
                 alert("This browser does not support HTML5.");
             }
@@ -130,8 +133,8 @@ function NavBar(){
                     </div>
                 ),   
                     (<div>
-                        <button type="button" class="btn btn-outline-primary ms-5" data-bs-toggle="modal" data-bs-target="#exportModal">Export Portfolio</button>
-                        <ExportModal/>
+                        <button type="button" class="btn btn-outline-primary ms-5" data-bs-toggle="modal" data-bs-target="#exportModal" onClick={()=>setExportTrigger(!exportTrigger)}>Export Portfolio</button>
+                        <ExportModal trigger={exportTrigger}/>
                     </div>
                 ),
                 (<button type="button" class="btn btn-outline-dark" onClick={()=>history.push('/account')}>Account</button>)]:
