@@ -7,20 +7,16 @@ function ExportModal(props){
     const token = localStorage.getItem('token');
     const [isPortfolioLoading,setIsPortfolioLoading] = useState(true);
     const [portfolios,setPortfolios]=useState(<div class="list-group"></div>);
-    // const [selectedPortfolioId,setSelectedPortfolioId] = useState();
     useEffect(async ()=>{
         const response = await api(`portfolio?token=${token}`, 'GET');
         if(response.portfolios.length === 0){
             setPortfolios(<button type="button" class="list-group-item list-group-item-action">You have no Portfolio</button>)
         }else{
             const portfolioList = response.portfolios.map(function(item){
-                // const link = `portfolio/download?portfolio_id=${item.portfolio_id}&token=${token}`
-                // return <a href={link}>{item.portfolio_name}</a>
                 return <button type="button" class="list-group-item list-group-item-action" onClick={()=>onPortfolioClick(item.portfolio_id)}>{item.portfolio_name}</button>
             });
             setPortfolios(portfolioList);
         }
-         {/* <button type="button" class="list-group-item list-group-item-action" onClick={()=>onPortfolioClick(item.portfolio_id)}>{item.portfolio_name}</button> */}
         setIsPortfolioLoading(false);
     },[trigger]);
 
@@ -34,7 +30,7 @@ function ExportModal(props){
                 <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Select a portfolio to add stock(s)</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
