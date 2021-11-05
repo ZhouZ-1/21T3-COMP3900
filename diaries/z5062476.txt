@@ -29,14 +29,18 @@ Week 5
 - Added forward and backward iterator for stock searcher
 
 Week 6
-- flex week
+- Flex week
 
 Week 7
-- Research on 
+- Worked on researching alternatives to alpha_vantage to find a stock feed that is live (or at least delayed)
+- Researched on alpha_vantage, google finance, yahoo finance, worldtradingdata (marketstack), reuters eikon API, polygon, twelve data
+- Worked on the backend for showing portfolio performance for the gains and losses for stocks.
+- Refined user stories while doing the usual jira management
 
 Week 8
-- 
-sprint 3 end of week 9
+- Assisted Tony in preparing and presenting the demo
+- Helped fix the UI for portfolio
+- Bug fixes for sprint 2
 
 Matthews email
 z5187551@student.unsw.edu.au
