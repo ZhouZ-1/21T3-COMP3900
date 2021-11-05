@@ -151,6 +151,7 @@ portfolio_performance_model = api.model("portfolio_performance_model", {
 })
 
 basic_performance_info = api.model('basic_performance_info', {
+    'symbol': fields.String(example='TSLA'),
     'orig_price': fields.Float(example=99.9, description='The price of the stock that was originally bought'),
     'curr_price': fields.Float(example=99.9, description='The price of the stock currently'),
     'change_val': fields.Float(example=99.9, description='The change in prices'),
@@ -158,7 +159,7 @@ basic_performance_info = api.model('basic_performance_info', {
 })
 
 portfolio_performance_response_model = api.model('portfolio_response_model', {
-    "symbol": fields.Nested(basic_performance_info)
+    "symbols": fields.List(fields.Nested(basic_performance_info))
 })
 
 upload_csv_model = api.inherit('upload_csv_model', token_model, {
