@@ -79,6 +79,7 @@ class GetPortfolioPerformance(Resource):
         # Get holdings for the particular portfolio
         portfolio_holdings = get_holdings(portfolio_id)
 
+        perf_calcs = {}
         perf_results = []
         orig_overall = 0
         curr_overall = 0
@@ -88,20 +89,33 @@ class GetPortfolioPerformance(Resource):
             for holding in portfolio_holdings:
                 # find out the most recent price of the stock
                 ts_data = dc.ts.get_quote_endpoint(holding['symbol'])[0]
-                curr_price = ts_data["05. price"]
+                curr_price = float(ts_data["05. price"])
 
-                delta = float(curr_price) - holding['value']
+                delta = curr_price - holding['value']
 
+                holding_product = holding['value'] * holding['qty']
+                curr_product = curr_price * holding['qty']
+
+                if holding['symbol'] in perf_calcs:
+                    perf_calcs[holding['symbol']]['orig_price'] += holding_product
+                    perf_calcs[holding['symbol']]['curr_price'] += curr_product
+                else:
+                    perf_calcs[holding['symbol']] = {}
+                    perf_calcs[holding['symbol']]['orig_price'] = holding_product
+                    perf_calcs[holding['symbol']]['curr_price'] = curr_product
+
+                orig_overall += holding_product
+                curr_overall += curr_product
+
+            for key in perf_calcs:
+                delta = perf_calcs[key]['curr_price'] - perf_calcs[key]['orig_price']
                 perf_results.append({
-                    'symbol': holding['symbol'],
-                    'orig_price': holding['value'],
-                    'curr_price': holding['value'],
-                    'change_val': delta * holding['qty'],
-                    'change-percent': delta / holding['value'],
+                    'symbol': key,
+                    'orig_price': perf_calcs[key]['orig_price'],
+                    'curr_price': perf_calcs[key]['curr_price'],
+                    'change_val': delta,
+                    'change-percent': delta / perf_calcs[key]['orig_price'],
                 })
-
-                orig_overall += holding['value'] * holding['qty']
-                curr_overall += curr_price * holding['qty']
 
             # calculate overall change
             overall_delta = curr_overall - orig_overall

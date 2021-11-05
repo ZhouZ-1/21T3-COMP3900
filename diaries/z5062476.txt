@@ -28,6 +28,14 @@ Week 4
 Week 5
 - Added forward and backward iterator for stock searcher
 
+Week 6
+- flex week
+
+Week 7
+- Research on 
+
+Week 8
+- 
 sprint 3 end of week 9
 
 Matthews email
