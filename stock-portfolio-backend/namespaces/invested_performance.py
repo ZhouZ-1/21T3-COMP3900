@@ -72,41 +72,62 @@ class GetPortfolioPerformance(Resource):
         Returns a JSON object containing the performance stats of the user's invested stocks
         """
         body = request.json
-        portfolio_id = request.args.get['portfolio']
+        portfolio_id = request.args.get('portfolio')
 
+        import sys
+        print(portfolio_id, file=sys.stderr)
         # Get holdings for the particular portfolio
         portfolio_holdings = get_holdings(portfolio_id)
 
-        perf_results ={}
+        perf_calcs = {}
+        perf_results = []
         orig_overall = 0
         curr_overall = 0
 
         # for each holding calculate the change in price
-        for holding in portfolio_holdings:
-            # find out the most recent price of the stock
-            ts_data = dc.ts.get_quote_endpoint(holding['symbol'])[0]
-            curr_price = ts_data["05. price"]
+        if len(portfolio_holdings) != 0:
+            for holding in portfolio_holdings:
+                # find out the most recent price of the stock
+                ts_data = dc.ts.get_quote_endpoint(holding['symbol'])[0]
+                curr_price = float(ts_data["05. price"])
 
-            delta = float(curr_price) - holding['price']
+                delta = curr_price - holding['value']
 
-            perf_results[holding['symbol']] = {
-                'orig_price': holding['price'],
-                'curr_price': holding['price'],
-                'change_val': delta * holding['qty'],
-                'change-percent': delta / holding['price'],
-            }
+                holding_product = holding['value'] * holding['qty']
+                curr_product = curr_price * holding['qty']
 
-            orig_overall += holding['price'] * holding['qty']
-            curr_overall += curr_price * holding['qty']
+                if holding['symbol'] in perf_calcs:
+                    perf_calcs[holding['symbol']]['orig_price'] += holding_product
+                    perf_calcs[holding['symbol']]['curr_price'] += curr_product
+                else:
+                    perf_calcs[holding['symbol']] = {}
+                    perf_calcs[holding['symbol']]['orig_price'] = holding_product
+                    perf_calcs[holding['symbol']]['curr_price'] = curr_product
 
-        # calculate overall change
-        overall_delta = curr_overall - orig_overall
+                orig_overall += holding_product
+                curr_overall += curr_product
 
-        perf_results['overall'] = {
-            'orig_price': orig_overall,
-            'curr_price': curr_overall,
-            'change_val': overall_delta,
-            'change-percent': overall_delta / orig_overall,
+            for key in perf_calcs:
+                delta = perf_calcs[key]['curr_price'] - perf_calcs[key]['orig_price']
+                perf_results.append({
+                    'symbol': key,
+                    'orig_price': perf_calcs[key]['orig_price'],
+                    'curr_price': perf_calcs[key]['curr_price'],
+                    'change_val': delta,
+                    'change-percent': delta / perf_calcs[key]['orig_price'],
+                })
+
+            # calculate overall change
+            overall_delta = curr_overall - orig_overall
+
+            perf_results.append({
+                'symbol': 'overall',
+                'orig_price': orig_overall,
+                'curr_price': curr_overall,
+                'change_val': overall_delta,
+                'change-percent': overall_delta / orig_overall,
+            })
+
+        return {
+            'symbols': perf_results
         }
-
-        return perf_results
