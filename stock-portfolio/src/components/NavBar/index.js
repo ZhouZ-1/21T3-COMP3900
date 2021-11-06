@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router";
 import api from "../../api";
-// import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ExportModal from "./ExportModal";
+import ImportModal from "./ImportModal";
 function NavBar(){
     const token = localStorage.getItem('token');
     var history = useHistory();
@@ -13,6 +13,7 @@ function NavBar(){
     const [stocks, setStocks] = useState();
     const [showDropDown,setShowDropDown] = useState(false);
     const [exportTrigger,setExportTrigger] = useState(false);
+    const [importTrigger,setImportTrigger] = useState(false);
     const handleLogout = () => {
         localStorage.removeItem("token");
         history.push('/');
@@ -49,61 +50,6 @@ function NavBar(){
         history.push(`/stockDetails/${symbol}`);
     }
     
-    const processFile = async () => {
-        var theFile = document.getElementById("myFile");
-        let csv_string = '';
-        var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.csv|.txt)$/;
-        //check if file is CSV
-        if (regex.test(theFile.value.toLowerCase())) {
-        //check if browser support FileReader
-            if (typeof (FileReader) != "undefined") {
-                var myReader = new FileReader();
-                myReader.onload = async function(e) {
-                    var content = myReader.result;
-                    var lines = content.split("\n");
-                    for (var count = 0; count < lines.length-1; count++) {
-                        // if(count == 0){
-                        //     continue;
-                        // }
-                        // var row = document.createElement("tr");
-                        var rowContent = lines[count].split(",");
-                        //loop throw all columns of a row
-                        let data='';
-                        for (var i = 0; i < rowContent.length; i++) {
-                        //create td element
-                            if(i==rowContent.length-1){
-                                data=data.concat(rowContent[i].trim());
-                            }else{
-                                data=data.concat(rowContent[i].trim());
-                                data=data.concat(',');
-                            }
-                        }
-                        
-                        if (count==lines.length-2){
-                            csv_string = csv_string.concat(data);
-                        }else{
-                            csv_string = csv_string.concat(data);
-                            csv_string = csv_string.concat('\n');
-                        }
-                    }
-                    console.log('csv string:');
-                    console.log(csv_string);
-                    await api('portfolio/upload','POST',{
-                        token: token,
-                        csv_string: csv_string,
-                        portfolio_name: "new Portfolio - testing"
-                    });
-                }
-                myReader.readAsText(theFile.files[0]);
-                
-            }else {
-                alert("This browser does not support HTML5.");
-            }
-        }else{
-            alert("Please upload a valid CSV file.");
-        }
-    }
-    
     return(
         <nav class="navbar navbar-light bg-light justify-content-around">
             <a class="navbar-brand" onClick={() => history.push('/')}>Home</a>
@@ -125,20 +71,26 @@ function NavBar(){
                     }
             </form>
             {isAuthenticated ?
-                [(<button type="button" class="btn btn-danger" onClick={() => handleLogout()}>Logout</button>),
-                    (<div>
-                        <input type="file" id="myFile"/>
-                        <button onClick={processFile}>Process</button>
-                        <table id="myTable"></table>
-                    </div>
-                ),   
-                    (<div>
-                        <button type="button" class="btn btn-outline-primary ms-5" data-bs-toggle="modal" data-bs-target="#exportModal" onClick={()=>setExportTrigger(!exportTrigger)}>Export Portfolio</button>
-                        <ExportModal trigger={exportTrigger}/>
-                    </div>
-                ),
-                (<button type="button" class="btn btn-outline-dark" onClick={()=>history.push('/account')}>Account</button>)]:
-                // (<button type="button" class="btn btn-outline-dark" onClick={()=>history.push('/account')}><AccountCircleIcon/>Account</button>)]:
+                [
+                    (
+                        <>
+                            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#importModal" onClick={()=>setImportTrigger(!importTrigger)}>Import Portfolio</button>
+                            <ImportModal trigger={importTrigger}/>
+                        </>
+                    ),   
+                    (
+                        <div>
+                            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#exportModal" onClick={()=>setExportTrigger(!exportTrigger)}>Export Portfolio</button>
+                            <ExportModal trigger={exportTrigger}/>
+                        </div>
+                    ),
+                    (
+                        <button type="button" class="btn btn-danger" onClick={() => handleLogout()}>Logout</button>
+                    ),
+                    (
+                        <button type="button" class="btn btn-outline-dark" onClick={()=>history.push('/account')}>Account</button>
+                    )
+                ]:
                 (<button type="button" class="btn btn-outline-dark" onClick={()=>history.push('/signIn')}>Sign in</button>)
             }
         </nav>
