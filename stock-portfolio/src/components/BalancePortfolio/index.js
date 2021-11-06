@@ -59,6 +59,13 @@ const BalancePortfolio = (props) => {
                 <span style={{ color: colourGain }}> {balance.total_gains} ({balance.pct_performance}%)</span>
             </div>
             <br />
+            <Grid
+                container
+                spacing={2}
+                direction="row"
+                justify="flex-start"
+                alignItems="flex-start"
+            >
             {overall.map(s => (
                     <Grid item xs={12} sm={6} md={3} key={overall.indexOf(s)}>
                         <Card 
@@ -66,7 +73,7 @@ const BalancePortfolio = (props) => {
                             >
                             <CardHeader
                                 title={`Symbol : ${s.symbol}`}
-                                subheader={`Changes : ${s.change_val}(${s.change_val}%)`}
+                                subheader={`Changes : ${s.change_val}(${s.change_percentage}%)`}
                                 />  
                             <CardContent>
                             <TextField
@@ -85,6 +92,7 @@ const BalancePortfolio = (props) => {
                         </Card>
                     </Grid>
                     ))}
+            </Grid>
         </Box>
       </div>
     </div>
