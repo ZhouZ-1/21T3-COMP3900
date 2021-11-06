@@ -45,22 +45,22 @@ function PortfolioPage() {
     });
     console.log(res);
 
-    const result = await Promise.all(res.map(async(s) => {
-      const data = await api(`stocks/search`, 'POST', {symbol: s}); 
-      console.log(`data: ${data}`);
-      return {
-        id: s.holding_id,
-        symbol: s.symbol,
-        value: s.value, 
-        qty: s.qty,
-        change: data.price,
-        percentage:data.change
-      };
-    }));
+    // const result = await Promise.all(res.map(async(s) => {
+    //   const data = await api(`stocks/search`, 'POST', {symbol: s}); 
+    //   console.log(`data: ${data}`);
+    //   return {
+    //     id: s.holding_id,
+    //     symbol: s.symbol,
+    //     value: s.value, 
+    //     qty: s.qty,
+    //     change: data.price,
+    //     percentage:data.change
+    //   };
+    // }));
   
-    console.log('results is',result);
+    // console.log('results is',result);
     
-    setStocks(result);
+    // setStocks(result);
     setIsLoading(false);
   }, []);
       
