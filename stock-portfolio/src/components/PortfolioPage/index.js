@@ -14,6 +14,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import api from "../../api";
 import moment from "moment";
 import Loader from "../Loader";
+import BalancePortfolio from "../BalancePortfolio";
 
 const columns = [
   { field: 'id', headerName: 'id', width: 100 },
@@ -34,28 +35,37 @@ function PortfolioPage() {
   const [qty,setQty] = useState(0);
   const [stocks, setStocks] = useState([]);
   const [select, setSelect] = useState([]);
-  const [balance, setBalance] = useState(0);
   const [isLoading,setIsLoading] = useState(false);
-  // const [refresh,setRefresh] = useState(0);
+  const [refresh, setRefresh] = useState(0);
+  const [overall, setOverall] = useState([]);
 
   useEffect(async() => {
     setIsLoading(true);
-
     const res = await api('portfolio/holdings', 'POST', {
       token: localStorage.getItem('token'), portfolio_id: localStorage.getItem('id')
     });
 
-    const bal = await api(`invested_performance?token=${localStorage.getItem('token')}`, 'GET'); 
-    console.log(bal);
-    setBalance(bal);
-
     const data = await api(`invested_performance/portfolio?portfolio=${localStorage.getItem('id')}`, 'GET'); 
-    console.log(data);
+    setOverall(overall);
 
-    setStocks(res.map(item => {item.id = item.holding_id; return item}));
-    setIsLoading(false);
-  }, []);
-
+    const newData = res.map(async(s) => {
+      const changes = overall.symbols.map(c => { if (c.symbol == s.symbol) return c;}); 
+      return {
+        id: s.holding_id,
+        symbol: s.symbol,
+        value: s.value,
+        qty: s.qty,
+        date: s.date,
+        origin: changes.orig_price,
+        curr: changes.curr_price,
+        change: changes.change_val,
+        percentage: changes.change_percent
+      };
+    });
+    
+    setStocks(newData);
+    // setIsLoading(true);
+  }, [refresh]);
 
   const handleClickOpenAdd = () => {
     setOpenAdd(true);
@@ -90,8 +100,8 @@ function PortfolioPage() {
   const searchStock = async(s) => {
     let value = -1;
     const res = await api(`stocks/search`, 'POST', {symbol: s}); 
-    if (res) {
-      return res;
+    if (res.price) {
+      return res.price;
     } 
     return value;
   };
@@ -99,7 +109,7 @@ function PortfolioPage() {
   const addStock = async () => {
     setIsLoading(true);
     const date = getCurrDate();
-    const value = await api(`stocks/search`, 'POST', {symbol}); 
+    const value = await searchStock(symbol); 
     // let value = await searchStock(symbol);
 
     if (!(symbol && qty)) {
@@ -112,9 +122,7 @@ function PortfolioPage() {
       alert("Stock Symbol not exist.");
       handleCloseAdd();
       return;
-    } else {
-      value = value.value;
-    }
+    } 
 
     if (qty < 1) {
       alert("Quantity cannot be less than 1.");
@@ -136,12 +144,11 @@ function PortfolioPage() {
 
     if (res.is_success) {
       alert("Successfully Add Stock!");
-      // setRefresh(r => r +1);
+      setRefresh(r => r +1);
     } 
     
     handleCloseAdd();
     setIsLoading(false);
-    history.push(`/portfolio/${localStorage.getItem('id')}`);
   };
   
   const deleteStock = async () => {
@@ -161,11 +168,10 @@ function PortfolioPage() {
       .then(res => {
         if (res !== undefined) {
           alert("Successfully Delete Stock(s)!");
-          // setRefresh(r => r +1);
+          setRefresh(r => r +1);
           setIsLoading(false);
         }});
     handleCloseDS();
-    history.push(`/portfolio/${localStorage.getItem('id')}`);
   };
 
   const handleDelete = async () => {
@@ -183,13 +189,21 @@ function PortfolioPage() {
     handleCloseDelete();
   };
 
+  const handleOverview = () => {
+     this.props.history.push({
+      pathname: '/portfolioBalance',
+      state: { overall: overall }
+    })
+  };
+
+
   return (
     <div>
       <div>
-        <h1>Portfolio: {localStorage.getItem('name')}</h1>
-        { !isLoading &&
-          (<p>Total_gains: {balance.total_gains} pct_performance: {balance.pct_performance}</p>)
-          }
+      { !isLoading &&
+        <h1>Portfolio: {localStorage.getItem('name')}
+          </h1>
+      }
         <br></br>
         <div>
           <Button class="btn btn-outline-primary ms-5" onClick={handleClickOpenAdd}>Add Stock</Button>
@@ -238,6 +252,9 @@ function PortfolioPage() {
         <br></br>
       </div>
       <div style={{ height: 400, width: '100%' }}>
+        { isLoading &&
+            (<Loader></Loader>)
+            }
         <DataGrid
           rows={stocks}
           columns={columns}
@@ -251,9 +268,6 @@ function PortfolioPage() {
           }}
           selectionModel={select}
         />
-        { isLoading &&
-          (<Loader></Loader>)
-          }
       </div>
       <div>
         <Button onClick={handleClickOpenDelete}>

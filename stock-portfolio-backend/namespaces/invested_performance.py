@@ -107,7 +107,7 @@ class GetPortfolioPerformance(Resource):
                     'orig_price': perf_calcs[key]['orig_price'],
                     'curr_price': perf_calcs[key]['curr_price'],
                     'change_val': delta,
-                    'change-percent': delta / perf_calcs[key]['orig_price'],
+                    'change_percent': delta / perf_calcs[key]['orig_price'],
                 })
 
             # calculate overall change
@@ -118,7 +118,7 @@ class GetPortfolioPerformance(Resource):
                 'orig_price': orig_overall,
                 'curr_price': curr_overall,
                 'change_val': overall_delta,
-                'change-percent': overall_delta / orig_overall,
+                'change_percent': overall_delta / orig_overall,
             })
 
         return {
