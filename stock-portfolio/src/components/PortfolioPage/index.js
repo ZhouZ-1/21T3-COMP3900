@@ -36,6 +36,7 @@ function PortfolioPage() {
   const [select, setSelect] = useState([]);
   const [balance, setBalance] = useState(0);
   const [isLoading,setIsLoading] = useState(false);
+  const [refresh,setRefresh] = useState(0);
 
   useEffect(async() => {
     setIsLoading(true);
@@ -43,26 +44,34 @@ function PortfolioPage() {
     const res = await api('portfolio/holdings', 'POST', {
       token: localStorage.getItem('token'), portfolio_id: localStorage.getItem('id')
     });
-    console.log(res);
 
-    // const result = await Promise.all(res.map(async(s) => {
-    //   const data = await api(`stocks/search`, 'POST', {symbol: s}); 
-    //   console.log(`data: ${data}`);
-    //   return {
-    //     id: s.holding_id,
-    //     symbol: s.symbol,
-    //     value: s.value, 
-    //     qty: s.qty,
-    //     change: data.price,
-    //     percentage:data.change
-    //   };
-    // }));
-  
-    // console.log('results is',result);
+    const bal = await api(`invested_performance?${localStorage.getItem('token')}`, 'GET'); 
+    console.log(`bal: ${bal}`);
+    // delete after no error
+    if (bal) {
+      setBalance(bal);
+    }
+
+    const promise = await res.map(async(s) => {
+      const data = await api(`stocks/search`, 'POST', {symbol: s}); 
+      console.log(`data: ${data}, ${data}`);
+      return {
+        id: s.holding_id,
+        symbol: s.symbol,
+        value: s.value, 
+        qty: s.qty,
+        date: s.date,
+        change: data.price,
+        percentage:data.change_percentage
+      };
+    });
     
-    // setStocks(result);
+    const result = await Promise.all(promise);
+    console.log('results is', result);
+    
+    setStocks(result);
     setIsLoading(false);
-  }, []);
+  }, [refresh]);
       
   // useEffect(async () => {
   //   setIsLoading(true);
@@ -117,7 +126,7 @@ function PortfolioPage() {
   const searchStock = async(s) => {
     let value = -1;
     const res = await api(`stocks/search`, 'POST', {symbol: s}); 
-    if (res.symbol) {
+    if (res) {
       return res;
     } 
     return value;
@@ -126,7 +135,8 @@ function PortfolioPage() {
   const addStock = async () => {
     setIsLoading(true);
     const date = getCurrDate();
-    const value = await searchStock(symbol);
+    const value = await api(`stocks/search`, 'POST', {symbol}); 
+    // let value = await searchStock(symbol);
 
     if (!(symbol && qty)) {
       alert("Missing Symbol/Quantity field.");
@@ -134,10 +144,12 @@ function PortfolioPage() {
       return;
     }
 
-    if (value == -1) {
+    if (!value) {
       alert("Stock Symbol not exist.");
       handleCloseAdd();
       return;
+    } else {
+      value = value.value;
     }
 
     if (qty < 1) {
@@ -148,7 +160,7 @@ function PortfolioPage() {
     const res = await api('portfolio/holdings/add', 'POST', {
       token: localStorage.getItem('token'), 
       portfolio_id: localStorage.getItem('id'),
-      symbol: symbol,
+      symbol: symbol.toUpperCase(),
       value: value,
       qty: qty,
       type: "buy",
@@ -159,8 +171,10 @@ function PortfolioPage() {
     });
 
     if (res.is_success) {
-        alert("Successfully Add Stock!");
+      alert("Successfully Add Stock!");
+      setRefresh(r => r +1);
     } 
+    
     handleCloseAdd();
     setIsLoading(false);
     history.push(`/portfolio/${localStorage.getItem('id')}`);
@@ -183,6 +197,7 @@ function PortfolioPage() {
       .then(res => {
         if (res !== undefined) {
           alert("Successfully Delete Stock(s)!");
+          setRefresh(r => r +1);
           setIsLoading(false);
         }});
     handleCloseDS();

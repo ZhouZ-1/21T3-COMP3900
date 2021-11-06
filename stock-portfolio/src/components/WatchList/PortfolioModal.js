@@ -10,18 +10,18 @@ function PortfolioModal(props){
     const [portfolios,setPortfolios]=useState(<div class="list-group"></div>);
     const [selectedPortfolioId,setSelectedPortfolioId] = useState();
 
-    useEffect(async ()=>{
-        const response = await api(`portfolio?token=${token}`, 'GET');
-        if(response.portfolios.length === 0){
-            setPortfolios(<button type="button" class="list-group-item list-group-item-action">You have no Portfolio</button>)
-        }else{
-            const portfolioList = response.portfolios.map(function(item){
-                return <button type="button" class="list-group-item list-group-item-action" onClick={()=>setSelectedPortfolioId(item.portfolio_id)}>{item.portfolio_name}</button>
-            });
-            setPortfolios(portfolioList);
-        }
-        setIsPortfolioLoading(false);
-    },[]);
+    // useEffect(async ()=>{
+    //     const response = await api(`portfolio?token=${token}`, 'GET');
+    //     if(response.portfolios.length === 0){
+    //         setPortfolios(<button type="button" class="list-group-item list-group-item-action">You have no Portfolio</button>)
+    //     }else{
+    //         const portfolioList = response.portfolios.map(function(item){
+    //             return <button type="button" class="list-group-item list-group-item-action" onClick={()=>setSelectedPortfolioId(item.portfolio_id)}>{item.portfolio_name}</button>
+    //         });
+    //         setPortfolios(portfolioList);
+    //     }
+    //     setIsPortfolioLoading(false);
+    // },[]);
 
     const onMoveClick = async () => {
         let selectedStocksCode = [];
