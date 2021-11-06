@@ -47,11 +47,11 @@ function PortfolioPage() {
 
     const bal = await api(`invested_performance?token=${localStorage.getItem('token')}`, 'GET'); 
     console.log(bal);
+    setBalance(bal);
 
     const data = await api(`invested_performance/portfolio?portfolio=${localStorage.getItem('id')}`, 'GET'); 
     console.log(data);
 
-    console.log();
     setStocks(res.map(item => {item.id = item.holding_id; return item}));
     setIsLoading(false);
   }, []);
@@ -188,7 +188,7 @@ function PortfolioPage() {
       <div>
         <h1>Portfolio: {localStorage.getItem('name')}</h1>
         { !isLoading &&
-          (<p>Balance: {balance}</p>)
+          (<p>Total_gains: {balance.total_gains} pct_performance: {balance.pct_performance}</p>)
           }
         <br></br>
         <div>
