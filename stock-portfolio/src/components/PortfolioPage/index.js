@@ -36,7 +36,7 @@ function PortfolioPage() {
   const [select, setSelect] = useState([]);
   const [balance, setBalance] = useState(0);
   const [isLoading,setIsLoading] = useState(false);
-  const [refresh,setRefresh] = useState(0);
+  // const [refresh,setRefresh] = useState(0);
 
   useEffect(async() => {
     setIsLoading(true);
@@ -53,8 +53,7 @@ function PortfolioPage() {
     }
 
     const promise = await res.map(async(s) => {
-      const data = await api(`invested_performance/portfolio?${localStorage.getItem('id')}`, 'GET'); 
-      // const data = await api(`stocks/search`, 'POST', {symbol: s.symbol}); 
+      const data = await api(`invested_performance/portfolio?portfolio=${localStorage.getItem('id')}`, 'GET'); 
       console.log(`data:`, data);
       return {
         id: s.holding_id,
@@ -62,7 +61,7 @@ function PortfolioPage() {
         value: s.value, 
         qty: s.qty,
         date: s.date,
-        change: data.price,
+        change: data.curr_price,
         percentage:data.change_percentage
       };
     });
@@ -72,7 +71,7 @@ function PortfolioPage() {
     
     setStocks(result);
     setIsLoading(false);
-  }, [refresh]);
+  }, []);
 
 
   const handleClickOpenAdd = () => {
@@ -154,7 +153,7 @@ function PortfolioPage() {
 
     if (res.is_success) {
       alert("Successfully Add Stock!");
-      setRefresh(r => r +1);
+      // setRefresh(r => r +1);
     } 
     
     handleCloseAdd();
@@ -179,7 +178,7 @@ function PortfolioPage() {
       .then(res => {
         if (res !== undefined) {
           alert("Successfully Delete Stock(s)!");
-          setRefresh(r => r +1);
+          // setRefresh(r => r +1);
           setIsLoading(false);
         }});
     handleCloseDS();
