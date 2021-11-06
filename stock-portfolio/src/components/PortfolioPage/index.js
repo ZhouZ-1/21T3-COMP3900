@@ -45,7 +45,7 @@ function PortfolioPage() {
       token: localStorage.getItem('token'), portfolio_id: localStorage.getItem('id')
     });
 
-    const bal = await api(`invested_performance?${localStorage.getItem('token')}`, 'GET'); 
+    const bal = await api(`invested_performance?token=${localStorage.getItem('token')}`, 'GET'); 
     console.log(`bal: ${bal}`);
     // delete after no error
     if (bal) {
