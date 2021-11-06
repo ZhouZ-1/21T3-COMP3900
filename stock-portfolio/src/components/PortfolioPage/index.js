@@ -1,5 +1,9 @@
 import React from 'react';
 import { useState, useEffect } from "react";
+import { BrowserRouter as Router, 
+  Switch, 
+  Route, 
+  Link } from "react-router-dom"
 import { useHistory } from "react-router";
 import { 
     Button,  
@@ -17,13 +21,13 @@ import Loader from "../Loader";
 import BalancePortfolio from "../BalancePortfolio";
 
 const columns = [
-  { field: 'id', headerName: 'id', width: 100 },
+  { field: 'holding_id', headerName: 'id', width: 100 },
   { field: 'symbol', headerName: 'Symbol', width: 125 },
   { field: 'value', headerName: 'Value', width: 120 },
   { field: 'qty', headerName: 'Quantity', width: 130 },
   { field: 'date', headerName: 'Date', width: 130 },
-  { field: 'change', headerName: 'Changes', width: 150 }, 
-  { field: 'percentage', headerName: 'Percentage', width: 150 }
+  { field: 'change_val', headerName: 'Changes', width: 150 }, 
+  { field: 'change_percent', headerName: 'Percentage', width: 150 }
 ];
 
 function PortfolioPage() {
@@ -41,27 +45,28 @@ function PortfolioPage() {
 
   useEffect(async() => {
     setIsLoading(true);
-    const res = await api('portfolio/holdings', 'POST', {
+    let newData = [];
+
+    const data = await  api(`invested_performance/portfolio?portfolio=${localStorage.getItem('id')}`, 'GET');
+    await api('portfolio/holdings', 'POST', {
       token: localStorage.getItem('token'), portfolio_id: localStorage.getItem('id')
+    })
+      .then(res => {
+        setOverall(data.symbols);
+        const overall = data.symbols.filter(c => { 
+          if (c.symbol == 'overall') 
+          return c;
+        });
+
+        res.map(s => {
+          const changes = data.symbols.filter(c => { 
+            if (c.symbol == s.symbol) 
+            return c;
+          })[0]; 
+          newData.push({id: s.holding_id, ...s,...changes});
+        });
     });
 
-    const data = await api(`invested_performance/portfolio?portfolio=${localStorage.getItem('id')}`, 'GET'); 
-    console.log(data);
-
-    const newData = res.map(s => {
-      const changes = data.symbols.map(c => { if (c.symbol == s.symbol) return c;}); 
-      return {
-        id: s.holding_id,
-        symbol: s.symbol,
-        value: s.value,
-        qty: s.qty,
-        date: s.date,
-        change: changes.change_val,
-        percentage: changes.change_percent
-      };
-    });
-
-    setOverall(data.symbols);
     setStocks(newData);
     setIsLoading(false);
   }, [refresh]);
@@ -188,12 +193,16 @@ function PortfolioPage() {
     handleCloseDelete();
   };
 
-  const handleOverview = () => {
-     this.props.history.push({
-      pathname: '/portfolioBalance',
-      state: { overall: overall }
-    })
-  };
+  // const handleOverview = () => {
+  //   return (
+  //     <Link to={{ 
+  //       pathname: "/portfolioBalance", 
+  //       state: { overall: overall }
+  //      }}>
+  //       Portfolio Balance
+  //      </Link>
+  //   );
+  // };
 
 
   return (
@@ -201,7 +210,12 @@ function PortfolioPage() {
       <div>
         <h1>Portfolio: {localStorage.getItem('name')}
         { !isLoading && 
-          <button class='btn btn-lg btn-link btn-block' onClick={handleOverview}>Portfolio Balance</button>
+          // <button class='btn btn-lg btn-link btn-block' onClick={handleOverview}>Portfolio Balance</button>
+          <Link to={{
+            pathname: "/portfolioBalance",
+            state: { detail: overall }
+          }}>Portfolio Balance</Link>
+
         }
         </h1>
         <br></br>

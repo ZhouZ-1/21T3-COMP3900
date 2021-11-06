@@ -10,6 +10,8 @@ Grid,
   CardContent
 } from '@mui/material';
 
+// class Wizard extends Component {
+//   render() {
 const BalancePortfolio = (props) => {
     var history = useHistory();
     const [balance, setBalance] = useState([0, 0]);
@@ -18,7 +20,10 @@ const BalancePortfolio = (props) => {
 
   useEffect(() => {
     handleBalance();
-    setOverall(props.overall);
+    console.log(this.props.location.state);
+    console.log(props.location.state);
+    console.log(this.props.location.state.detail);
+    setOverall(this.props.location.state);
   }, []);
 
   const handleBalance = async() => {
@@ -92,7 +97,7 @@ const BalancePortfolio = (props) => {
                         </Card>
                     </Grid>
                     ))}
-            </Grid>
+          </Grid>
         </Box>
       </div>
     </div>
