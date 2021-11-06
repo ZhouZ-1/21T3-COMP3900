@@ -46,30 +46,13 @@ function PortfolioPage() {
     });
 
     const bal = await api(`invested_performance?token=${localStorage.getItem('token')}`, 'GET'); 
-    console.log(`bal: ${bal}`);
-    // delete after no error
-    if (bal) {
-      setBalance(bal);
-    }
+    console.log(bal);
 
-    const promise = await res.map(async(s) => {
-      const data = await api(`invested_performance/portfolio?portfolio=${localStorage.getItem('id')}`, 'GET'); 
-      console.log(`data:`, data);
-      return {
-        id: s.holding_id,
-        symbol: s.symbol,
-        value: s.value, 
-        qty: s.qty,
-        date: s.date,
-        change: data.curr_price,
-        percentage:data.change_percentage
-      };
-    });
-    
-    const result = await Promise.all(promise);
-    console.log('results is', result);
-    
-    setStocks(result);
+    const data = await api(`invested_performance/portfolio?portfolio=${localStorage.getItem('id')}`, 'GET'); 
+    console.log(data);
+
+    console.log();
+    setStocks(res.map(item => {item.id = item.holding_id; return item}));
     setIsLoading(false);
   }, []);
 
