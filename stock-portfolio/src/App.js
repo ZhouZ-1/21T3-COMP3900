@@ -11,7 +11,7 @@ import StockList from './components/StockList';
 import WatchList from './components/WatchList';
 import PortfolioOverview from './components/PortfolioOverview';
 import PortfolioPage from './components/PortfolioPage';
-// import TaxStatement from './components/TaxStatement';
+import TaxStatement from './components/TaxStatement';
 
 function App() {
   return (
@@ -28,7 +28,7 @@ function App() {
         <Route exact path='/watchList' component={WatchList}/>
         <Route exact path='/viewPortfolio' component={PortfolioOverview}/>
         <Route exact path='/portfolio/:id' component={PortfolioPage}/>
-        {/* <Route exact path='/tax' component={TaxStatement}/> */}
+        <Route exact path='/tax' component={TaxStatement}/>
 
 
       </Switch>
