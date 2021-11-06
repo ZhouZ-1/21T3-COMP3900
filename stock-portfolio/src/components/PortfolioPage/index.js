@@ -37,31 +37,30 @@ function PortfolioPage() {
   const [balance, setBalance] = useState(0);
   const [isLoading,setIsLoading] = useState(false);
 
-  useEffect(() => {
+  useEffect(async() => {
     setIsLoading(true);
-    let arr = [];
 
-    const res = api('portfolio/holdings', 'POST', {
+    const res = await api('portfolio/holdings', 'POST', {
       token: localStorage.getItem('token'), portfolio_id: localStorage.getItem('id')
     });
     console.log(res);
 
-    // const result = await Promise.all(res.map(async(s) => {
-    //   const data = await api(`stocks/search`, 'POST', {symbol: s}); 
-    //   console.log(`data: ${data}`);
-    //   return {
-    //     id: s.holding_id,
-    //     symbol: s.symbol,
-    //     value: s.value, 
-    //     qty: s.qty,
-    //     change: data.price,
-    //     percentage:data.change
-    //   };
-    // }));
+    const result = await Promise.all(res.map(async(s) => {
+      const data = await api(`stocks/search`, 'POST', {symbol: s}); 
+      console.log(`data: ${data}`);
+      return {
+        id: s.holding_id,
+        symbol: s.symbol,
+        value: s.value, 
+        qty: s.qty,
+        change: data.price,
+        percentage:data.change
+      };
+    }));
   
-    // console.log('results is',result);
+    console.log('results is',result);
     
-    // setStocks(result);
+    setStocks(result);
     setIsLoading(false);
   }, []);
       
