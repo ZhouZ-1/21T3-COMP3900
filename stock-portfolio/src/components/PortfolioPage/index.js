@@ -52,7 +52,10 @@ function PortfolioPage() {
       token: localStorage.getItem('token'), portfolio_id: localStorage.getItem('id')
     })
       .then(res => {
-        setOverall(data.symbols);
+        setOverall(data.symbols.filter(c => { 
+          if (c.symbol != 'overall') 
+          return c;
+        }));
         const overall = data.symbols.filter(c => { 
           if (c.symbol == 'overall') 
           return c;

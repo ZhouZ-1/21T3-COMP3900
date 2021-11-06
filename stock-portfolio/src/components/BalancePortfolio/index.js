@@ -20,10 +20,7 @@ const BalancePortfolio = (props) => {
 
   useEffect(() => {
     handleBalance();
-    console.log(this.props.location.state);
-    console.log(props.location.state);
-    console.log(this.props.location.state.detail);
-    setOverall(this.props.location.state);
+    setOverall(props.location.state.detail);
   }, []);
 
   const handleBalance = async() => {
@@ -50,15 +47,6 @@ const BalancePortfolio = (props) => {
               Go Back
             </button>
       <div>
-          <Box
-            component='form'
-            sx={{'& .MuiTextField-root': { m: 1, width: '25ch' },
-            }}
-            noValidate
-            m={23}
-            pt={8}
-            autoComplete='off'
-          >
             <div>
                 <span>Total Balance: </span>
                 <span style={{ color: colourGain }}> {balance.total_gains} ({balance.pct_performance}%)</span>
@@ -78,7 +66,7 @@ const BalancePortfolio = (props) => {
                             >
                             <CardHeader
                                 title={`Symbol : ${s.symbol}`}
-                                subheader={`Changes : ${s.change_val}(${s.change_percentage}%)`}
+                                subheader={`Changes : ${s.change_val}(${s.change_percent}%)`}
                                 />  
                             <CardContent>
                             <TextField
@@ -98,7 +86,6 @@ const BalancePortfolio = (props) => {
                     </Grid>
                     ))}
           </Grid>
-        </Box>
       </div>
     </div>
   );
