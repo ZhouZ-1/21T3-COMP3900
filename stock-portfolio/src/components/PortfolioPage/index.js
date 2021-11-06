@@ -21,7 +21,8 @@ const columns = [
   { field: 'value', headerName: 'Value', width: 120 },
   { field: 'qty', headerName: 'Quantity', width: 130 },
   { field: 'date', headerName: 'Date', width: 130 },
-  { field: 'perform', headerName: 'Performance', width: 150 }
+  { field: 'change', headerName: 'Changes', width: 150 }, 
+  { field: 'percentage', headerName: 'Percentage', width: 150 }
 ];
 
 function PortfolioPage() {
@@ -32,7 +33,6 @@ function PortfolioPage() {
   const [symbol,setSymbol] = useState('');
   const [qty,setQty] = useState(0);
   const [stocks, setStocks] = useState([]);
-  const [perform, setPerform] = useState(0);
   const [select, setSelect] = useState([]);
   const [balance, setBalance] = useState(0);
   const [isLoading,setIsLoading] = useState(false);
@@ -41,24 +41,27 @@ function PortfolioPage() {
     setIsLoading(true);
     let arr = [];
 
-    api('portfolio/holdings', 'POST', {
+    const res = api('portfolio/holdings', 'POST', {
       token: localStorage.getItem('token'), portfolio_id: localStorage.getItem('id')
-    })
-      .then(res => {
-        if (res) {
-          res.map(s => {
-            let fil = [];
-            fil['id'] = s.holding_id;
-            fil['symbol'] = s.symbol;
-            fil['value'] = s.value;
-            fil['qty'] = s.qty;
-            fil['date'] = s.date;
-            arr.push(fil);
-          })
-          setStocks(arr);
-        } 
-      })
+    });
+    console.log(res);
 
+    // const result = await Promise.all(res.map(async(s) => {
+    //   const data = await api(`stocks/search`, 'POST', {symbol: s}); 
+    //   console.log(`data: ${data}`);
+    //   return {
+    //     id: s.holding_id,
+    //     symbol: s.symbol,
+    //     value: s.value, 
+    //     qty: s.qty,
+    //     change: data.price,
+    //     percentage:data.change
+    //   };
+    // }));
+  
+    // console.log('results is',result);
+    
+    // setStocks(result);
     setIsLoading(false);
   }, []);
       
@@ -115,8 +118,8 @@ function PortfolioPage() {
   const searchStock = async(s) => {
     let value = -1;
     const res = await api(`stocks/search`, 'POST', {symbol: s}); 
-    if (res.price) {
-      return res.price;
+    if (res.symbol) {
+      return res;
     } 
     return value;
   };
