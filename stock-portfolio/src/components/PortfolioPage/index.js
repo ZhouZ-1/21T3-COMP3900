@@ -53,8 +53,9 @@ function PortfolioPage() {
     }
 
     const promise = await res.map(async(s) => {
+      // const data = await api(`invested_performance/portfolio?${localStorage.getItem('id')}`, 'GET'); 
       const data = await api(`stocks/search`, 'POST', {symbol: s.symbol}); 
-      console.log(`data: ${data}, ${data.price}`);
+      console.log(`data:`, data);
       return {
         id: s.holding_id,
         symbol: s.symbol,
@@ -72,6 +73,7 @@ function PortfolioPage() {
     setStocks(result);
     setIsLoading(false);
   }, [refresh]);
+
 
   const handleClickOpenAdd = () => {
     setOpenAdd(true);
