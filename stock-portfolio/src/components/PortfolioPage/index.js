@@ -53,8 +53,8 @@ function PortfolioPage() {
     }
 
     const promise = await res.map(async(s) => {
-      const data = await api(`stocks/search`, 'POST', {symbol: s}); 
-      console.log(`data: ${data}, ${data}`);
+      const data = await api(`stocks/search`, 'POST', {symbol: s.symbol}); 
+      console.log(`data: ${data}, ${data.price}`);
       return {
         id: s.holding_id,
         symbol: s.symbol,
@@ -72,26 +72,6 @@ function PortfolioPage() {
     setStocks(result);
     setIsLoading(false);
   }, [refresh]);
-      
-  // useEffect(async () => {
-  //   setIsLoading(true);
-  //   let sum = 0;
-  //   const res = await api('portfolio/summary', 'POST', {  
-  //     token: localStorage.getItem('token'), 
-  //     portfolio_id: localStorage.getItem('id')
-  //   })  
-    
-  //   Promise.all(res.holdings.map(async(s) => {
-  //     let price = await searchStock(s.symbol);
-  //     if (price){
-  //       const curr = (price - s.average_price) * s.qty;
-  //       sum += curr;
-  //       console.log(price, s.average_price, s.qty);
-  //     }
-  //   }));
-  //   setBalance(sum);
-  //   setIsLoading(false);
-  // }, []);
 
   const handleClickOpenAdd = () => {
     setOpenAdd(true);
