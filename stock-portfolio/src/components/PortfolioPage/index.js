@@ -46,25 +46,24 @@ function PortfolioPage() {
     });
 
     const data = await api(`invested_performance/portfolio?portfolio=${localStorage.getItem('id')}`, 'GET'); 
-    setOverall(overall);
+    console.log(data);
 
-    const newData = res.map(async(s) => {
-      const changes = overall.symbols.map(c => { if (c.symbol == s.symbol) return c;}); 
+    const newData = res.map(s => {
+      const changes = data.symbols.map(c => { if (c.symbol == s.symbol) return c;}); 
       return {
         id: s.holding_id,
         symbol: s.symbol,
         value: s.value,
         qty: s.qty,
         date: s.date,
-        origin: changes.orig_price,
-        curr: changes.curr_price,
         change: changes.change_val,
         percentage: changes.change_percent
       };
     });
-    
+
+    setOverall(data.symbols);
     setStocks(newData);
-    // setIsLoading(true);
+    setIsLoading(false);
   }, [refresh]);
 
   const handleClickOpenAdd = () => {
@@ -200,10 +199,11 @@ function PortfolioPage() {
   return (
     <div>
       <div>
-      { !isLoading &&
         <h1>Portfolio: {localStorage.getItem('name')}
-          </h1>
-      }
+        { !isLoading && 
+          <button class='btn btn-lg btn-link btn-block' onClick={handleOverview}>Portfolio Balance</button>
+        }
+        </h1>
         <br></br>
         <div>
           <Button class="btn btn-outline-primary ms-5" onClick={handleClickOpenAdd}>Add Stock</Button>
@@ -255,19 +255,21 @@ function PortfolioPage() {
         { isLoading &&
             (<Loader></Loader>)
             }
-        <DataGrid
-          rows={stocks}
-          columns={columns}
-          pagination
-          checkboxSelection
-          pageSize={7}
-          rowCount={100}
-          // paginationMode="server"
-          onSelectionModelChange={(newModel) => {
-            setSelect(newModel);
-          }}
-          selectionModel={select}
-        />
+        { !isLoading &&
+          <DataGrid
+            rows={stocks}
+            columns={columns}
+            pagination
+            checkboxSelection
+            pageSize={7}
+            rowCount={100}
+            // paginationMode="server"
+            onSelectionModelChange={(newModel) => {
+              setSelect(newModel);
+            }}
+            selectionModel={select}
+          />
+        }
       </div>
       <div>
         <Button onClick={handleClickOpenDelete}>

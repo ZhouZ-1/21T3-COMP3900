@@ -152,8 +152,6 @@ function PortfolioOverview() {
                             <CardHeader
                                 onClick={(e) => handleRedirect(`${p.portfolio_id}`, `${p.portfolio_name}`, e)}
                                 title={`Portfolio : ${p.portfolio_name}`}
-                                subheader={`earnings : ${p.earnings}`}
-                                subheader={`earnings : 10000`}
                                 />  
                             <CardContent>
                                 <Typography variant="h5" gutterBottom>
