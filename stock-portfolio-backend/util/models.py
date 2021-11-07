@@ -197,3 +197,42 @@ summary_response_model = api.model('summary_response_model', {
     "summary": fields.List(fields.Nested(simple_holding_info))
 })
 
+shared_with_me_model = api.model('shared_with_me_model', {
+    "portfolio_id": fields.Integer(required=True, example=1),
+    "sharing_id": fields.Integer(required=True, example=1),
+    "portfolio_name": fields.String(required=True, example="My Portfolio"),
+    "owner": fields.String(required=True, example="John Doe"),
+})
+
+sharing_mapping = api.model('sharing_mapping', {
+    "username": fields.String(required=True, example="John Doe"),
+    "sharing_id": fields.Integer(required=True, example=1),
+    "status": fields.String(required=True, example="accepted")
+})
+
+sharing_with_others_model = api.model('sharing_with_others_model', {
+    "portfolio_id": fields.Integer(required=True, example=1),
+    "portfolio_name": fields.String(required=True, example="My Portfolio"),
+    "shared_with": fields.List(fields.Nested(sharing_mapping))
+})
+
+send_invite_model = api.inherit('send_invite_model', token_model, {
+    "username": fields.String(required=True, example="John Doe"),
+    "portfolio_id": fields.Integer(required=True, example=1)
+})
+
+invite_model = api.model('invite_model', {
+    "sharing_id": fields.Integer(required=True, example=1),
+    "portfolio_id": fields.Integer(required=True, example=1),
+    "portfolio_name": fields.String(required=True, example="My Portfolio"),
+    "owner": fields.String(required=True, example="John Doe"),
+})
+
+reply_model = api.model('reply_model', {
+    "sharing_id": fields.Integer(required=True, example=1),
+    "accepted": fields.Boolean(required=True, example=True)
+})
+
+revoke_permission_model = api.inherit('revoke_permission_model', token_model, {
+    "sharing_id": fields.Integer(required=True, example=1)
+})
