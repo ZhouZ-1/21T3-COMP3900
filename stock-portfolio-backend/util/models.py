@@ -163,6 +163,7 @@ portfolio_performance_response_model = api.model('portfolio_response_model', {
 })
 
 portfolio_performance_response_model = api.model('portfolio_response_model', {
+    "yearly_gain": fields.Float(example=99.9, description='The amount of money gained for the past year'),
     "to_declare": fields.Float(example=99.9, description='The amount of money to declare'),
     "CGT": fields.Float(example=99.9, description='The amount of money to declare if you held the stocks for more than a year'),
 })

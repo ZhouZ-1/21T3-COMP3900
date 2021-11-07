@@ -187,10 +187,10 @@ class GetCapitalGainTax(Resource):
 
             # Calculate the performance of the stock
             total_gains += (curr_price - old_price) * holding['qty']
+            to_declare = 0
             if total_gains < 0:
-                total_gains = -total_gains
+                to_declare = -total_gains
 
         return {
-            'to_declare': total_gains,
-            'CGT': total_gains / 2,
+            'yearly_gain': total_gains,
         }

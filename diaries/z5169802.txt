@@ -31,3 +31,6 @@ Start performance data api
 
 # Week 8
 Finish calculations for performance data
+
+# Week 9
+Start feature to calculate Capital Gains Tax
