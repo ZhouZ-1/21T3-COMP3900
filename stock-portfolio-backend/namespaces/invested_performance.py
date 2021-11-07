@@ -193,4 +193,6 @@ class GetCapitalGainTax(Resource):
 
         return {
             'yearly_gain': total_gains,
+            'to_declare': to_declare,
+            'CGT': to_declare / 2,
         }
