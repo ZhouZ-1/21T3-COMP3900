@@ -1,5 +1,6 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import { useHistory } from 'react-router';
 import {
   Button,
@@ -15,14 +16,17 @@ import api from '../../api';
 import moment from 'moment';
 import Loader from '../Loader';
 import NavBar from '../NavBar/';
+import BalancePortfolio from '../BalancePortfolio';
 
 const columns = [
-  { field: 'id', headerName: 'id', width: 100 },
+  { field: 'holding_id', headerName: 'id', width: 100 },
   { field: 'symbol', headerName: 'Symbol', width: 125 },
   { field: 'value', headerName: 'Value', width: 120 },
   { field: 'qty', headerName: 'Quantity', width: 130 },
   { field: 'date', headerName: 'Date', width: 130 },
   { field: 'perform', headerName: 'Performance', width: 150 },
+  { field: 'change_val', headerName: 'Changes', width: 150 },
+  { field: 'change_percent', headerName: 'Percentage', width: 150 },
 ];
 
 function PortfolioPage() {
@@ -33,57 +37,47 @@ function PortfolioPage() {
   const [symbol, setSymbol] = useState('');
   const [qty, setQty] = useState(0);
   const [stocks, setStocks] = useState([]);
-  const [perform, setPerform] = useState(0);
   const [select, setSelect] = useState([]);
   const [balance, setBalance] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
+  
   const [userName, setUserName] = useState('');
   const [openCollaborativeModal, setOpenCollaborativeModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [refresh, setRefresh] = useState(0);
+  const [overall, setOverall] = useState([]);
 
-  useEffect(() => {
+  useEffect(async () => {
     setIsLoading(true);
-    let arr = [];
+    let newData = [];
 
-    api('portfolio/holdings', 'POST', {
+    const data = await api(
+      `invested_performance/portfolio?portfolio=${localStorage.getItem('id')}`,
+      'GET'
+    );
+    await api('portfolio/holdings', 'POST', {
       token: localStorage.getItem('token'),
       portfolio_id: localStorage.getItem('id'),
     }).then((res) => {
-      if (res) {
-        res.map((s) => {
-          let fil = [];
-          fil['id'] = s.holding_id;
-          fil['symbol'] = s.symbol;
-          fil['value'] = s.value;
-          fil['qty'] = s.qty;
-          fil['date'] = s.date;
-          arr.push(fil);
-        });
-        setStocks(arr);
-      }
+      setOverall(
+        data.symbols.filter((c) => {
+          if (c.symbol != 'overall') return c;
+        })
+      );
+      const overall = data.symbols.filter((c) => {
+        if (c.symbol == 'overall') return c;
+      });
+
+      res.map((s) => {
+        const changes = data.symbols.filter((c) => {
+          if (c.symbol == s.symbol) return c;
+        })[0];
+        newData.push({ id: s.holding_id, ...s, ...changes });
+      });
     });
 
+    setStocks(newData);
     setIsLoading(false);
-  }, []);
-
-  // useEffect(async () => {
-  //   setIsLoading(true);
-  //   let sum = 0;
-  //   const res = await api('portfolio/summary', 'POST', {
-  //     token: localStorage.getItem('token'),
-  //     portfolio_id: localStorage.getItem('id')
-  //   })
-
-  //   Promise.all(res.holdings.map(async(s) => {
-  //     let price = await searchStock(s.symbol);
-  //     if (price){
-  //       const curr = (price - s.average_price) * s.qty;
-  //       sum += curr;
-  //       console.log(price, s.average_price, s.qty);
-  //     }
-  //   }));
-  //   setBalance(sum);
-  //   setIsLoading(false);
-  // }, []);
+  }, [refresh]);
 
   const handleClickOpenAdd = () => {
     setOpenAdd(true);
@@ -129,6 +123,7 @@ function PortfolioPage() {
     setIsLoading(true);
     const date = getCurrDate();
     const value = await searchStock(symbol);
+    // let value = await searchStock(symbol);
 
     if (!(symbol && qty)) {
       alert('Missing Symbol/Quantity field.');
@@ -136,7 +131,7 @@ function PortfolioPage() {
       return;
     }
 
-    if (value == -1) {
+    if (!value) {
       alert('Stock Symbol not exist.');
       handleCloseAdd();
       return;
@@ -150,7 +145,7 @@ function PortfolioPage() {
     const res = await api('portfolio/holdings/add', 'POST', {
       token: localStorage.getItem('token'),
       portfolio_id: localStorage.getItem('id'),
-      symbol: symbol,
+      symbol: symbol.toUpperCase(),
       value: value,
       qty: qty,
       type: 'buy',
@@ -162,10 +157,10 @@ function PortfolioPage() {
 
     if (res.is_success) {
       alert('Successfully Add Stock!');
+      setRefresh((r) => r + 1);
     }
     handleCloseAdd();
     setIsLoading(false);
-    history.push(`/portfolio/${localStorage.getItem('id')}`);
   };
 
   const deleteStock = async () => {
@@ -186,11 +181,11 @@ function PortfolioPage() {
     ).then((res) => {
       if (res !== undefined) {
         alert('Successfully Delete Stock(s)!');
+        setRefresh((r) => r + 1);
         setIsLoading(false);
       }
     });
     handleCloseDS();
-    history.push(`/portfolio/${localStorage.getItem('id')}`);
   };
 
   const handleDelete = async () => {
@@ -225,12 +220,24 @@ function PortfolioPage() {
     <div>
       <NavBar></NavBar>
       <div>
-        <h1>Portfolio: {localStorage.getItem('name')}</h1>
-        {!isLoading && <p>Balance: {balance}</p>}
+        <h1>
+          Portfolio: {localStorage.getItem('name')}
+          {!isLoading && (
+            // <button class='btn btn-lg btn-link btn-block' onClick={handleOverview}>Portfolio Balance</button>
+            <Link
+              to={{
+                pathname: '/portfolioBalance',
+                state: { detail: overall },
+              }}
+            >
+              Portfolio Balance
+            </Link>
+          )}
+        </h1>
         <br></br>
         <div>
           <Button
-            class="btn btn-outline-primary ms-5"
+            class='btn btn-outline-primary ms-5'
             onClick={handleClickOpenAdd}
           >
             Add Stock
@@ -238,23 +245,23 @@ function PortfolioPage() {
           <Dialog
             open={openAdd}
             onClose={handleCloseAdd}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
+            aria-labelledby='alert-dialog-title'
+            aria-describedby='alert-dialog-description'
           >
-            <DialogTitle id="alert-dialog-title">{'Add Stock'}</DialogTitle>
+            <DialogTitle id='alert-dialog-title'>{'Add Stock'}</DialogTitle>
             <DialogContent>
-              <DialogContentText id="alert-dialog-description">
+              <DialogContentText id='alert-dialog-description'>
                 Please Enter the Symbol of Stock:
               </DialogContentText>
               <TextField
-                id="demo-helper-text-misaligned-no-helper"
-                label="symbol"
+                id='demo-helper-text-misaligned-no-helper'
+                label='symbol'
                 required
                 onChange={(evt) => setSymbol(evt.target.value)}
               ></TextField>
               <TextField
-                id="demo-helper-text-misaligned-no-helper"
-                label="Quantity"
+                id='demo-helper-text-misaligned-no-helper'
+                label='Quantity'
                 required
                 onChange={(evt) => setQty(evt.target.value)}
               ></TextField>
@@ -267,7 +274,7 @@ function PortfolioPage() {
             </DialogActions>
           </Dialog>
           <Button
-            class="btn btn-outline-primary ms-5"
+            class='btn btn-outline-primary ms-5'
             onClick={handleClickOpenDS}
           >
             Delete Stock
@@ -275,12 +282,12 @@ function PortfolioPage() {
           <Dialog
             open={openDS}
             onClose={handleCloseDS}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
+            aria-labelledby='alert-dialog-title'
+            aria-describedby='alert-dialog-description'
           >
-            <DialogTitle id="alert-dialog-title">{'Delete Stock'}</DialogTitle>
+            <DialogTitle id='alert-dialog-title'>{'Delete Stock'}</DialogTitle>
             <DialogContent>
-              <DialogContentText id="alert-dialog-description">
+              <DialogContentText id='alert-dialog-description'>
                 Do You Want To Delete These Stock(s)?
               </DialogContentText>
             </DialogContent>
@@ -326,34 +333,36 @@ function PortfolioPage() {
         <br></br>
       </div>
       <div style={{ height: 400, width: '100%' }}>
-        <DataGrid
-          rows={stocks}
-          columns={columns}
-          pagination
-          checkboxSelection
-          pageSize={7}
-          rowCount={100}
-          // paginationMode="server"
-          onSelectionModelChange={(newModel) => {
-            setSelect(newModel);
-          }}
-          selectionModel={select}
-        />
         {isLoading && <Loader></Loader>}
+        {!isLoading && (
+          <DataGrid
+            rows={stocks}
+            columns={columns}
+            pagination
+            checkboxSelection
+            pageSize={7}
+            rowCount={100}
+            // paginationMode="server"
+            onSelectionModelChange={(newModel) => {
+              setSelect(newModel);
+            }}
+            selectionModel={select}
+          />
+        )}
       </div>
       <div>
         <Button onClick={handleClickOpenDelete}>Delete Portfolio</Button>
         <Dialog
           open={openDelete}
           onClose={handleCloseDelete}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
+          aria-labelledby='alert-dialog-title'
+          aria-describedby='alert-dialog-description'
         >
-          <DialogTitle id="alert-dialog-title">
+          <DialogTitle id='alert-dialog-title'>
             {'Delete Portfolio'}
           </DialogTitle>
           <DialogContent>
-            <DialogContentText id="alert-dialog-description">
+            <DialogContentText id='alert-dialog-description'>
               Do You Want To Delete This Portfolio?
             </DialogContentText>
           </DialogContent>

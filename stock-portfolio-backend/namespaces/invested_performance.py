@@ -40,10 +40,6 @@ class GetInvestedPerformance(Resource):
         curr_price = 0
         old_price = 0
 
-        print(user)
-        print(all_portfolios)
-        print(all_holdings)
-
         for holding in all_holdings:
             print(holding)
             # Get the current price of the stock
@@ -71,11 +67,8 @@ class GetPortfolioPerformance(Resource):
         """
         Returns a JSON object containing the performance stats of the user's invested stocks
         """
-        body = request.json
         portfolio_id = request.args.get('portfolio')
 
-        import sys
-        print(portfolio_id, file=sys.stderr)
         # Get holdings for the particular portfolio
         portfolio_holdings = get_holdings(portfolio_id)
 
@@ -114,7 +107,7 @@ class GetPortfolioPerformance(Resource):
                     'orig_price': perf_calcs[key]['orig_price'],
                     'curr_price': perf_calcs[key]['curr_price'],
                     'change_val': delta,
-                    'change-percent': delta / perf_calcs[key]['orig_price'],
+                    'change_percent': delta / perf_calcs[key]['orig_price'],
                 })
 
             # calculate overall change
@@ -125,7 +118,7 @@ class GetPortfolioPerformance(Resource):
                 'orig_price': orig_overall,
                 'curr_price': curr_overall,
                 'change_val': overall_delta,
-                'change-percent': overall_delta / orig_overall,
+                'change_percent': overall_delta / orig_overall,
             })
 
         return {
