@@ -67,6 +67,16 @@ if not os.path.exists(database_file):
         FOREIGN KEY(held_by) REFERENCES portfolios(portfolio_id)
     );
     ''')
+    cursor.execute('''
+    CREATE TABLE permissions (
+        sharing_id integer PRIMARY KEY AUTOINCREMENT,
+        portfolio_id integer NOT NULL,
+        username text NOT NULL,
+        status text CHECK(status in ('accepted', 'pending', 'rejected')),
+        FOREIGN KEY(portfolio_id) REFERENCES portfolios(portfolio_id),
+        FOREIGN KEY(username) REFERENCES users(username)
+    );
+    ''')
     conn.commit()
 conn = sqlite3.connect('db/database.db', check_same_thread=False)
 
