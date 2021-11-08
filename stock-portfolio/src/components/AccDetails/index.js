@@ -1,32 +1,32 @@
-import { useState, useEffect } from "react";
-import { useHistory } from "react-router";
-import React from "react";
+import { useState, useEffect } from 'react';
+import { useHistory } from 'react-router';
+import React from 'react';
 // TODO fetch from api
-import api from "../../api";
-import { Avatar, Box, TextField } from "@mui/material";
+import api from '../../api';
+import { Avatar, Box, TextField } from '@mui/material';
 import {
   Card,
   CardActions,
   CardContent,
   CardMedia,
   Typography,
-} from "@mui/material";
-import { validateEmail } from "../SignUp/helper";
+} from '@mui/material';
+import { validateEmail } from '../SignUp/helper';
 
 function AccDetails() {
   var history = useHistory();
-  const [username, setUsername] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [profileImage, setProfileImage] = useState("");
+  const [username, setUsername] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [profileImage, setProfileImage] = useState('');
   const [editing, setEditing] = useState(false);
   const [isValidEmail, setIsValidEmail] = useState(true);
 
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
-    api("accounts/details", "PUT", { token }).then((res) => {
+    api('accounts/details', 'PUT', { token }).then((res) => {
       if (!res.message) {
         setUsername(res.username);
         setFirstName(res.first_name);
@@ -40,25 +40,25 @@ function AccDetails() {
   }, []);
 
   const updateEmail = () => {
-    api("accounts/update-details", "PUT", {
+    api('accounts/update-details', 'PUT', {
       token,
-      field: "email",
+      field: 'email',
       value: email,
     });
   };
 
   const updateFirstName = () => {
-    api("accounts/update-details", "PUT", {
+    api('accounts/update-details', 'PUT', {
       token,
-      field: "first_name",
+      field: 'first_name',
       value: firstName,
     });
   };
 
   const updateLastName = () => {
-    api("accounts/update-details", "PUT", {
+    api('accounts/update-details', 'PUT', {
       token,
-      field: "last_name",
+      field: 'last_name',
       value: lastName,
     });
   };
@@ -71,7 +71,7 @@ function AccDetails() {
   const handleAccountPage = () => {
     //@TODO: check id/password to authenticate/authorise.
     //  if(id,password exist){
-    history.push("/account"); // Go back to the main page
+    history.push('/account'); // Go back to the main page
     // }else{
     //     display error message
     // }
@@ -90,12 +90,13 @@ function AccDetails() {
   }
 
   return (
-    <div class="text-center w-100 p-3">
+    <div class='text-center w-100 p-3'>
       <form>
+
         <h1>
           Personal Information
           {!editing && (
-            <button class="btn btn-lg btn-link btn-block" onClick={edit}>
+            <button class='btn btn-lg btn-link btn-block' onClick={edit}>
               Edit
             </button>
           )}
@@ -103,68 +104,68 @@ function AccDetails() {
       </form>
 
       <div>
-        <Box display="flex" justifyContent="center" alignItems="center">
+        <Box display='flex' justifyContent='center' alignItems='center'>
           <div>
             <Card sx={{ maxWidth: 345 }}>
               <CardMedia
-                component="img"
+                component='img'
                 // height="140"
                 image={`${profileImage}`}
-                alt="Logo"
+                alt='Logo'
               />
               <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
+                <Typography gutterBottom variant='h5' component='div'>
                   {username}
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant='body2' color='text.secondary'>
                   Profile
                 </Typography>
               </CardContent>
             </Card>
           </div>
           <Box
-            component="form"
+            component='form'
             sx={{
-              "& .MuiTextField-root": { m: 1, width: "25ch" },
+              '& .MuiTextField-root': { m: 1, width: '25ch' },
             }}
             noValidate
             m={23}
             pt={8}
-            autoComplete="off"
+            autoComplete='off'
           >
             <div>
               <TextField
-                id="standard-read-only-input"
-                label="Email"
+                id='standard-read-only-input'
+                label='Email'
                 value={email}
                 InputProps={{
                   readOnly: !editing,
                 }}
                 onChange={(e) => handleEmailChange(e)}
-                variant="standard"
+                variant='standard'
               />
               {!isValidEmail && (
-                <p class="text-danger">Please check the email rules</p>
+                <p class='text-danger'>Please check the email rules</p>
               )}
             </div>
             <br />
             <div>
               <TextField
-                id="standard-read-only-input"
-                label="First Name"
+                id='standard-read-only-input'
+                label='First Name'
                 value={firstName}
                 InputProps={{
                   readOnly: !editing,
                 }}
                 onChange={(e) => setFirstName(e.target.value)}
-                variant="standard"
+                variant='standard'
               />
             </div>
             <br />
             <div>
               <TextField
-                id="standard-read-only-input"
-                label="Last Name"
+                id='standard-read-only-input'
+                label='Last Name'
                 value={lastName}
                 InputProps={{
                   readOnly: !editing,
@@ -173,12 +174,12 @@ function AccDetails() {
                   setLastName(e.target.value);
                   console.log(e);
                 }}
-                variant="standard"
+                variant='standard'
               />
             </div>
             {editing && (
               <button
-                class="btn-primary"
+                class='btn-primary'
                 onClick={handleUpdate}
                 disabled={!isValidEmail}
               >
