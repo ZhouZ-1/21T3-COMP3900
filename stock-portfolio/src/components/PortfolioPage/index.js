@@ -1,6 +1,6 @@
-import React from "react";
-import { useState, useEffect } from "react";
-import { useHistory } from "react-router";
+import React from 'react';
+import { useState, useEffect } from 'react';
+import { useHistory } from 'react-router';
 import {
   Button,
   TextField,
@@ -9,20 +9,20 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-} from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
-import api from "../../api";
-import moment from "moment";
-import Loader from "../Loader";
-import NavBar from "../NavBar/";
+} from '@mui/material';
+import { DataGrid } from '@mui/x-data-grid';
+import api from '../../api';
+import moment from 'moment';
+import Loader from '../Loader';
+import NavBar from '../NavBar/';
 
 const columns = [
-  { field: "id", headerName: "id", width: 100 },
-  { field: "symbol", headerName: "Symbol", width: 125 },
-  { field: "value", headerName: "Value", width: 120 },
-  { field: "qty", headerName: "Quantity", width: 130 },
-  { field: "date", headerName: "Date", width: 130 },
-  { field: "perform", headerName: "Performance", width: 150 },
+  { field: 'id', headerName: 'id', width: 100 },
+  { field: 'symbol', headerName: 'Symbol', width: 125 },
+  { field: 'value', headerName: 'Value', width: 120 },
+  { field: 'qty', headerName: 'Quantity', width: 130 },
+  { field: 'date', headerName: 'Date', width: 130 },
+  { field: 'perform', headerName: 'Performance', width: 150 },
 ];
 
 function PortfolioPage() {
@@ -30,32 +30,32 @@ function PortfolioPage() {
   const [openDelete, setOpenDelete] = useState(false);
   const [openAdd, setOpenAdd] = useState(false);
   const [openDS, setOpenDS] = useState(false);
-  const [symbol, setSymbol] = useState("");
+  const [symbol, setSymbol] = useState('');
   const [qty, setQty] = useState(0);
   const [stocks, setStocks] = useState([]);
   const [perform, setPerform] = useState(0);
   const [select, setSelect] = useState([]);
   const [balance, setBalance] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const [userName, setUserName] = useState("");
+  const [userName, setUserName] = useState('');
   const [openCollaborativeModal, setOpenCollaborativeModal] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
     let arr = [];
 
-    api("portfolio/holdings", "POST", {
-      token: localStorage.getItem("token"),
-      portfolio_id: localStorage.getItem("id"),
+    api('portfolio/holdings', 'POST', {
+      token: localStorage.getItem('token'),
+      portfolio_id: localStorage.getItem('id'),
     }).then((res) => {
       if (res) {
         res.map((s) => {
           let fil = [];
-          fil["id"] = s.holding_id;
-          fil["symbol"] = s.symbol;
-          fil["value"] = s.value;
-          fil["qty"] = s.qty;
-          fil["date"] = s.date;
+          fil['id'] = s.holding_id;
+          fil['symbol'] = s.symbol;
+          fil['value'] = s.value;
+          fil['qty'] = s.qty;
+          fil['date'] = s.date;
           arr.push(fil);
         });
         setStocks(arr);
@@ -112,13 +112,13 @@ function PortfolioPage() {
   const getCurrDate = () => {
     let curr = new Date();
     let date =
-      curr.getDate() + "/" + (curr.getMonth() + 1) + "/" + curr.getFullYear();
+      curr.getDate() + '/' + (curr.getMonth() + 1) + '/' + curr.getFullYear();
     return date;
   };
 
   const searchStock = async (s) => {
     let value = -1;
-    const res = await api(`stocks/search`, "POST", { symbol: s });
+    const res = await api(`stocks/search`, 'POST', { symbol: s });
     if (res.price) {
       return res.price;
     }
@@ -131,79 +131,79 @@ function PortfolioPage() {
     const value = await searchStock(symbol);
 
     if (!(symbol && qty)) {
-      alert("Missing Symbol/Quantity field.");
+      alert('Missing Symbol/Quantity field.');
       handleCloseAdd();
       return;
     }
 
     if (value == -1) {
-      alert("Stock Symbol not exist.");
+      alert('Stock Symbol not exist.');
       handleCloseAdd();
       return;
     }
 
     if (qty < 1) {
-      alert("Quantity cannot be less than 1.");
+      alert('Quantity cannot be less than 1.');
       return;
     }
 
-    const res = await api("portfolio/holdings/add", "POST", {
-      token: localStorage.getItem("token"),
-      portfolio_id: localStorage.getItem("id"),
+    const res = await api('portfolio/holdings/add', 'POST', {
+      token: localStorage.getItem('token'),
+      portfolio_id: localStorage.getItem('id'),
       symbol: symbol,
       value: value,
       qty: qty,
-      type: "buy",
-      brokerage: "9.95",
-      exchange: "NYSE",
+      type: 'buy',
+      brokerage: '9.95',
+      exchange: 'NYSE',
       date: date,
-      currency: "USD",
+      currency: 'USD',
     });
 
     if (res.is_success) {
-      alert("Successfully Add Stock!");
+      alert('Successfully Add Stock!');
     }
     handleCloseAdd();
     setIsLoading(false);
-    history.push(`/portfolio/${localStorage.getItem("id")}`);
+    history.push(`/portfolio/${localStorage.getItem('id')}`);
   };
 
   const deleteStock = async () => {
     setIsLoading(true);
 
     if (select.length == 0) {
-      alert("You have not select any stocks.");
+      alert('You have not select any stocks.');
       return;
     }
 
     Promise.all(
       select.map((id) => {
-        const res = api("portfolio/holdings/delete", "DELETE", {
-          token: localStorage.getItem("token"),
+        const res = api('portfolio/holdings/delete', 'DELETE', {
+          token: localStorage.getItem('token'),
           holding_id: id,
         });
       })
     ).then((res) => {
       if (res !== undefined) {
-        alert("Successfully Delete Stock(s)!");
+        alert('Successfully Delete Stock(s)!');
         setIsLoading(false);
       }
     });
     handleCloseDS();
-    history.push(`/portfolio/${localStorage.getItem("id")}`);
+    history.push(`/portfolio/${localStorage.getItem('id')}`);
   };
 
   const handleDelete = async () => {
     setIsLoading(true);
-    const res = await api("portfolio/delete", "DELETE", {
-      token: localStorage.getItem("token"),
-      portfolio_id: localStorage.getItem("id"),
+    const res = await api('portfolio/delete', 'DELETE', {
+      token: localStorage.getItem('token'),
+      portfolio_id: localStorage.getItem('id'),
     });
 
     if (res) {
-      alert("Successfully Delete The Portfolio.");
-      localStorage.removeItem("id");
-      history.push("/viewPortfolio");
+      alert('Successfully Delete The Portfolio.');
+      localStorage.removeItem('id');
+      history.push('/viewPortfolio');
     }
     setIsLoading(false);
     handleCloseDelete();
@@ -225,7 +225,7 @@ function PortfolioPage() {
     <div>
       <NavBar></NavBar>
       <div>
-        <h1>Portfolio: {localStorage.getItem("name")}</h1>
+        <h1>Portfolio: {localStorage.getItem('name')}</h1>
         {!isLoading && <p>Balance: {balance}</p>}
         <br></br>
         <div>
@@ -241,7 +241,7 @@ function PortfolioPage() {
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
           >
-            <DialogTitle id="alert-dialog-title">{"Add Stock"}</DialogTitle>
+            <DialogTitle id="alert-dialog-title">{'Add Stock'}</DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
                 Please Enter the Symbol of Stock:
@@ -278,7 +278,7 @@ function PortfolioPage() {
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
           >
-            <DialogTitle id="alert-dialog-title">{"Delete Stock"}</DialogTitle>
+            <DialogTitle id="alert-dialog-title">{'Delete Stock'}</DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
                 Do You Want To Delete These Stock(s)?
@@ -325,7 +325,7 @@ function PortfolioPage() {
         </div>
         <br></br>
       </div>
-      <div style={{ height: 400, width: "100%" }}>
+      <div style={{ height: 400, width: '100%' }}>
         <DataGrid
           rows={stocks}
           columns={columns}
@@ -350,7 +350,7 @@ function PortfolioPage() {
           aria-describedby="alert-dialog-description"
         >
           <DialogTitle id="alert-dialog-title">
-            {"Delete Portfolio"}
+            {'Delete Portfolio'}
           </DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
