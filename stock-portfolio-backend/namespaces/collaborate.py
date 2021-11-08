@@ -54,6 +54,32 @@ class Send(Resource):
         portfolio_id = body['portfolio_id']
         username = body['username']
 
+        # Check that the token is valid
+        user = db.get_user_by_value("active_token", token)
+        if not user or token == "":
+            abort(401, "Invalid token")
+
+        # Check that user owns the portfolio.
+        portfolio = db.query_portfolio(portfolio_id)
+        if portfolio is None or portfolio["owner"] != user["username"]:
+            abort(400, "User does not own portfolio")
+
+        # Check that the user exists
+        if not db.get_user_by_value("username", username) or username == user["username"]:
+            abort(400, "Invalid username")
+
+        # Check that the user is not already collaborating on the portfolio
+        status = db.get_permission_status(portfolio_id, username)
+        if status == "accepted":
+            abort(400, "User is already collaborating on portfolio")
+        elif status == "pending":
+            abort(400, "Invite already sent to user")
+        elif status == "rejected":
+            abort(400, "User has rejected invite")
+
+        # Send the invite
+        db.send_invite(portfolio_id, username)
+
         return {
             "is_success": True
         }

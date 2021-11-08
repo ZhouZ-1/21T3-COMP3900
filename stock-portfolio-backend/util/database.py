@@ -254,6 +254,25 @@ def get_holdings(portfolio_id):
         "currency": currency
     } for holding_id, symbol, value, qty, type, brokerage, exchange, date, currency, _ in cursor.fetchall()]
 
+def get_permission_status(portfolio_id, username):
+    '''
+    Returns the permission status of a portfolio with a user.
+    '''
+    cursor = conn.cursor()
+    cursor.execute("SELECT * from permissions WHERE portfolio_id=? AND username=?", [portfolio_id, username])
+    permission = cursor.fetchone()
+    if permission is None:
+        return None
+    return permission[3]
+
+def send_invite(portfolio_id, username):
+    '''
+    Sends an invite to a user to join a portfolio.
+    '''
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO permissions (portfolio_id, username, status) values (?, ?, 'pending')", [portfolio_id, username])
+    conn.commit()
+
 """
     Stock table functions
 """
