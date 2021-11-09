@@ -2,7 +2,7 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import api from '../../api';
-import { Box, TextField } from '@mui/material';
+import { TextField } from '@mui/material';
 import { Grid, Card, CardHeader, CardContent } from '@mui/material';
 
 // class Wizard extends Component {
