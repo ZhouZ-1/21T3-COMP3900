@@ -16,6 +16,10 @@ function MainPage(){
                     <button type="button" class="btn btn-warning" onClick={() => history.push('/watchList')}>Go to the watch list</button>
                     <br></br>
                     <button type="button" class="btn btn-warning" onClick={() => history.push('/viewPortfolio')}>Go to the Portfolio</button>
+                    <br></br>
+                    <button type="button" class="btn btn-warning" onClick={() => history.push('/collaboration')}>Go to the Collaboration Portfolio</button>
+                    <br></br>
+                    <button type="button" class="btn btn-warning" onClick={() => history.push('/tax')}>Go to the Tax</button>
                 </div>): 
                 (<p>Some contents here</p>)}
             </div>

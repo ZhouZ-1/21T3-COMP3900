@@ -1,30 +1,27 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
-import { makeStyles } from '@material-ui/core/styles'
 import { useHistory } from 'react-router'
 import {
   List,
   ListItem,
   ListItemText
 } from '@mui/material';
+import { DataGrid } from '@mui/x-data-grid'
 import api from '../../api'
 import NavBar from '../NavBar'
 import Loader from '../Loader'
-import PortfolioPage from '../PortfolioPage'
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    flexGrow: 1,
-    padding: theme.spacing(2)
-  }
-}))
+const columns = [
+  { field: 'sharing_id', headerName: 'Sharing id', width: 150 },
+  // { field: 'portfolio_id', headerName: 'Portfolio id', width: 150 },
+  { field: 'portfolio_name', headerName: 'Portfolio', width: 150 },
+  { field: 'owner', headerName: 'Owner', width: 130 }
+]
 
 function CollabList () {
-  const theme = useTheme()
   var history = useHistory()
-  const classes = useStyles()
   const [title, setTitle] = React.useState('')
-  const [port, setPort] = useState([])
+  const [collabPort, setCollabPort] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [openEdit, setOpenEdit] = useState(false)
   const [open, setOpen] = React.useState(false)
@@ -37,9 +34,12 @@ function CollabList () {
     setOpen(false)
   }
 
-  useEffect(() => {
+  useEffect(async() => {
     setIsLoading(true)
     // api
+    const data = await api(`collaborate/check?token=${localStorage.getItem('token')}`, 'GET');
+    console.log(data);
+    setCollabPort(data.map(d => {d.id = d.sharing_id; return d}))
     setIsLoading(false)
   }, [])
 
@@ -86,7 +86,7 @@ function CollabList () {
   }
 
   return (
-    <div className={classes.root}>
+    <div>
       <NavBar />
       <br />
       <div>
@@ -126,7 +126,25 @@ function CollabList () {
       </div> */}
       <br />
       {isLoading && <Loader />}
-      <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+      <div style={{ height: 400, width: '100%' }}>
+        {isLoading && <Loader />}
+        {!isLoading && (
+          <DataGrid
+            rows={collabPort}
+            columns={columns}
+            pagination
+            checkboxSelection
+            pageSize={7}
+            rowCount={100}
+            // paginationMode="server"
+            // onSelectionModelChange={newModel => {
+            //   setSelect(newModel)
+            // }}
+            // selectionModel={select}
+          />
+        )}
+      </div>
+      {/* <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
         {port.map(p => (
           <div>
             <ListItem>
@@ -135,7 +153,7 @@ function CollabList () {
           <p></p>
           </div>
         ))}
-      </List>
+      </List> */}
     </div>
     </div>
   )

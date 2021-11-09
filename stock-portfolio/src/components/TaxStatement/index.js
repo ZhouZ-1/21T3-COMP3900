@@ -2,17 +2,31 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 import api from '../../api'
 import { Box, TextField } from '@mui/material'
+import Loader from '../Loader';
 
-function AccDetails () {
+function TaxStatement () {
+  const [isLoading, setIsLoading] = useState(false);
   const [prevI, setPrevI] = useState(0)
   const [income, setIncome] = useState(0)
   const [rate, setRate] = useState(0)
   const [tax, setTaxValue] = useState(0)
   const [editing, setEditing] = useState(false)
 
-  //   useEffect(() => {
-
-  //   }, []);
+  useEffect(() => {
+    setIsLoading(true);
+    api(`invested_performance/tax?token=${localStorage.getItem('token')}`, 'GET').then(
+      (res) => {
+        if (res.CGT) {
+          setIncome(res.yearly_gain);
+          setTaxValue(res.CGT);
+          setRate(res.to_declare);
+        } else {
+          alert('No Stocks yet');
+        }
+      }
+    );
+    setIsLoading(false);
+  }, []);
 
   const fetchRate = () => {
     let value = 0
@@ -49,11 +63,11 @@ function AccDetails () {
       <form>
         <h1>
           Tax Information
-          {!editing && (
+          {/* {!editing && (
             <button class="btn btn-lg btn-link btn-block" onClick={edit}>
               Edit
             </button>
-          )}
+          )} */}
         </h1>
       </form>
 
@@ -68,12 +82,12 @@ function AccDetails () {
           <div>
             <TextField
               id="standard-read-only-input"
-              label="Income"
-              value={income}
+              label="How much you gain from stocks so far:"
+              value={`$${income}`}
               InputProps={{
                 readOnly: !editing
               }}
-              onChange={e => setIncome(e.target.value)}
+              // onChange={e => setIncome(e.target.value)}
               variant="standard"
             />
           </div>
@@ -82,8 +96,8 @@ function AccDetails () {
             <div>
               <TextField
                 id="standard-read-only-input"
-                label="Tax Rate"
-                value={`${rate}%`}
+                label="Owned for more than a year(CGT):"
+                value={`$${tax}`}
                 InputProps={{
                   readOnly: !editing
                 }}
@@ -96,8 +110,8 @@ function AccDetails () {
             <div>
               <TextField
                 id="standard-read-only-input"
-                label="Tax"
-                value={`$${tax}`}
+                label="Otherwise, you have to declare:"
+                value={`$${rate}`}
                 InputProps={{
                   readOnly: !editing
                 }}
@@ -127,4 +141,4 @@ function AccDetails () {
   )
 }
 
-export default AccDetails
+export default TaxStatement

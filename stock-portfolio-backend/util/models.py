@@ -162,6 +162,12 @@ portfolio_performance_response_model = api.model('portfolio_response_model', {
     "symbols": fields.List(fields.Nested(basic_performance_info))
 })
 
+portfolio_performance_response_model = api.model('portfolio_response_model', {
+    "yearly_gain": fields.Float(example=99.9, description='The amount of money gained for the past year'),
+    "to_declare": fields.Float(example=99.9, description='The amount of money to declare'),
+    "CGT": fields.Float(example=99.9, description='The amount of money to declare if you held the stocks for more than a year'),
+})
+
 upload_csv_model = api.inherit('upload_csv_model', token_model, {
     "csv_string": fields.String(required=True, example="symbol,value,qty,type,brokerage,exchange,date,currency\nAAPL,1.1,99.9,buy,9.95,NYSE,19/10/21,USD\nMSFT,1.1,99.9,buy,9.95,NYSE,19/10/21,USD"),
     "portfolio_name": fields.String(required=True, example="My Portfolio")
