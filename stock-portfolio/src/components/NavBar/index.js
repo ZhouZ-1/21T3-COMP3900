@@ -1,100 +1,174 @@
-import { useEffect, useState } from "react";
-import { useHistory } from "react-router";
-import api from "../../api";
-import ExportModal from "./ExportModal";
-import ImportModal from "./ImportModal";
-function NavBar(){
-    const token = localStorage.getItem('token');
-    var history = useHistory();
-    let isAuthenticated = !!token;
+import { useEffect, useState } from 'react';
+import { useHistory } from 'react-router';
+import api from '../../api';
+import ExportModal from './ExportModal';
+import ImportModal from './ImportModal';
+import InvitesModal from './InvitesModal';
+import './styles.css';
+function NavBar() {
+  const token = localStorage.getItem('token');
+  var history = useHistory();
+  let isAuthenticated = !!token;
 
-    const [keywords,setKeyWords] = useState('');
-    const [showAllStocks,setShowAllStocks] = useState(true);
-    const [stocks, setStocks] = useState();
-    const [showDropDown,setShowDropDown] = useState(false);
-    const [exportTrigger,setExportTrigger] = useState(false);
-    const [importTrigger,setImportTrigger] = useState(false);
-    const handleLogout = () => {
-        localStorage.removeItem("token");
-        history.push('/');
-    }
+  const [keywords, setKeyWords] = useState('');
+  const [showAllStocks, setShowAllStocks] = useState(true);
+  const [stocks, setStocks] = useState();
+  const [showDropDown, setShowDropDown] = useState(false);
+  const [exportTrigger, setExportTrigger] = useState(false);
+  const [importTrigger, setImportTrigger] = useState(false);
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    history.push('/');
+  };
 
-    useEffect(()=>{
-        if(keywords === ''){
-            setShowAllStocks(true);
-        }
-    },[keywords]);
-    const onSearchFocus = () => {
-        setShowDropDown(true);
+  useEffect(() => {
+    if (keywords === '') {
+      setShowAllStocks(true);
     }
+  }, [keywords]);
+  const onSearchFocus = () => {
+    setShowDropDown(true);
+  };
 
-    const onKeywordChange = async (e) => {
-        setKeyWords(e.target.value);
-        if (keywords === ''){
-            setShowAllStocks(true);
-        }else{
-            setShowAllStocks(false);
-        }
-        const response = await api(`stocks?query=${keywords}&limit=${10}&offset=${2}`,'GET');
-        const stockResults = response.map(function(item,idx){
-            return <li key={idx} onMouseDown={() => onStockClick(item.symbol)}>{item.symbol} {item.name}</li>;
-        });
-        setStocks(stockResults);
+  const onKeywordChange = async (e) => {
+    setKeyWords(e.target.value);
+    if (keywords === '') {
+      setShowAllStocks(true);
+    } else {
+      setShowAllStocks(false);
     }
-
-    const onStockClick = (symbol) => {
-        setShowAllStocks(true);
-        setShowDropDown(false);
-        setKeyWords('');
-        document.getElementById("searchBar").value = '';
-        history.push(`/stockDetails/${symbol}`);
-    }
-    
-    return(
-        <nav class="navbar navbar-light bg-light justify-content-around">
-            <a class="navbar-brand" onClick={() => history.push('/')}>Home</a>
-            <form class="form-inline" onSubmit={(e) => e.preventDefault()}>
-                <input id="searchBar" class="form-control me-2" type="search" placeholder="Search" aria-label="Search" onBlur={()=>setShowDropDown(false)} onFocus={onSearchFocus} onChange={(e) => onKeywordChange(e)} data-bs-toggle="collapse" data-bs-target="#stockList" aria-expanded="false"/>
-                    {showDropDown ? (
-                        showAllStocks ? (
-                            <ul id = "stockList" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                <li onMouseDown={() => history.push('/stockList')}>Please tap here to search all stocks</li>
-                            </ul>
-                            ):(
-                            <ul id = "stockList" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                {stocks}
-                            </ul>
-                            )
-                        
-                        ):
-                        (null)
-                    }
-            </form>
-            {isAuthenticated ?
-                [
-                    (
-                        <>
-                            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#importModal" onClick={()=>setImportTrigger(!importTrigger)}>Import Portfolio</button>
-                            <ImportModal trigger={importTrigger}/>
-                        </>
-                    ),   
-                    (
-                        <div>
-                            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#exportModal" onClick={()=>setExportTrigger(!exportTrigger)}>Export Portfolio</button>
-                            <ExportModal trigger={exportTrigger}/>
-                        </div>
-                    ),
-                    (
-                        <button type="button" class="btn btn-danger" onClick={() => handleLogout()}>Logout</button>
-                    ),
-                    (
-                        <button type="button" class="btn btn-outline-dark" onClick={()=>history.push('/account')}>Account</button>
-                    )
-                ]:
-                (<button type="button" class="btn btn-outline-dark" onClick={()=>history.push('/signIn')}>Sign in</button>)
-            }
-        </nav>
+    const response = await api(
+      `stocks?query=${keywords}&limit=${10}&offset=${2}`,
+      'GET'
     );
+    const stockResults = response.map(function (item, idx) {
+      return (
+        <li key={idx} onMouseDown={() => onStockClick(item.symbol)}>
+          {item.symbol} {item.name}
+        </li>
+      );
+    });
+    setStocks(stockResults);
+  };
+
+  const onStockClick = (symbol) => {
+    setShowAllStocks(true);
+    setShowDropDown(false);
+    setKeyWords('');
+    document.getElementById('searchBar').value = '';
+    history.push(`/stockDetails/${symbol}`);
+  };
+  const onIconClick = () => {};
+  return (
+    <nav class="navbar navbar-light bg-light justify-content-around">
+      <a class="navbar-brand" onClick={() => history.push('/')}>
+        Home
+      </a>
+      <form class="form-inline" onSubmit={(e) => e.preventDefault()}>
+        <input
+          id="searchBar"
+          class="form-control me-2"
+          type="search"
+          placeholder="Search"
+          aria-label="Search"
+          onBlur={() => setShowDropDown(false)}
+          onFocus={onSearchFocus}
+          onChange={(e) => onKeywordChange(e)}
+          data-bs-toggle="collapse"
+          data-bs-target="#stockList"
+          aria-expanded="false"
+        />
+        {showDropDown ? (
+          showAllStocks ? (
+            <ul
+              id="stockList"
+              class="dropdown-menu"
+              aria-labelledby="dropdownMenuButton1"
+            >
+              <li onMouseDown={() => history.push('/stockList')}>
+                Please tap here to search all stocks
+              </li>
+            </ul>
+          ) : (
+            <ul
+              id="stockList"
+              class="dropdown-menu"
+              aria-labelledby="dropdownMenuButton1"
+            >
+              {stocks}
+            </ul>
+          )
+        ) : null}
+      </form>
+      {isAuthenticated ? (
+        [
+          <>
+            <button
+              type="button"
+              class="btn btn-outline-primary"
+              data-bs-toggle="modal"
+              data-bs-target="#importModal"
+              onClick={() => setImportTrigger(!importTrigger)}
+            >
+              Import Portfolio
+            </button>
+            <ImportModal trigger={importTrigger} />
+          </>,
+          <div>
+            <button
+              type="button"
+              class="btn btn-outline-danger"
+              data-bs-toggle="modal"
+              data-bs-target="#exportModal"
+              onClick={() => setExportTrigger(!exportTrigger)}
+            >
+              Export Portfolio
+            </button>
+            <ExportModal trigger={exportTrigger} />
+          </div>,
+          <button
+            type="button"
+            class="btn btn-danger"
+            onClick={() => handleLogout()}
+          >
+            Logout
+          </button>,
+          <button
+            type="button"
+            class="btn btn-outline-dark"
+            onClick={() => history.push('/account')}
+          >
+            Account
+          </button>,
+          <div>
+            <svg
+              className="notificationIcon"
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-bell"
+              viewBox="0 0 16 16"
+              data-bs-toggle="modal"
+              data-bs-target="#invitesModal"
+              onClick={() => setExportTrigger(!exportTrigger)}
+            >
+              <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zM8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5.002 5.002 0 0 1 13 6c0 .88.32 4.2 1.22 6z" />
+            </svg>
+            <InvitesModal />
+          </div>,
+        ]
+      ) : (
+        <button
+          type="button"
+          class="btn btn-outline-dark"
+          onClick={() => history.push('/signIn')}
+        >
+          Sign in
+        </button>
+      )}
+    </nav>
+  );
 }
 
 export default NavBar;

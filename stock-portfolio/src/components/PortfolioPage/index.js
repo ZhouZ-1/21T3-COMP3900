@@ -39,24 +39,28 @@ function PortfolioPage() {
   const [stocks, setStocks] = useState([]);
   const [select, setSelect] = useState([]);
   const [balance, setBalance] = useState(0);
-  
+
   const [userName, setUserName] = useState('');
   const [openCollaborativeModal, setOpenCollaborativeModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [refresh, setRefresh] = useState(0);
   const [overall, setOverall] = useState([]);
+  const [isPortfolioOwner, setIsPortfolioOwner] = useState(false);
+
+  const portfolio_id = localStorage.getItem('id');
+  const token = localStorage.getItem('token');
 
   useEffect(async () => {
     setIsLoading(true);
     let newData = [];
 
     const data = await api(
-      `invested_performance/portfolio?portfolio=${localStorage.getItem('id')}`,
+      `invested_performance/portfolio?portfolio=${portfolio_id}`,
       'GET'
     );
     await api('portfolio/holdings', 'POST', {
-      token: localStorage.getItem('token'),
-      portfolio_id: localStorage.getItem('id'),
+      token: token,
+      portfolio_id: portfolio_id,
     }).then((res) => {
       setOverall(
         data.symbols.filter((c) => {
@@ -77,6 +81,17 @@ function PortfolioPage() {
 
     setStocks(newData);
     setIsLoading(false);
+
+    const response = await api(`portfolio?token=${token}`, 'GET');
+    let portfolios = response.portfolios;
+    let isOwner = false;
+    for (let index = 0; index < portfolios.length; index++) {
+      if (portfolios[index].portfolio_id == portfolio_id) {
+        console.log('here');
+        isOwner = true;
+      }
+    }
+    setIsPortfolioOwner(isOwner);
   }, [refresh]);
 
   const handleClickOpenAdd = () => {
@@ -123,7 +138,6 @@ function PortfolioPage() {
     setIsLoading(true);
     const date = getCurrDate();
     const value = await searchStock(symbol);
-    // let value = await searchStock(symbol);
 
     if (!(symbol && qty)) {
       alert('Missing Symbol/Quantity field.');
@@ -143,8 +157,8 @@ function PortfolioPage() {
     }
 
     const res = await api('portfolio/holdings/add', 'POST', {
-      token: localStorage.getItem('token'),
-      portfolio_id: localStorage.getItem('id'),
+      token: token,
+      portfolio_id: portfolio_id,
       symbol: symbol.toUpperCase(),
       value: value,
       qty: qty,
@@ -174,7 +188,7 @@ function PortfolioPage() {
     Promise.all(
       select.map((id) => {
         const res = api('portfolio/holdings/delete', 'DELETE', {
-          token: localStorage.getItem('token'),
+          token: token,
           holding_id: id,
         });
       })
@@ -191,8 +205,8 @@ function PortfolioPage() {
   const handleDelete = async () => {
     setIsLoading(true);
     const res = await api('portfolio/delete', 'DELETE', {
-      token: localStorage.getItem('token'),
-      portfolio_id: localStorage.getItem('id'),
+      token: token,
+      portfolio_id: portfolio_id,
     });
 
     if (res) {
@@ -204,8 +218,13 @@ function PortfolioPage() {
     handleCloseDelete();
   };
 
-  const onClickShare = () => {
-    // TODO: Call api call here when it is ready from the backend
+  const onClickShare = async () => {
+    const response = await api('collaborate/send', 'POST', {
+      token: token,
+      userName: userName,
+      portfolio_id: portfolio_id,
+    });
+    setOpenCollaborativeModal(false);
     return;
   };
   const handleOpenCollaborativeModal = () => {
@@ -237,7 +256,7 @@ function PortfolioPage() {
         <br></br>
         <div>
           <Button
-            class='btn btn-outline-primary ms-5'
+            class="btn btn-outline-primary ms-5"
             onClick={handleClickOpenAdd}
           >
             Add Stock
@@ -245,23 +264,23 @@ function PortfolioPage() {
           <Dialog
             open={openAdd}
             onClose={handleCloseAdd}
-            aria-labelledby='alert-dialog-title'
-            aria-describedby='alert-dialog-description'
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
           >
-            <DialogTitle id='alert-dialog-title'>{'Add Stock'}</DialogTitle>
+            <DialogTitle id="alert-dialog-title">{'Add Stock'}</DialogTitle>
             <DialogContent>
-              <DialogContentText id='alert-dialog-description'>
+              <DialogContentText id="alert-dialog-description">
                 Please Enter the Symbol of Stock:
               </DialogContentText>
               <TextField
-                id='demo-helper-text-misaligned-no-helper'
-                label='symbol'
+                id="demo-helper-text-misaligned-no-helper"
+                label="symbol"
                 required
                 onChange={(evt) => setSymbol(evt.target.value)}
               ></TextField>
               <TextField
-                id='demo-helper-text-misaligned-no-helper'
-                label='Quantity'
+                id="demo-helper-text-misaligned-no-helper"
+                label="Quantity"
                 required
                 onChange={(evt) => setQty(evt.target.value)}
               ></TextField>
@@ -274,7 +293,7 @@ function PortfolioPage() {
             </DialogActions>
           </Dialog>
           <Button
-            class='btn btn-outline-primary ms-5'
+            class="btn btn-outline-primary ms-5"
             onClick={handleClickOpenDS}
           >
             Delete Stock
@@ -282,12 +301,12 @@ function PortfolioPage() {
           <Dialog
             open={openDS}
             onClose={handleCloseDS}
-            aria-labelledby='alert-dialog-title'
-            aria-describedby='alert-dialog-description'
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
           >
-            <DialogTitle id='alert-dialog-title'>{'Delete Stock'}</DialogTitle>
+            <DialogTitle id="alert-dialog-title">{'Delete Stock'}</DialogTitle>
             <DialogContent>
-              <DialogContentText id='alert-dialog-description'>
+              <DialogContentText id="alert-dialog-description">
                 Do You Want To Delete These Stock(s)?
               </DialogContentText>
             </DialogContent>
@@ -298,37 +317,43 @@ function PortfolioPage() {
               </Button>
             </DialogActions>
           </Dialog>
-          <Button
-            class="btn btn-outline-primary ms-5"
-            onClick={handleOpenCollaborativeModal}
-          >
-            Share this portfolio
-          </Button>
-          <Dialog
-            open={openCollaborativeModal}
-            onClose={handleCloseCollaborativeModal}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-          >
-            <DialogTitle id="alert-dialog-title">
-              Collaborative Portfolio
-            </DialogTitle>
-            <DialogContent>
-              <DialogContentText id="alert-dialog-description">
-                Please type in user's name you want to share it with
-              </DialogContentText>
-              <TextField
-                id="demo-helper-text-misaligned-no-helper"
-                label="user name"
-                required
-                onChange={(evt) => setUserName(evt.target.value)}
-              ></TextField>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={onClickShare}>Share</Button>
-              <Button onClick={handleCloseCollaborativeModal}>Cancel</Button>
-            </DialogActions>
-          </Dialog>
+          {isPortfolioOwner && (
+            <>
+              <Button
+                class="btn btn-outline-primary ms-5"
+                onClick={handleOpenCollaborativeModal}
+              >
+                Share this portfolio
+              </Button>
+              <Dialog
+                open={openCollaborativeModal}
+                onClose={handleCloseCollaborativeModal}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+              >
+                <DialogTitle id="alert-dialog-title">
+                  Collaborative Portfolio
+                </DialogTitle>
+                <DialogContent>
+                  <DialogContentText id="alert-dialog-description">
+                    Please type in user's name you want to share it with
+                  </DialogContentText>
+                  <TextField
+                    id="demo-helper-text-misaligned-no-helper"
+                    label="user name"
+                    required
+                    onChange={(evt) => setUserName(evt.target.value)}
+                  ></TextField>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={onClickShare}>Share</Button>
+                  <Button onClick={handleCloseCollaborativeModal}>
+                    Cancel
+                  </Button>
+                </DialogActions>
+              </Dialog>
+            </>
+          )}
         </div>
         <br></br>
       </div>
@@ -351,28 +376,32 @@ function PortfolioPage() {
         )}
       </div>
       <div>
-        <Button onClick={handleClickOpenDelete}>Delete Portfolio</Button>
-        <Dialog
-          open={openDelete}
-          onClose={handleCloseDelete}
-          aria-labelledby='alert-dialog-title'
-          aria-describedby='alert-dialog-description'
-        >
-          <DialogTitle id='alert-dialog-title'>
-            {'Delete Portfolio'}
-          </DialogTitle>
-          <DialogContent>
-            <DialogContentText id='alert-dialog-description'>
-              Do You Want To Delete This Portfolio?
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseDelete}>Cancel</Button>
-            <Button onClick={handleDelete} autoFocus>
-              Confirm
-            </Button>
-          </DialogActions>
-        </Dialog>
+        {isPortfolioOwner && (
+          <>
+            <Button onClick={handleClickOpenDelete}>Delete Portfolio</Button>
+            <Dialog
+              open={openDelete}
+              onClose={handleCloseDelete}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+            >
+              <DialogTitle id="alert-dialog-title">
+                'Delete Portfolio'
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  Do You Want To Delete This Portfolio?
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleCloseDelete}>Cancel</Button>
+                <Button onClick={handleDelete} autoFocus>
+                  Confirm
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </>
+        )}
       </div>
     </div>
   );

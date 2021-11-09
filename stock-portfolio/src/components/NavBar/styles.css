@@ -1,0 +1,9 @@
+.notificationIcon:hover {
+  fill: #ffe4b5;
+}
+.accept {
+  fill: blue;
+}
+.reject {
+  fill: red;
+}
