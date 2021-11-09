@@ -15,6 +15,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import api from '../../api';
 import moment from 'moment';
 import Loader from '../Loader';
+import NavBar from '../NavBar/';
 import BalancePortfolio from '../BalancePortfolio';
 
 const columns = [
@@ -23,6 +24,7 @@ const columns = [
   { field: 'value', headerName: 'Value', width: 120 },
   { field: 'qty', headerName: 'Quantity', width: 130 },
   { field: 'date', headerName: 'Date', width: 130 },
+  { field: 'perform', headerName: 'Performance', width: 150 },
   { field: 'change_val', headerName: 'Changes', width: 150 },
   { field: 'change_percent', headerName: 'Percentage', width: 150 },
 ];
@@ -36,6 +38,10 @@ function PortfolioPage() {
   const [qty, setQty] = useState(0);
   const [stocks, setStocks] = useState([]);
   const [select, setSelect] = useState([]);
+  const [balance, setBalance] = useState(0);
+  
+  const [userName, setUserName] = useState('');
+  const [openCollaborativeModal, setOpenCollaborativeModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [refresh, setRefresh] = useState(0);
   const [overall, setOverall] = useState([]);
@@ -153,7 +159,6 @@ function PortfolioPage() {
       alert('Successfully Add Stock!');
       setRefresh((r) => r + 1);
     }
-
     handleCloseAdd();
     setIsLoading(false);
   };
@@ -199,8 +204,21 @@ function PortfolioPage() {
     handleCloseDelete();
   };
 
+  const onClickShare = () => {
+    // TODO: Call api call here when it is ready from the backend
+    return;
+  };
+  const handleOpenCollaborativeModal = () => {
+    setOpenCollaborativeModal(true);
+  };
+
+  const handleCloseCollaborativeModal = () => {
+    setOpenCollaborativeModal(false);
+  };
+
   return (
     <div>
+      <NavBar></NavBar>
       <div>
         <h1>
           Portfolio: {localStorage.getItem('name')}
@@ -278,6 +296,37 @@ function PortfolioPage() {
               <Button onClick={deleteStock} autoFocus>
                 Confirm
               </Button>
+            </DialogActions>
+          </Dialog>
+          <Button
+            class="btn btn-outline-primary ms-5"
+            onClick={handleOpenCollaborativeModal}
+          >
+            Share this portfolio
+          </Button>
+          <Dialog
+            open={openCollaborativeModal}
+            onClose={handleCloseCollaborativeModal}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">
+              Collaborative Portfolio
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                Please type in user's name you want to share it with
+              </DialogContentText>
+              <TextField
+                id="demo-helper-text-misaligned-no-helper"
+                label="user name"
+                required
+                onChange={(evt) => setUserName(evt.target.value)}
+              ></TextField>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={onClickShare}>Share</Button>
+              <Button onClick={handleCloseCollaborativeModal}>Cancel</Button>
             </DialogActions>
           </Dialog>
         </div>
