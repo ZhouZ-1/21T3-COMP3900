@@ -358,6 +358,19 @@ def get_sharing_with_others(username):
     
     return portfolios
 
+def get_owner_of_shared_portfolio(sharing_id):
+    '''
+    Gets the owner of a shared portfolio.
+    '''
+    cursor = conn.cursor()
+    cursor.execute("SELECT * from permissions WHERE sharing_id=?", [sharing_id])
+    _, portfolio_id, _, _ = cursor.fetchone()
+    
+    # Get owner from portfolio_id
+    owner = query_portfolio(portfolio_id)["owner"]
+
+    return owner
+
 """
     Stock table functions
 """
