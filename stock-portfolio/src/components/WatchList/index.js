@@ -67,6 +67,7 @@ function WatchList() {
             Delete Stock
           </button>
           <button
+            id="moveStock"
             type="button"
             class="btn btn-outline-primary ms-5"
             data-bs-toggle="modal"
