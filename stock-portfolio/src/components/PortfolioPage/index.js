@@ -102,11 +102,9 @@ function PortfolioPage() {
     let isOwner = false;
     for (let index = 0; index < portfolios.length; index++) {
       if (portfolios[index].portfolio_id == portfolio_id) {
-        console.log('here');
         isOwner = true;
       }
     }
-    console.log('is owner of the portfolio?', isOwner);
     setIsPortfolioOwner(isOwner);
   }, [refresh]);
 
@@ -141,13 +139,11 @@ function PortfolioPage() {
 
   const getParticipants = async () => {
     if (isPortfolioOwner) {
-      console.log('entering here because you are the owner!');
       let allPortfolios = [];
       allPortfolios = await api(
         `collaborate/sharing-with-others?token=${token}`,
         'GET'
       );
-      console.log('allPortfolios', allPortfolios);
       let currnetPortfolio = {};
       allPortfolios.map((portfolioInfo) => {
         if (portfolioInfo.portfolio_id === portfolio_id) {
@@ -299,7 +295,6 @@ function PortfolioPage() {
       username: userName,
       portfolio_id: portfolio_id,
     });
-    console.log('sending response,', response);
     setOpenCollaborativeModal(false);
     return;
   };

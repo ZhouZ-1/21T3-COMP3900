@@ -31,7 +31,6 @@ function InvitesModal(props) {
 
   const getInvites = async () => {
     const response = await api(`collaborate/check?token=${token}`, 'GET');
-    console.log('logging received invites', response);
     const invites = response.map(function (item) {
       return (
         <li class="list-group-item list-group-item-action">

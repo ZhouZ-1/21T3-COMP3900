@@ -9,9 +9,6 @@ function ExportModal(props) {
   const [portfolios, setPortfolios] = useState(<div class="list-group"></div>);
   useEffect(async () => {
     const response = await api(`portfolio?token=${token}`, 'GET');
-    // if (response === undefined) {
-    //   return;
-    // }
     if (response.portfolios.length === 0) {
       setPortfolios(
         <button type="button" class="list-group-item list-group-item-action">

@@ -49,7 +49,6 @@ function NavBar() {
       );
     });
     setStocks(stockResults);
-    console.log(keywords);
   };
 
   const onStockClick = (symbol) => {

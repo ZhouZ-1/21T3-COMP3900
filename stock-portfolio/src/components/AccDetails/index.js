@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import React from 'react';
-// TODO fetch from api
 import api from '../../api';
 import { Avatar, Box, TextField } from '@mui/material';
 import {
@@ -171,7 +170,6 @@ function AccDetails() {
                 }}
                 onChange={(e) => {
                   setLastName(e.target.value);
-                  console.log(e);
                 }}
                 variant="standard"
               />
