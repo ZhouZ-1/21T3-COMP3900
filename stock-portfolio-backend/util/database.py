@@ -318,6 +318,46 @@ def reject_invite(sharing_id):
     cursor.execute("DELETE FROM permissions WHERE sharing_id=?", [sharing_id])
     conn.commit()
 
+def get_shared_with_user(username):
+    '''
+    Get all accepted permissions that are shared with the user.
+    '''
+    cursor = conn.cursor()
+    cursor.execute("SELECT * from permissions WHERE username=? AND status='accepted'", [username])
+    
+    # Extract sharing details
+    shared_with_user = [{**get_sharing_details(sharing_id), **query_portfolio(portfolio_id)} for sharing_id, portfolio_id, _, _ in cursor.fetchall()]
+
+    # Remove status and username
+    for shared in shared_with_user:
+        shared.pop("status")
+        shared.pop("username")
+    
+    return shared_with_user
+
+def get_sharing_with_others(username):
+    '''
+    Get all portfolios that are owner by the user and shared with other people
+    '''
+    
+    # Get a list of portfolios that are owned by the user
+    portfolios = all_portfolios_from_user(username)
+    
+    for portfolio in portfolios:
+        # Get a list of sharing_id's for the portfolio
+        cursor = conn.cursor()
+        cursor.execute("SELECT * from permissions WHERE portfolio_id=? AND status='accepted'", [portfolio["portfolio_id"]])
+        
+        # Extract sharing_id
+        sharing_details = [{"sharing_id": sharing_id, "username": username, "status": status} for sharing_id, _, username, status in cursor.fetchall()]
+        
+        portfolio["shared_with"] = sharing_details
+        
+    # Remove any portfolios that are not being shared
+    portfolios = [portfolio for portfolio in portfolios if "shared_with" in portfolio]
+    
+    return portfolios
+
 """
     Stock table functions
 """

@@ -13,14 +13,17 @@ collaborate = api.namespace('collaborate', description='Collaborative Portfolio'
 class SharedWithMe(Resource):
     @collaborate.response(200, 'Success', [shared_with_me_model])
     def get(self):
-        return [
-            {
-                "sharing_id": 1, 
-                "portfolio_id": 1, 
-                "portfolio_name": "Shared Portfolio", 
-                "owner": "test"
-            }
-        ]
+        token = request.args.get('token')
+        
+        # Check that the token is valid
+        user = db.get_user_by_value("active_token", token)
+        if not user or token == "":
+            abort(401, "Invalid token")
+
+        # Get the list of portfolios shared with the user
+        shared_with_user = db.get_shared_with_user(user["username"])
+        
+        return shared_with_user
 
 @collaborate.route('/sharing-with-others', doc={
     'description': 'Returns a list of portfolios that you are sharing with other people'
@@ -29,18 +32,17 @@ class SharedWithMe(Resource):
 class SharingWithOthers(Resource):
     @collaborate.response(200, 'Success', [sharing_with_others_model])
     def get(self):
-        return [
-            {
-                "portfolio_id": 1,
-                "portfolio_name": "Shared Portfolio",
-                "shared_with": [
-                    {
-                        "username": "test",
-                        "sharing_id": 1
-                    }
-                ]
-            }
-        ]
+        token = request.args.get('token')
+        
+        # Check that the token is valid
+        user = db.get_user_by_value("active_token", token)
+        if not user or token == "":
+            abort(401, "Invalid token")
+            
+        # Get the list of portfolios that the user is sharing with other people
+        sharing_with_others = db.get_sharing_with_others(user["username"])
+        
+        return sharing_with_others
 
 @collaborate.route('/send', doc={
     'description': 'Sends an invite to collaborate on a portfolio to another user',
