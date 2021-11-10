@@ -181,6 +181,23 @@ class Revoke(Resource):
     @collaborate.expect(revoke_permission_model)
     @collaborate.response(200, 'Success', success_model)
     def delete(self):
+        body = request.json
+        token = body['token']
+        sharing_id = body['sharing_id']
+        
+        # Check that the token is valid
+        user = db.get_user_by_value("active_token", token)
+        if not user or token == "":
+            abort(401, "Invalid token")
+
+        # Get the owner of the sharing id
+        owner = db.get_owner_of_shared_portfolio(sharing_id)
+        if owner != user["username"]:
+            abort(400, "User does not have permission to revoke permission")
+            
+        # Revoke the permission
+        db.reject_invite(sharing_id)
+
         return {
             "is_success": True
         }
