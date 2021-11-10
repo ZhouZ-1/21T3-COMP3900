@@ -51,7 +51,7 @@ function PortfolioOverview() {
 
   useEffect(() => {
     setIsLoading(true);
-    api(`portfolio?token=${localStorage.getItem('token')}`, 'GET').then(
+    api(`portfolio?token=${sessionStorage.getItem('token')}`, 'GET').then(
       (res) => {
         if (res) {
           setPort(res.portfolios);
@@ -64,7 +64,7 @@ function PortfolioOverview() {
   const handleCreate = async () => {
     if (title !== '') {
       const res = await api('portfolio/create', 'POST', {
-        token: localStorage.getItem('token'),
+        token: sessionStorage.getItem('token'),
         portfolio_name: title,
       });
       if (res.portfolios) {
@@ -86,9 +86,9 @@ function PortfolioOverview() {
   const handleEdit = async () => {
     if (title !== '') {
       const res = await api('portfolio/edit', 'POST', {
-        token: localStorage.getItem('token'),
+        token: sessionStorage.getItem('token'),
         portfolio_name: title,
-        portfolio_id: localStorage.getItem('id'),
+        portfolio_id: sessionStorage.getItem('id'),
       });
       if (res.is_success) {
         alert('Successfully Update Your Portfolio Name!');
@@ -98,8 +98,8 @@ function PortfolioOverview() {
   };
 
   const handleRedirect = (id, name) => {
-    localStorage.setItem('id', id);
-    localStorage.setItem('name', name);
+    sessionStorage.setItem('id', id);
+    sessionStorage.setItem('name', name);
     history.push(`portfolio/${id}`);
   };
 
@@ -110,25 +110,25 @@ function PortfolioOverview() {
       <div>
         <h3>Portfolio Overview</h3>
         <div>
-          <Button variant='outlined' onClick={handleClickOpen}>
+          <Button variant="outlined" onClick={handleClickOpen}>
             Create Portfolio
           </Button>
           <Dialog
             open={open}
             onClose={handleClose}
-            aria-labelledby='alert-dialog-title'
-            aria-describedby='alert-dialog-description'
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
           >
-            <DialogTitle id='alert-dialog-title'>
+            <DialogTitle id="alert-dialog-title">
               {'Create Porfolio'}
             </DialogTitle>
             <DialogContent>
-              <DialogContentText id='alert-dialog-description'>
+              <DialogContentText id="alert-dialog-description">
                 Please enter title of Portfolio:
               </DialogContentText>
               <TextField
-                id='demo-helper-text-misaligned-no-helper'
-                label='Title'
+                id="demo-helper-text-misaligned-no-helper"
+                label="Title"
                 required
                 onChange={(evt) => setTitle(evt.target.value)}
               ></TextField>
@@ -147,13 +147,13 @@ function PortfolioOverview() {
       <Grid
         container
         spacing={2}
-        direction='row'
-        justify='flex-start'
-        alignItems='flex-start'
+        direction="row"
+        justify="flex-start"
+        alignItems="flex-start"
       >
         {port.map((p) => (
           <Grid item xs={12} sm={6} md={3} key={port.indexOf(p)}>
-            <Card variant='outlined'>
+            <Card variant="outlined">
               <CardHeader
                 onClick={(e) =>
                   handleRedirect(`${p.portfolio_id}`, `${p.portfolio_name}`, e)
@@ -161,11 +161,11 @@ function PortfolioOverview() {
                 title={`Portfolio : ${p.portfolio_name}`}
               />
               <CardContent>
-                <Typography variant='h5' gutterBottom>
+                <Typography variant="h5" gutterBottom>
                   {/* Description */}
                 </Typography>
                 <Button
-                  class='btn btn-outline-primary ms-5'
+                  class="btn btn-outline-primary ms-5"
                   onClick={handleClickOpenEdit}
                 >
                   Edit Name
@@ -173,19 +173,19 @@ function PortfolioOverview() {
                 <Dialog
                   open={openEdit}
                   onClose={handleCloseEdit}
-                  aria-labelledby='alert-dialog-title'
-                  aria-describedby='alert-dialog-description'
+                  aria-labelledby="alert-dialog-title"
+                  aria-describedby="alert-dialog-description"
                 >
-                  <DialogTitle id='alert-dialog-title'>
+                  <DialogTitle id="alert-dialog-title">
                     {'Edit Porfolio'}
                   </DialogTitle>
                   <DialogContent>
-                    <DialogContentText id='alert-dialog-description'>
+                    <DialogContentText id="alert-dialog-description">
                       Please update the title of Portfolio:
                     </DialogContentText>
                     <TextField
-                      id='demo-helper-text-misaligned-no-helper'
-                      label='Title'
+                      id="demo-helper-text-misaligned-no-helper"
+                      label="Title"
                       required
                       onChange={(evt) => setTitle(evt.target.value)}
                     ></TextField>
