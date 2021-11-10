@@ -1,11 +1,7 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
 import { useHistory } from 'react-router'
-import {
-  List,
-  ListItem,
-  ListItemText
-} from '@mui/material';
+import { List, ListItem, ListItemText } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 import api from '../../api'
 import NavBar from '../NavBar'
@@ -34,12 +30,20 @@ function CollabList () {
     setOpen(false)
   }
 
-  useEffect(async() => {
+  useEffect(async () => {
     setIsLoading(true)
     // api
-    const data = await api(`collaborate/check?token=${localStorage.getItem('token')}`, 'GET');
-    console.log(data);
-    setCollabPort(data.map(d => {d.id = d.sharing_id; return d}))
+    const data = await api(
+      `collaborate/check?token=${localStorage.getItem('token')}`,
+      'GET'
+    )
+    console.log(data)
+    setCollabPort(
+      data.map(d => {
+        d.id = d.sharing_id
+        return d
+      })
+    )
     setIsLoading(false)
   }, [])
 
@@ -124,27 +128,27 @@ function CollabList () {
           </Dialog>
         </div>
       </div> */}
-      <br />
-      {isLoading && <Loader />}
-      <div style={{ height: 400, width: '100%' }}>
+        <br />
         {isLoading && <Loader />}
-        {!isLoading && (
-          <DataGrid
-            rows={collabPort}
-            columns={columns}
-            pagination
-            checkboxSelection
-            pageSize={7}
-            rowCount={100}
-            // paginationMode="server"
-            // onSelectionModelChange={newModel => {
-            //   setSelect(newModel)
-            // }}
-            // selectionModel={select}
-          />
-        )}
-      </div>
-      {/* <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+        <div style={{ height: 400, width: '100%' }}>
+          {isLoading && <Loader />}
+          {!isLoading && (
+            <DataGrid
+              rows={collabPort}
+              columns={columns}
+              pagination
+              checkboxSelection
+              pageSize={7}
+              rowCount={100}
+              // paginationMode="server"
+              // onSelectionModelChange={newModel => {
+              //   setSelect(newModel)
+              // }}
+              // selectionModel={select}
+            />
+          )}
+        </div>
+        {/* <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
         {port.map(p => (
           <div>
             <ListItem>
@@ -154,11 +158,9 @@ function CollabList () {
           </div>
         ))}
       </List> */}
-    </div>
+      </div>
     </div>
   )
 }
 
-export default CollabList;
-
-
+export default CollabList

@@ -31,7 +31,6 @@ function App () {
         <Route exact path="/portfolio/:id" component={PortfolioPage} />
         <Route exact path="/tax" component={TaxStatement} />
         <Route exact path="/collaboration" component={CollabList} />
-
       </Switch>
     </Router>
   )

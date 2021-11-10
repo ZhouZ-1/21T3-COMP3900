@@ -1,14 +1,14 @@
-import React from 'react';
-import { useState, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { useHistory } from 'react-router';
+import React from 'react'
+import { useState, useEffect } from 'react'
+import { makeStyles } from '@material-ui/core/styles'
+import { useHistory } from 'react-router'
 import {
   Grid,
   Card,
   CardContent,
   Typography,
-  CardHeader,
-} from '@material-ui/core/';
+  CardHeader
+} from '@material-ui/core/'
 import {
   Button,
   TextField,
@@ -17,121 +17,119 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  useTheme,
-} from '@mui/material';
-import api from '../../api';
-import NavBar from '../NavBar';
-import Loader from '../Loader';
-import PortfolioPage from '../PortfolioPage';
+  useTheme
+} from '@mui/material'
+import api from '../../api'
+import NavBar from '../NavBar'
+import Loader from '../Loader'
+import PortfolioPage from '../PortfolioPage'
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
-    padding: theme.spacing(2),
-  },
-}));
+    padding: theme.spacing(2)
+  }
+}))
 
-function PortfolioOverview() {
-  const theme = useTheme();
-  var history = useHistory();
-  const classes = useStyles();
-  const [title, setTitle] = React.useState('');
-  const [port, setPort] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [openEdit, setOpenEdit] = useState(false);
-  const [open, setOpen] = React.useState(false);
+function PortfolioOverview () {
+  const theme = useTheme()
+  var history = useHistory()
+  const classes = useStyles()
+  const [title, setTitle] = React.useState('')
+  const [port, setPort] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [openEdit, setOpenEdit] = useState(false)
+  const [open, setOpen] = React.useState(false)
 
   const handleClickOpen = () => {
-    setOpen(true);
-  };
+    setOpen(true)
+  }
 
   const handleClose = () => {
-    setOpen(false);
-  };
+    setOpen(false)
+  }
 
   useEffect(() => {
-    setIsLoading(true);
-    api(`portfolio?token=${localStorage.getItem('token')}`, 'GET').then(
-      (res) => {
-        if (res) {
-          setPort(res.portfolios);
-        }
+    setIsLoading(true)
+    api(`portfolio?token=${localStorage.getItem('token')}`, 'GET').then(res => {
+      if (res) {
+        setPort(res.portfolios)
       }
-    );
-    setIsLoading(false);
-  }, []);
+    })
+    setIsLoading(false)
+  }, [])
 
   const handleCreate = async () => {
     if (title !== '') {
       const res = await api('portfolio/create', 'POST', {
         token: localStorage.getItem('token'),
-        portfolio_name: title,
-      });
+        portfolio_name: title
+      })
       if (res.portfolios) {
-        alert('Successfully Add A New Portfolio!');
-        history.go(0);
+        alert('Successfully Add A New Portfolio!')
+        history.go(0)
       }
     }
-    handleClose();
-  };
+    handleClose()
+  }
 
   const handleClickOpenEdit = () => {
-    setOpenEdit(true);
-  };
+    setOpenEdit(true)
+  }
 
   const handleCloseEdit = () => {
-    setOpenEdit(false);
-  };
+    setOpenEdit(false)
+  }
 
   const handleEdit = async () => {
     if (title !== '') {
       const res = await api('portfolio/edit', 'POST', {
         token: localStorage.getItem('token'),
         portfolio_name: title,
-        portfolio_id: localStorage.getItem('id'),
-      });
+        portfolio_id: localStorage.getItem('id')
+      })
       if (res.is_success) {
-        alert('Successfully Update Your Portfolio Name!');
+        alert('Successfully Update Your Portfolio Name!')
       }
     }
-    handleCloseEdit();
-  };
+    handleCloseEdit()
+  }
 
   const handleRedirect = (id, name) => {
-    localStorage.setItem('id', id);
-    localStorage.setItem('name', name);
-    history.push(`portfolio/${id}`);
-  };
+    localStorage.setItem('id', id)
+    localStorage.setItem('name', name)
+    history.push(`portfolio/${id}`)
+  }
 
   return (
     <div className={classes.root}>
       <NavBar />
-      <br></br>
+      <br />
       <div>
         <h3>Portfolio Overview</h3>
         <div>
-          <Button variant='outlined' onClick={handleClickOpen}>
+          <Button variant="outlined" onClick={handleClickOpen}>
             Create Portfolio
           </Button>
           <Dialog
             open={open}
             onClose={handleClose}
-            aria-labelledby='alert-dialog-title'
-            aria-describedby='alert-dialog-description'
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
           >
-            <DialogTitle id='alert-dialog-title'>
+            <DialogTitle id="alert-dialog-title">
               {'Create Porfolio'}
             </DialogTitle>
             <DialogContent>
-              <DialogContentText id='alert-dialog-description'>
+              <DialogContentText id="alert-dialog-description">
                 Please enter title of Portfolio:
               </DialogContentText>
               <TextField
-                id='demo-helper-text-misaligned-no-helper'
-                label='Title'
+                id="demo-helper-text-misaligned-no-helper"
+                label="Title"
                 required
-                onChange={(evt) => setTitle(evt.target.value)}
-              ></TextField>
+                onChange={evt => setTitle(evt.target.value)}
+              />
             </DialogContent>
             <DialogActions>
               <Button onClick={handleClose}>Cancel</Button>
@@ -142,30 +140,30 @@ function PortfolioOverview() {
           </Dialog>
         </div>
       </div>
-      <br></br>
-      {isLoading && <Loader></Loader>}
+      <br />
+      {isLoading && <Loader />}
       <Grid
         container
         spacing={2}
-        direction='row'
-        justify='flex-start'
-        alignItems='flex-start'
+        direction="row"
+        justify="flex-start"
+        alignItems="flex-start"
       >
-        {port.map((p) => (
+        {port.map(p => (
           <Grid item xs={12} sm={6} md={3} key={port.indexOf(p)}>
-            <Card variant='outlined'>
+            <Card variant="outlined">
               <CardHeader
-                onClick={(e) =>
+                onClick={e =>
                   handleRedirect(`${p.portfolio_id}`, `${p.portfolio_name}`, e)
                 }
                 title={`Portfolio : ${p.portfolio_name}`}
               />
               <CardContent>
-                <Typography variant='h5' gutterBottom>
+                <Typography variant="h5" gutterBottom>
                   {/* Description */}
                 </Typography>
                 <Button
-                  class='btn btn-outline-primary ms-5'
+                  class="btn btn-outline-primary ms-5"
                   onClick={handleClickOpenEdit}
                 >
                   Edit Name
@@ -173,22 +171,22 @@ function PortfolioOverview() {
                 <Dialog
                   open={openEdit}
                   onClose={handleCloseEdit}
-                  aria-labelledby='alert-dialog-title'
-                  aria-describedby='alert-dialog-description'
+                  aria-labelledby="alert-dialog-title"
+                  aria-describedby="alert-dialog-description"
                 >
-                  <DialogTitle id='alert-dialog-title'>
+                  <DialogTitle id="alert-dialog-title">
                     {'Edit Porfolio'}
                   </DialogTitle>
                   <DialogContent>
-                    <DialogContentText id='alert-dialog-description'>
+                    <DialogContentText id="alert-dialog-description">
                       Please update the title of Portfolio:
                     </DialogContentText>
                     <TextField
-                      id='demo-helper-text-misaligned-no-helper'
-                      label='Title'
+                      id="demo-helper-text-misaligned-no-helper"
+                      label="Title"
                       required
-                      onChange={(evt) => setTitle(evt.target.value)}
-                    ></TextField>
+                      onChange={evt => setTitle(evt.target.value)}
+                    />
                   </DialogContent>
                   <DialogActions>
                     <Button onClick={handleCloseEdit}>Cancel</Button>
@@ -203,7 +201,7 @@ function PortfolioOverview() {
         ))}
       </Grid>
     </div>
-  );
+  )
 }
 
-export default PortfolioOverview;
+export default PortfolioOverview

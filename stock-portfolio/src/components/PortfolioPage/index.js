@@ -84,32 +84,33 @@ function PortfolioPage () {
   )
 
   const handleClickOpenAdd = () => {
-    setOpenAdd(true);
-  };
+    setOpenAdd(true)
+  }
 
   const handleCloseAdd = () => {
-    setOpenAdd(false);
-  };
+    setOpenAdd(false)
+  }
 
   const handleClickOpenDS = () => {
-    setOpenDS(true);
-  };
+    setOpenDS(true)
+  }
 
   const handleCloseDS = () => {
-    setOpenDS(false);
-  };
+    setOpenDS(false)
+  }
 
   const handleClickOpenDelete = () => {
-    setOpenDelete(true);
-  };
+    setOpenDelete(true)
+  }
 
   const handleCloseDelete = () => {
-    setOpenDelete(false);
-  };
+    setOpenDelete(false)
+  }
 
   const getCurrDate = () => {
     let curr = new Date()
-    let date = curr.getDate() + '/' + (curr.getMonth() + 1) + '/' + curr.getFullYear()
+    let date =
+      curr.getDate() + '/' + (curr.getMonth() + 1) + '/' + curr.getFullYear()
     return date
   }
 
@@ -155,7 +156,7 @@ function PortfolioPage () {
       if (res.is_success) {
         alert('Successfully Add Stock!')
         setRefresh(r => r + 1)
-      } 
+      }
     } else {
       alert('Stock Symbol not exist.')
     }
@@ -165,7 +166,7 @@ function PortfolioPage () {
   }
 
   const deleteStock = async () => {
-    setIsLoading(true);
+    setIsLoading(true)
 
     if (select.length == 0) {
       alert('You have not select any stocks.')
@@ -190,7 +191,7 @@ function PortfolioPage () {
   }
 
   const handleDelete = async () => {
-    setIsLoading(true);
+    setIsLoading(true)
     const res = await api('portfolio/delete', 'DELETE', {
       token: localStorage.getItem('token'),
       portfolio_id: localStorage.getItem('id')
@@ -201,13 +202,12 @@ function PortfolioPage () {
       localStorage.removeItem('id')
       history.push('/viewPortfolio')
     }
-    setIsLoading(false);
-    handleCloseDelete();
-  };
+    setIsLoading(false)
+    handleCloseDelete()
+  }
 
   const onClickShare = () => {
     // TODO: Call api call here when it is ready from the backend
-
   }
   const handleOpenCollaborativeModal = () => {
     setOpenCollaborativeModal(true)
@@ -331,7 +331,7 @@ function PortfolioPage () {
             </DialogActions>
           </Dialog>
         </div>
-        <br></br>
+        <br />
       </div>
       <div style={{ height: 400, width: '100%' }}>
         {isLoading && <Loader />}
@@ -376,7 +376,7 @@ function PortfolioPage () {
         </Dialog>
       </div>
     </div>
-  );
+  )
 }
 
 export default PortfolioPage

@@ -2,10 +2,14 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 import api from '../../api'
 import { Box, TextField } from '@mui/material'
+<<<<<<< HEAD
 import Loader from '../Loader';
+=======
+import Loader from '../Loader'
+>>>>>>> HR3900-36-tax
 
 function TaxStatement () {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false)
   const [prevI, setPrevI] = useState(0)
   const [income, setIncome] = useState(0)
   const [rate, setRate] = useState(0)
@@ -13,20 +17,21 @@ function TaxStatement () {
   const [editing, setEditing] = useState(false)
 
   useEffect(() => {
-    setIsLoading(true);
-    api(`invested_performance/tax?token=${localStorage.getItem('token')}`, 'GET').then(
-      (res) => {
-        if (res.CGT) {
-          setIncome(res.yearly_gain);
-          setTaxValue(res.CGT);
-          setRate(res.to_declare);
-        } else {
-          alert('No Stocks yet');
-        }
+    setIsLoading(true)
+    api(
+      `invested_performance/tax?token=${localStorage.getItem('token')}`,
+      'GET'
+    ).then(res => {
+      if (res.CGT) {
+        setIncome(res.yearly_gain)
+        setTaxValue(res.CGT)
+        setRate(res.to_declare)
+      } else {
+        alert('No Stocks yet')
       }
-    );
-    setIsLoading(false);
-  }, []);
+    })
+    setIsLoading(false)
+  }, [])
 
   const fetchRate = () => {
     let value = 0
@@ -62,7 +67,7 @@ function TaxStatement () {
     <div class="text-center w-100 p-3">
       <form>
         <h1>
-          Tax Information
+          Financial Information
           {/* {!editing && (
             <button class="btn btn-lg btn-link btn-block" onClick={edit}>
               Edit
