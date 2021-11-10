@@ -228,7 +228,7 @@ invite_model = api.model('invite_model', {
     "owner": fields.String(required=True, example="John Doe"),
 })
 
-reply_model = api.model('reply_model', {
+reply_model = api.inherit('reply_model', token_model, {
     "sharing_id": fields.Integer(required=True, example=1),
     "accepted": fields.Boolean(required=True, example=True)
 })

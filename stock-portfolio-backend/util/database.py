@@ -272,6 +272,51 @@ def send_invite(portfolio_id, username):
     cursor = conn.cursor()
     cursor.execute("INSERT INTO permissions (portfolio_id, username, status) values (?, ?, 'pending')", [portfolio_id, username])
     conn.commit()
+    
+def check_pending_invites(username):
+    '''
+    Returns a list of pending invites to a portfolio.
+    '''
+    cursor = conn.cursor()
+    cursor.execute("SELECT * from permissions WHERE username=? AND status='pending'", [username])
+    
+    pending = [{"sharing_id": sharing_id, "portfolio_id": portfolio_id } for sharing_id, portfolio_id, _, _ in cursor.fetchall()]
+    
+    # Add portfolio name and owner to each pending invite
+    pending = [{**pending_invite, **query_portfolio(pending_invite["portfolio_id"])} for pending_invite in pending]
+    
+    return pending
+
+def get_sharing_details(sharing_id):
+    '''
+    Returns the details of the shared portfolio in the permisssions table.
+    '''
+    cursor = conn.cursor()
+    cursor.execute("SELECT * from permissions WHERE sharing_id=?", [sharing_id])
+    sharing_id, portfolio_id, username, status = cursor.fetchone()
+    
+    return {
+        "sharing_id": sharing_id,
+        "portfolio_id": portfolio_id,
+        "username": username,
+        "status": status
+    }
+    
+def accept_invite(sharing_id):
+    '''
+    Accepts an invite to a portfolio.
+    '''
+    cursor = conn.cursor()
+    cursor.execute("UPDATE permissions SET status='accepted' WHERE sharing_id=?", [sharing_id])
+    conn.commit()
+    
+def reject_invite(sharing_id):
+    '''
+    Rejects an invite to a portfolio.
+    '''
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM permissions WHERE sharing_id=?", [sharing_id])
+    conn.commit()
 
 """
     Stock table functions
