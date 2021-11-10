@@ -63,7 +63,7 @@ function TaxStatement () {
     <div class="text-center w-100 p-3">
       <form>
         <h1>
-          Tax Information
+          Financial Information
           {/* {!editing && (
             <button class="btn btn-lg btn-link btn-block" onClick={edit}>
               Edit
