@@ -1,0 +1,9 @@
+#accept {
+  fill: blue;
+  margin: 5px;
+}
+
+#reject {
+  fill: red;
+  margin: 5px;
+}

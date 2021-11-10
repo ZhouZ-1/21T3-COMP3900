@@ -4,7 +4,7 @@ import api from '../../api';
 import ExportModal from './ExportModal';
 import ImportModal from './ImportModal';
 import InvitesModal from './InvitesModal';
-import './styles.css';
+import './navbarStyles.css';
 function NavBar() {
   const token = localStorage.getItem('token');
   var history = useHistory();
@@ -58,7 +58,7 @@ function NavBar() {
     document.getElementById('searchBar').value = '';
     history.push(`/stockDetails/${symbol}`);
   };
-  const onIconClick = () => {};
+
   return (
     <nav class="navbar navbar-light bg-light justify-content-around">
       <a class="navbar-brand" onClick={() => history.push('/')}>
@@ -142,7 +142,7 @@ function NavBar() {
           </button>,
           <div>
             <svg
-              className="notificationIcon"
+              id="notificationIcon"
               xmlns="http://www.w3.org/2000/svg"
               width="16"
               height="16"

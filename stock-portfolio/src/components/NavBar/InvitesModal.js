@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import api from '../../api';
-import Loader from '../Loader';
-import './styles.css';
+
+import './invitesModalStyles.css';
 function InvitesModal(props) {
   const token = localStorage.getItem('token');
 
   const [invites, setInvites] = useState(
     <li type="button" class="list-group-item list-group-item-action">
-      You have no invites
+      ...Loading Invites...
     </li>
   );
 
@@ -40,7 +40,7 @@ function InvitesModal(props) {
             {item.owner} invites you to {item.portfolio_name}
           </span>
           <svg
-            className="accept m-2"
+            id="accept"
             xmlns="http://www.w3.org/2000/svg"
             width="20"
             height="20"
@@ -53,7 +53,7 @@ function InvitesModal(props) {
             <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
           </svg>
           <svg
-            className="reject m-2"
+            id="reject"
             xmlns="http://www.w3.org/2000/svg"
             width="20"
             height="20"
@@ -68,6 +68,13 @@ function InvitesModal(props) {
         </li>
       );
     });
+    if (invites.length === 0) {
+      return (
+        <li class="list-group-item list-group-item-action">
+          You have no invites
+        </li>
+      );
+    }
     return invites;
   };
 

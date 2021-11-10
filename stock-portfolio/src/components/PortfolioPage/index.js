@@ -42,14 +42,29 @@ function PortfolioPage() {
 
   const [userName, setUserName] = useState('');
   const [openCollaborativeModal, setOpenCollaborativeModal] = useState(false);
+  const [openParticipantsModal, setOpenParticipantsModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [refresh, setRefresh] = useState(0);
   const [overall, setOverall] = useState([]);
   const [isPortfolioOwner, setIsPortfolioOwner] = useState(false);
+  const [participants, setParticipants] = useState(
+    <li class="list-group-item list-group-item-action">
+      ...Loading Participants...
+    </li>
+  );
 
   const portfolio_id = localStorage.getItem('id');
   const token = localStorage.getItem('token');
 
+  const onRemoveParticipants = async (sharingId) => {
+    await api('collaborate/revoke-permission', 'DELETE', {
+      token: token,
+      sharing_id: sharingId,
+    });
+    //  Assuming the user's status is no longer accepted (ex, reject or pending)
+    const participants = await getParticipants();
+    setParticipants(participants);
+  };
   useEffect(async () => {
     setIsLoading(true);
     let newData = [];
@@ -91,8 +106,14 @@ function PortfolioPage() {
         isOwner = true;
       }
     }
+    console.log('is owner of the portfolio?', isOwner);
     setIsPortfolioOwner(isOwner);
   }, [refresh]);
+
+  useEffect(async () => {
+    const participants = await getParticipants();
+    setParticipants(participants);
+  }, [isPortfolioOwner]);
 
   const handleClickOpenAdd = () => {
     setOpenAdd(true);
@@ -116,6 +137,59 @@ function PortfolioPage() {
 
   const handleCloseDelete = () => {
     setOpenDelete(false);
+  };
+
+  const getParticipants = async () => {
+    if (isPortfolioOwner) {
+      console.log('entering here because you are the owner!');
+      let allPortfolios = [];
+      allPortfolios = await api(
+        `collaborate/sharing-with-others?token=${token}`,
+        'GET'
+      );
+      console.log('allPortfolios', allPortfolios);
+      let currnetPortfolio = {};
+      allPortfolios.map((portfolioInfo) => {
+        if (portfolioInfo.portfolio_id === portfolio_id) {
+          currnetPortfolio = portfolioInfo;
+        }
+      });
+      let allParticipants = currnetPortfolio.shared_with || [];
+      let activeParticipants = [];
+      allParticipants.map((user) => {
+        if (user.status == 'accepted') {
+          activeParticipants.push([user.username, user.sharing_id]);
+        }
+      });
+      const currentParticipants = allParticipants.map(function (userInfo) {
+        return (
+          <li class="list-group-item list-group-item-action">
+            <span>{userInfo[0]}</span>
+            <svg
+              id="reject"
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              fill="currentColor"
+              class="bi bi-dash-circle"
+              viewBox="0 0 16 16"
+              onClick={() => onRemoveParticipants(userInfo[1])}
+            >
+              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+              <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z" />
+            </svg>
+          </li>
+        );
+      });
+      if (currentParticipants.length === 0) {
+        return (
+          <li class="list-group-item list-group-item-action">
+            You have no Participants
+          </li>
+        );
+      }
+      return currentParticipants;
+    }
   };
 
   const getCurrDate = () => {
@@ -235,6 +309,14 @@ function PortfolioPage() {
     setOpenCollaborativeModal(false);
   };
 
+  const handleOpenParticipantsModal = () => {
+    setOpenParticipantsModal(true);
+  };
+
+  const handleCloseParticipantsModal = () => {
+    setOpenParticipantsModal(false);
+  };
+
   return (
     <div>
       <NavBar></NavBar>
@@ -350,6 +432,33 @@ function PortfolioPage() {
                   <Button onClick={handleCloseCollaborativeModal}>
                     Cancel
                   </Button>
+                </DialogActions>
+              </Dialog>
+            </>
+          )}
+
+          {isPortfolioOwner && (
+            <>
+              <Button
+                class="btn btn-outline-primary ms-5"
+                onClick={handleOpenParticipantsModal}
+              >
+                participants
+              </Button>
+              <Dialog
+                open={openParticipantsModal}
+                onClose={handleCloseParticipantsModal}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+              >
+                <DialogTitle id="alert-dialog-title">Participants</DialogTitle>
+                <DialogContent>
+                  <DialogContentText id="alert-dialog-description">
+                    {participants}
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleCloseParticipantsModal}>Cancel</Button>
                 </DialogActions>
               </Dialog>
             </>
