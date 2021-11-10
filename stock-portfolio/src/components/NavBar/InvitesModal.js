@@ -3,7 +3,7 @@ import api from '../../api';
 
 import './invitesModalStyles.css';
 function InvitesModal(props) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
 
   const [invites, setInvites] = useState(
     <li type="button" class="list-group-item list-group-item-action">
@@ -12,7 +12,6 @@ function InvitesModal(props) {
   );
 
   const onAcceptClick = async (sharingID) => {
-    console.log('accepted!', sharingID);
     await api('collaborate/reply', 'POST', {
       sharing_id: sharingID,
       accepted: true,
@@ -22,7 +21,6 @@ function InvitesModal(props) {
   };
 
   const onRejectClick = async (sharingID) => {
-    console.log('rejected!', sharingID);
     await api('collaborate/reply', 'POST', {
       sharing_id: sharingID,
       accepted: false,
@@ -33,6 +31,7 @@ function InvitesModal(props) {
 
   const getInvites = async () => {
     const response = await api(`collaborate/check?token=${token}`, 'GET');
+    console.log('logging received invites', response);
     const invites = response.map(function (item) {
       return (
         <li class="list-group-item list-group-item-action">

@@ -6,7 +6,7 @@ import ImportModal from './ImportModal';
 import InvitesModal from './InvitesModal';
 import './navbarStyles.css';
 function NavBar() {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   var history = useHistory();
   let isAuthenticated = !!token;
 
@@ -17,7 +17,7 @@ function NavBar() {
   const [exportTrigger, setExportTrigger] = useState(false);
   const [importTrigger, setImportTrigger] = useState(false);
   const handleLogout = () => {
-    localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
     history.push('/');
   };
 
@@ -49,6 +49,7 @@ function NavBar() {
       );
     });
     setStocks(stockResults);
+    console.log(keywords);
   };
 
   const onStockClick = (symbol) => {

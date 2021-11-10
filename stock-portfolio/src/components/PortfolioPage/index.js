@@ -53,8 +53,8 @@ function PortfolioPage() {
     </li>
   );
 
-  const portfolio_id = localStorage.getItem('id');
-  const token = localStorage.getItem('token');
+  const portfolio_id = sessionStorage.getItem('id');
+  const token = sessionStorage.getItem('token');
 
   const onRemoveParticipants = async (sharingId) => {
     await api('collaborate/revoke-permission', 'DELETE', {
@@ -181,10 +181,11 @@ function PortfolioPage() {
           </li>
         );
       });
+
       if (currentParticipants.length === 0) {
         return (
           <li class="list-group-item list-group-item-action">
-            You have no Participants
+            You have no Participants in this portfolio.
           </li>
         );
       }
@@ -285,7 +286,7 @@ function PortfolioPage() {
 
     if (res) {
       alert('Successfully Delete The Portfolio.');
-      localStorage.removeItem('id');
+      sessionStorage.removeItem('id');
       history.push('/viewPortfolio');
     }
     setIsLoading(false);
@@ -295,9 +296,10 @@ function PortfolioPage() {
   const onClickShare = async () => {
     const response = await api('collaborate/send', 'POST', {
       token: token,
-      userName: userName,
+      username: userName,
       portfolio_id: portfolio_id,
     });
+    console.log('sending response,', response);
     setOpenCollaborativeModal(false);
     return;
   };
@@ -322,7 +324,7 @@ function PortfolioPage() {
       <NavBar></NavBar>
       <div>
         <h1>
-          Portfolio: {localStorage.getItem('name')}
+          Portfolio: {sessionStorage.getItem('name')}
           {!isLoading && (
             // <button class='btn btn-lg btn-link btn-block' onClick={handleOverview}>Portfolio Balance</button>
             <Link

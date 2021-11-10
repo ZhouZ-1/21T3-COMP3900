@@ -4,7 +4,7 @@ import Loader from '../Loader';
 
 function ExportModal(props) {
   const { trigger } = props;
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const [isPortfolioLoading, setIsPortfolioLoading] = useState(true);
   const [portfolios, setPortfolios] = useState(<div class="list-group"></div>);
   useEffect(async () => {

@@ -3,7 +3,7 @@ import { useHistory } from 'react-router';
 
 function MainPage() {
   const history = useHistory();
-  let isAuthenticated = !!localStorage.getItem('token');
+  let isAuthenticated = !!sessionStorage.getItem('token');
   return (
     <div>
       <div className="navBar">
