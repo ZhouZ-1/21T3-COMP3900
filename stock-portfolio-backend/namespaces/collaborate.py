@@ -43,19 +43,6 @@ class SharingWithOthers(Resource):
         sharing_with_others = db.get_sharing_with_others(user["username"])
         
         return sharing_with_others
-        
-        return [
-            {
-                "portfolio_id": 1,
-                "portfolio_name": "Shared Portfolio",
-                "shared_with": [
-                    {
-                        "username": "test",
-                        "sharing_id": 1
-                    }
-                ]
-            }
-        ]
 
 @collaborate.route('/send', doc={
     'description': 'Sends an invite to collaborate on a portfolio to another user',
