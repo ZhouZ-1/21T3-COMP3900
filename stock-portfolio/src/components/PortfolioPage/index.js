@@ -109,7 +109,8 @@ function PortfolioPage () {
 
   const getCurrDate = () => {
     let curr = new Date()
-    let date = curr.getDate() + '/' + (curr.getMonth() + 1) + '/' + curr.getFullYear()
+    let date =
+      curr.getDate() + '/' + (curr.getMonth() + 1) + '/' + curr.getFullYear()
     return date
   }
 
@@ -155,7 +156,7 @@ function PortfolioPage () {
       if (res.is_success) {
         alert('Successfully Add Stock!')
         setRefresh(r => r + 1)
-      } 
+      }
     } else {
       alert('Stock Symbol not exist.')
     }
@@ -207,7 +208,6 @@ function PortfolioPage () {
 
   const onClickShare = () => {
     // TODO: Call api call here when it is ready from the backend
-
   }
   const handleOpenCollaborativeModal = () => {
     setOpenCollaborativeModal(true)
