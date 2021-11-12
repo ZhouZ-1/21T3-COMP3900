@@ -13,6 +13,8 @@ function TaxStatement () {
   const [editing, setEditing] = useState(false)
 
   useEffect(() => {
+    if (sessionStorage.getItem('token') == null) return alert("Not loading the portfolio");
+
     setIsLoading(true)
     api(
       `invested_performance/tax?token=${localStorage.getItem('token')}`,

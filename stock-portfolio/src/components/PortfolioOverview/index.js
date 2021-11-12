@@ -40,6 +40,7 @@ function PortfolioOverview () {
   const [isLoading, setIsLoading] = useState(false)
   const [openEdit, setOpenEdit] = useState(false)
   const [open, setOpen] = React.useState(false)
+  const [refresh, setRefresh] = useState(0);
 
   const handleClickOpen = () => {
     setOpen(true)
@@ -50,6 +51,7 @@ function PortfolioOverview () {
   }
 
   useEffect(() => {
+    if (sessionStorage.getItem('token') == null) return alert("Not loading the portfolio");
     setIsLoading(true)
     api(`portfolio?token=${sessionStorage.getItem('token')}`, 'GET').then(
       res => {
@@ -59,7 +61,7 @@ function PortfolioOverview () {
       }
     )
     setIsLoading(false)
-  }, [])
+  }, [refresh])
 
   const handleCreate = async () => {
     if (title !== '') {
@@ -69,6 +71,7 @@ function PortfolioOverview () {
       })
       if (res.portfolios) {
         alert('Successfully Add A New Portfolio!')
+        setRefresh((r) => r + 1);
         history.go(0)
       }
     }

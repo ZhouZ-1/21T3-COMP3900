@@ -65,8 +65,17 @@ function PortfolioPage() {
     setParticipants(participants);
   };
   useEffect(async () => {
+    if (sessionStorage.getItem('token') == null) return alert("Not loading the portfolio");
+
     setIsLoading(true);
     let newData = [];
+
+    // const send = await api('collaborate/send', 'POST', {
+    //   token: sessionStorage.getItem('token'),
+    //   username: "1234",
+    //   portfolio_id: sessionStorage.getItem('id')
+    // })
+    // console.log("send", send);
 
     const data = await api(
       `invested_performance/portfolio?portfolio=${portfolio_id}`,
@@ -215,8 +224,8 @@ function PortfolioPage() {
       return
     }
 
-    if (qty < 1) {
-      alert('Quantity cannot be less than 1.')
+    if (qty == 0) {
+      alert('Quantity cannot be equal to 0.')
       return
     }
 
