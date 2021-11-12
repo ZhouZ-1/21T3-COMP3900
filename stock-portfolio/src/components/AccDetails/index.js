@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useHistory } from 'react-router'
 import React from 'react'
-// TODO fetch from api
 import api from '../../api'
 import { Avatar, Box, TextField } from '@mui/material'
 import {
@@ -23,7 +22,7 @@ function AccDetails () {
   const [editing, setEditing] = useState(false)
   const [isValidEmail, setIsValidEmail] = useState(true)
 
-  const token = localStorage.getItem('token')
+  const token = sessionStorage.getItem('token')
 
   useEffect(() => {
     api('accounts/details', 'PUT', { token }).then(res => {
@@ -170,7 +169,6 @@ function AccDetails () {
                 }}
                 onChange={e => {
                   setLastName(e.target.value)
-                  console.log(e)
                 }}
                 variant="standard"
               />

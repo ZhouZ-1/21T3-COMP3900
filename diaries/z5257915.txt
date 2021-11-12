@@ -48,3 +48,16 @@ Tuesday: Started working on being able to upload and download portfolios as a cs
 Wednesday: Implemented logic for the downloading of the portfolio as a csv file.
 Thursday: Had a maths test today so no 3900 work today.
 Friday: Finished the uploading of the portfolio as a csv file.
+Saturday: Finished holding summary and holdings routes.
+
+# Week 8
+Monday: Helped a little with frontend stuff, active on the discord incase anyone needs help since I finished all my work.
+Wednesday: Finished demo and retroactive b today. Think the team needs a short break.
+Saturday: Assigned stuff to do in the meeting. Also brainstormed some possible routes for collaborative portfolio.
+Sunday: Started working on the portfolio routes, mainly documentation and stub code.
+
+# Week 9 
+Monday: Started working on the implementation of some portfolio routes (I finished invite route). Also meeting progress check.
+Tuesday: Finished accept collaborative portfolio invite.
+Wednesday: Finish the rest of the implementation of the portfolio routes.
+Thursday: Start working on final report + potential script for the final demo.

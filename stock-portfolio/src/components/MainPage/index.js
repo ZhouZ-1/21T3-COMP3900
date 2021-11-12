@@ -32,17 +32,9 @@ function MainPage () {
             <button
               type="button"
               class="btn btn-warning"
-              onClick={() => history.push('/collaboration')}
-            >
-              Go to the Collaboration Portfolio
-            </button>
-            <br />
-            <button
-              type="button"
-              class="btn btn-warning"
               onClick={() => history.push('/tax')}
             >
-              Go to the Tax
+              Go to the Financial
             </button>
           </div>
         ) : (
@@ -56,4 +48,5 @@ function MainPage () {
     </div>
   )
 }
+
 export default MainPage

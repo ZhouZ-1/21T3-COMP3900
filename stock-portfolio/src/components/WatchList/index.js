@@ -7,7 +7,7 @@ import api from '../../api';
 import PortfolioModal from './PortfolioModal';
 
 function WatchList() {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const columns = [
     { field: 'id', headerName: 'ID', width: 100 },
     { field: 'code', headerName: 'Stock Code', width: 200 },
@@ -26,7 +26,6 @@ function WatchList() {
   ];
   const [rows, setRows] = useState(initialRow);
   const [selectedStocks, setSelectedStocks] = useState([]);
-  // const [toggleMoveModal, setToggleMoveModal] = useState('');
 
   useEffect(async () => {
     const newRow = await getRows(token);

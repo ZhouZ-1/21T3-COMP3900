@@ -254,6 +254,123 @@ def get_holdings(portfolio_id):
         "currency": currency
     } for holding_id, symbol, value, qty, type, brokerage, exchange, date, currency, _ in cursor.fetchall()]
 
+def get_permission_status(portfolio_id, username):
+    '''
+    Returns the permission status of a portfolio with a user.
+    '''
+    cursor = conn.cursor()
+    cursor.execute("SELECT * from permissions WHERE portfolio_id=? AND username=?", [portfolio_id, username])
+    permission = cursor.fetchone()
+    if permission is None:
+        return None
+    return permission[3]
+
+def send_invite(portfolio_id, username):
+    '''
+    Sends an invite to a user to join a portfolio.
+    '''
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO permissions (portfolio_id, username, status) values (?, ?, 'pending')", [portfolio_id, username])
+    conn.commit()
+    
+def check_pending_invites(username):
+    '''
+    Returns a list of pending invites to a portfolio.
+    '''
+    cursor = conn.cursor()
+    cursor.execute("SELECT * from permissions WHERE username=? AND status='pending'", [username])
+    
+    pending = [{"sharing_id": sharing_id, "portfolio_id": portfolio_id } for sharing_id, portfolio_id, _, _ in cursor.fetchall()]
+    
+    # Add portfolio name and owner to each pending invite
+    pending = [{**pending_invite, **query_portfolio(pending_invite["portfolio_id"])} for pending_invite in pending]
+    
+    return pending
+
+def get_sharing_details(sharing_id):
+    '''
+    Returns the details of the shared portfolio in the permisssions table.
+    '''
+    cursor = conn.cursor()
+    cursor.execute("SELECT * from permissions WHERE sharing_id=?", [sharing_id])
+    sharing_id, portfolio_id, username, status = cursor.fetchone()
+    
+    return {
+        "sharing_id": sharing_id,
+        "portfolio_id": portfolio_id,
+        "username": username,
+        "status": status
+    }
+    
+def accept_invite(sharing_id):
+    '''
+    Accepts an invite to a portfolio.
+    '''
+    cursor = conn.cursor()
+    cursor.execute("UPDATE permissions SET status='accepted' WHERE sharing_id=?", [sharing_id])
+    conn.commit()
+    
+def reject_invite(sharing_id):
+    '''
+    Rejects an invite to a portfolio.
+    '''
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM permissions WHERE sharing_id=?", [sharing_id])
+    conn.commit()
+
+def get_shared_with_user(username):
+    '''
+    Get all accepted permissions that are shared with the user.
+    '''
+    cursor = conn.cursor()
+    cursor.execute("SELECT * from permissions WHERE username=? AND status='accepted'", [username])
+    
+    # Extract sharing details
+    shared_with_user = [{**get_sharing_details(sharing_id), **query_portfolio(portfolio_id)} for sharing_id, portfolio_id, _, _ in cursor.fetchall()]
+
+    # Remove status and username
+    for shared in shared_with_user:
+        shared.pop("status")
+        shared.pop("username")
+    
+    return shared_with_user
+
+def get_sharing_with_others(username):
+    '''
+    Get all portfolios that are owner by the user and shared with other people
+    '''
+    
+    # Get a list of portfolios that are owned by the user
+    portfolios = all_portfolios_from_user(username)
+    
+    for portfolio in portfolios:
+        # Get a list of sharing_id's for the portfolio
+        cursor = conn.cursor()
+        cursor.execute("SELECT * from permissions WHERE portfolio_id=? AND status='accepted'", [portfolio["portfolio_id"]])
+        
+        # Extract sharing_id
+        sharing_details = [{"sharing_id": sharing_id, "username": username, "status": status} for sharing_id, _, username, status in cursor.fetchall()]
+        
+        portfolio["shared_with"] = sharing_details
+        
+    # Remove any portfolios that are not being shared
+    portfolios = [portfolio for portfolio in portfolios if "shared_with" in portfolio]
+    
+    return portfolios
+
+def get_owner_of_shared_portfolio(sharing_id):
+    '''
+    Gets the owner of a shared portfolio.
+    '''
+    cursor = conn.cursor()
+    cursor.execute("SELECT * from permissions WHERE sharing_id=?", [sharing_id])
+    _, portfolio_id, _, _ = cursor.fetchone()
+    
+    # Get owner from portfolio_id
+    owner = query_portfolio(portfolio_id)["owner"]
+
+    return owner
+
 """
     Stock table functions
 """

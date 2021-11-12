@@ -51,18 +51,20 @@ function PortfolioOverview () {
 
   useEffect(() => {
     setIsLoading(true)
-    api(`portfolio?token=${localStorage.getItem('token')}`, 'GET').then(res => {
-      if (res) {
-        setPort(res.portfolios)
+    api(`portfolio?token=${sessionStorage.getItem('token')}`, 'GET').then(
+      res => {
+        if (res) {
+          setPort(res.portfolios)
+        }
       }
-    })
+    )
     setIsLoading(false)
   }, [])
 
   const handleCreate = async () => {
     if (title !== '') {
       const res = await api('portfolio/create', 'POST', {
-        token: localStorage.getItem('token'),
+        token: sessionStorage.getItem('token'),
         portfolio_name: title
       })
       if (res.portfolios) {
@@ -84,9 +86,9 @@ function PortfolioOverview () {
   const handleEdit = async () => {
     if (title !== '') {
       const res = await api('portfolio/edit', 'POST', {
-        token: localStorage.getItem('token'),
+        token: sessionStorage.getItem('token'),
         portfolio_name: title,
-        portfolio_id: localStorage.getItem('id')
+        portfolio_id: sessionStorage.getItem('id')
       })
       if (res.is_success) {
         alert('Successfully Update Your Portfolio Name!')
@@ -96,8 +98,8 @@ function PortfolioOverview () {
   }
 
   const handleRedirect = (id, name) => {
-    localStorage.setItem('id', id)
-    localStorage.setItem('name', name)
+    sessionStorage.setItem('id', id)
+    sessionStorage.setItem('name', name)
     history.push(`portfolio/${id}`)
   }
 
