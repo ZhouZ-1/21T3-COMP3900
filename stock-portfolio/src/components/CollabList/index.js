@@ -8,7 +8,7 @@ import NavBar from '../NavBar'
 import Loader from '../Loader'
 
 const columns = [
-  { field: 'sharing_id', headerName: 'Sharing id', width: 150 },
+  { field: 'sharing_id', headerName: 'id', width: 100 },
   // { field: 'portfolio_id', headerName: 'Portfolio id', width: 150 },
   { field: 'portfolio_name', headerName: 'Portfolio', width: 150 },
   { field: 'owner', headerName: 'Owner', width: 130 }
@@ -32,18 +32,28 @@ function CollabList () {
 
   useEffect(async () => {
     setIsLoading(true)
-    // api
+    // const res = await api('collaborate/send', 'POST', {
+    //   token: localStorage.getItem('token'),
+    //   username: "1234",
+    //   portfolio_id: localStorage.getItem('id')
+    // })
+    
     const data = await api(
-      `collaborate/check?token=${localStorage.getItem('token')}`,
+      `collaborate/shared_with_me?token=${localStorage.getItem('token')}`,
       'GET'
     )
-    console.log(data)
+    // console.log(data)   
+    data.map(d => {
+      console.log('d', d);
+    })
+    
     setCollabPort(
       data.map(d => {
         d.id = d.sharing_id
         return d
       })
     )
+
     setIsLoading(false)
   }, [])
 
@@ -131,7 +141,6 @@ function CollabList () {
         <br />
         {isLoading && <Loader />}
         <div style={{ height: 400, width: '100%' }}>
-          {isLoading && <Loader />}
           {!isLoading && (
             <DataGrid
               rows={collabPort}

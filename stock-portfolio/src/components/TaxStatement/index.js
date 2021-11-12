@@ -2,11 +2,7 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 import api from '../../api'
 import { Box, TextField } from '@mui/material'
-<<<<<<< HEAD
-import Loader from '../Loader';
-=======
 import Loader from '../Loader'
->>>>>>> HR3900-36-tax
 
 function TaxStatement () {
   const [isLoading, setIsLoading] = useState(false)

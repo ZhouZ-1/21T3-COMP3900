@@ -50,6 +50,14 @@ function PortfolioPage () {
       setIsLoading(true)
       let newData = []
 
+      // // dummy data: delete before commit
+      // const send = await api('collaborate/send', 'POST', {
+      //   token: localStorage.getItem('token'),
+      //   username: "4321",
+      //   portfolio_id: localStorage.getItem('id')
+      // })
+      // console.log(send)
+
       const data = await api(
         `invested_performance/portfolio?portfolio=${localStorage.getItem(
           'id'
