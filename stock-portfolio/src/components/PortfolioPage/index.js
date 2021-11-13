@@ -71,13 +71,6 @@ function PortfolioPage() {
     setIsLoading(true);
     let newData = [];
 
-    // const send = await api('collaborate/send', 'POST', {
-    //   token: sessionStorage.getItem('token'),
-    //   username: "4321",
-    //   portfolio_id: sessionStorage.getItem('id')
-    // })
-    // console.log("send", send);
-
     const data = await api(
       `invested_performance/portfolio?portfolio=${portfolio_id}`,
       'GET'
