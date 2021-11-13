@@ -117,7 +117,7 @@ class Add(Resource):
 
         # Check that user owns or has edit permissions for the portfolio
         portfolio = db.query_portfolio(portfolio_id)
-        if portfolio is None or portfolio["owner"] != user["username"] or not query_check_edit_permissions(portfolio_id, user['username']):
+        if portfolio is None or not(portfolio["owner"] == user["username"] or not query_check_edit_permissions(portfolio_id, user['username'])):
             abort(400, "User does not have permission to add stocks to the portfolio")
 
         # Check that the type is either buy or sell.
@@ -157,7 +157,7 @@ class Edit(Resource):
         # Check that user owns or has edit permissions for the portfolio
         portfolio_id = db.get_portfolio_id_from_holding(holding_id)
         portfolio = db.query_portfolio(portfolio_id)
-        if portfolio is None or portfolio["owner"] != user["username"] or not query_check_edit_permissions(portfolio_id, user['username']):
+        if portfolio is None or not (portfolio["owner"] == user["username"] or query_check_edit_permissions(portfolio_id, user['username'])):
             abort(400, "User cannot access this holding.")
 
         # Update holding details.
@@ -189,7 +189,7 @@ class Remove(Resource):
          # Check that user owns or has edit permissions for the portfolio
         portfolio_id = db.get_portfolio_id_from_holding(holding_id)
         portfolio = db.query_portfolio(portfolio_id)
-        if portfolio is None or portfolio["owner"] != user["username"] or not query_check_edit_permissions(portfolio_id, user['username']):
+        if portfolio is None or not(portfolio["owner"] == user["username"] or query_check_edit_permissions(portfolio_id, user['username'])):
             abort(400, "User cannot access this holding.")
 
         # Delete the holding.

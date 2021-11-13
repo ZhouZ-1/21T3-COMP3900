@@ -42,6 +42,11 @@ Week 8
 - Helped fix the UI for portfolio
 - Bug fixes for sprint 2
 
+Week 9
+- Collaborative stocks features (add, remove, delete) 
+- Report
+
+
 Matthews email
 z5187551@student.unsw.edu.au
 https://3900-w18a-group-group.atlassian.net/jira/projects?selectedProjectType=software
