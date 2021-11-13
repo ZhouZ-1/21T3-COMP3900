@@ -33,7 +33,7 @@ function StockDetails() {
     }
     setIsGraphLoading(false);
     drawGraph(openPrices);
-  }, [isGraphLoading, graphTimeOption]);
+  }, [symbol, graphTimeOption]);
 
   const onTimeChange = (time) => {
     setIsGraphLoading(true);
@@ -112,6 +112,7 @@ function StockDetails() {
 
         <div class="mt-2 graph-container">
           <div class="stock-trend-graph">
+            {/* <canvas id="myChart" width="500" height="300"></canvas> */}
             {isGraphLoading ? (
               <Loader></Loader>
             ) : (
