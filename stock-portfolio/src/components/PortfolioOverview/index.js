@@ -2,6 +2,9 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { useHistory } from 'react-router'
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
+import CollabList from '../CollabList'
+
 import {
   Grid,
   Card,
@@ -205,6 +208,13 @@ function PortfolioOverview () {
           </Grid>
         ))}
       </Grid>
+      {/* <Router>
+        <Switch>
+          <Route path="/collab"> */}
+            <CollabList />
+          {/* </Route>
+        </Switch>
+      </Router> */}
     </div>
   )
 }

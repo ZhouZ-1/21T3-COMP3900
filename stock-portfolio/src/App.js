@@ -11,6 +11,7 @@ import StockList from './components/StockList'
 import WatchList from './components/WatchList'
 import PortfolioOverview from './components/PortfolioOverview'
 import PortfolioPage from './components/PortfolioPage'
+import BalancePortfolio from './components/BalancePortfolio'
 import TaxStatement from './components/TaxStatement'
 import CollabList from './components/CollabList'
 
@@ -29,8 +30,9 @@ function App () {
         <Route exact path="/watchList" component={WatchList} />
         <Route exact path="/viewPortfolio" component={PortfolioOverview} />
         <Route exact path="/portfolio/:id" component={PortfolioPage} />
+        <Route exact path="/balance" component={BalancePortfolio} />
         <Route exact path="/tax" component={TaxStatement} />
-        <Route exact path="/collaboration" component={CollabList} />
+        <Route exact path="/collab" component={CollabList} />
       </Switch>
     </Router>
   )

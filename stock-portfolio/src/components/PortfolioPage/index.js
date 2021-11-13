@@ -4,6 +4,8 @@ import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
 import { useHistory } from 'react-router'
 import {
   Button,
+  Menu,
+  MenuItem,
   TextField,
   Dialog,
   DialogActions,
@@ -16,7 +18,6 @@ import api from '../../api'
 import moment from 'moment'
 import Loader from '../Loader'
 import NavBar from '../NavBar/'
-import BalancePortfolio from '../BalancePortfolio'
 
 const columns = [
   // { field: 'holding_id', headerName: 'id', width: 100 },
@@ -72,7 +73,7 @@ function PortfolioPage() {
 
     // const send = await api('collaborate/send', 'POST', {
     //   token: sessionStorage.getItem('token'),
-    //   username: "1234",
+    //   username: "4321",
     //   portfolio_id: sessionStorage.getItem('id')
     // })
     // console.log("send", send);
@@ -85,14 +86,7 @@ function PortfolioPage() {
       token: token,
       portfolio_id: portfolio_id,
     }).then((res) => {
-      setOverall(
-        data.symbols.filter((c) => {
-          if (c.symbol != 'overall') return c;
-        })
-      );
-      const overall = data.symbols.filter((c) => {
-        if (c.symbol == 'overall') return c;
-      });
+      setOverall(data);
 
       res.map(s => {
         const changes = data.symbols.filter(c => {
@@ -323,19 +317,19 @@ function PortfolioPage() {
       <div>
         <h1>
           Portfolio: {sessionStorage.getItem('name')}
+          <br />
           {!isLoading && (
-            // <button class='btn btn-lg btn-link btn-block' onClick={handleOverview}>Portfolio Balance</button>
-            <Link
+            <Button
+              id="basic-button"
+              component={Link} 
               to={{
-                pathname: '/portfolioBalance',
+                pathname: '/balance',
                 state: { detail: overall }
-              }}
-            >
+              }}>
               Portfolio Balance
-            </Link>
+            </Button>
           )}
         </h1>
-        <br />
         <div>
           <Button
             class="btn btn-outline-primary ms-5"
@@ -517,3 +511,4 @@ function PortfolioPage() {
 }
 
 export default PortfolioPage
+
