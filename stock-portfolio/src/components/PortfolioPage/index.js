@@ -141,7 +141,7 @@ function PortfolioPage() {
       );
       let currnetPortfolio = {};
       allPortfolios.map((portfolioInfo) => {
-        if (portfolioInfo.portfolio_id === portfolio_id) {
+        if (portfolioInfo.portfolio_id == portfolio_id) {
           currnetPortfolio = portfolioInfo;
         }
       });
@@ -152,7 +152,7 @@ function PortfolioPage() {
           activeParticipants.push([user.username, user.sharing_id]);
         }
       });
-      const currentParticipants = allParticipants.map(function (userInfo) {
+      const currentParticipants = activeParticipants.map(function (userInfo) {
         return (
           <li class="list-group-item list-group-item-action">
             <span>{userInfo[0]}</span>
@@ -172,7 +172,6 @@ function PortfolioPage() {
           </li>
         );
       });
-
       if (currentParticipants.length === 0) {
         return (
           <li class="list-group-item list-group-item-action">

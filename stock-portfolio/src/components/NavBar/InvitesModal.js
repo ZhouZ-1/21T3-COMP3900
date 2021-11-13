@@ -13,6 +13,7 @@ function InvitesModal(props) {
 
   const onAcceptClick = async (sharingID) => {
     await api('collaborate/reply', 'POST', {
+      token: token,
       sharing_id: sharingID,
       accepted: true,
     });
@@ -22,6 +23,7 @@ function InvitesModal(props) {
 
   const onRejectClick = async (sharingID) => {
     await api('collaborate/reply', 'POST', {
+      token: token,
       sharing_id: sharingID,
       accepted: false,
     });
