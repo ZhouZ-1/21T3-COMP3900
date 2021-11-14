@@ -1,7 +1,6 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
 import { useHistory } from 'react-router'
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
 import {
   Box,
   List,
@@ -20,15 +19,12 @@ const columns = [
   // { field: 'sharing_id', headerName: 'id', width: 100 },
   // { field: 'portfolio_id', headerName: 'Portfolio id', width: 150 },
   { field: 'portfolio_name', headerName: 'Portfolio', width: 150 },
-  { field: 'owner', headerName: 'Owner', width: 130 },
-  { field: 'redirect', headerName: 'Link', width: 150
-    , renderCell: (params) => (
-    <Link to={`/portfolio/${params.id}`}>Redirect</Link>) }
+  { field: 'owner', headerName: 'Owner', width: 130 }
 ]
 
 const columns2 = [
   // { field: 'id', headerName: 'id', width: 100 },
-  { field: 'sharing_id', headerName: 'id', width: 100 },
+  // { field: 'sharing_id', headerName: 'id', width: 100 },
   // { field: 'portfolio_id', headerName: 'Portfolio id', width: 150 },
   { field: 'portfolio_name', headerName: 'Portfolio', width: 150 },
   { field: 'shared_with', headerName: 'Shared_with', width: 130 }
@@ -59,7 +55,7 @@ function CollabList () {
     //     return m
     //   })
     // )
-    // console.log(me);
+    // // console.log(me);
 
     await api(
       `collaborate/shared-with-me?token=${sessionStorage.getItem('token')}`,
@@ -74,7 +70,7 @@ function CollabList () {
       setSharingMeLen(dataMe.length)
       setCollabPortMe(
         dataMe.map(d => {
-          d.id = d.portfolio_id
+          d.id = d.sharing_id
           return d
         })
       )
@@ -132,12 +128,6 @@ function CollabList () {
     setIsLoading(false)
   }, [])
 
-  const handleRedirect = (id) => {
-    console.log(id.id)
-    // sessionStorage.setItem('id', id)
-    // history.push(`portfolio/${id}`)
-  }
-
   return (
     <div>
       <hr/>
@@ -158,7 +148,6 @@ function CollabList () {
                 pageSize={7}
                 rowCount={100}
                 paginationMode="server"
-                // onClick={(ev) => handleRedirect(ev)}
               />
             )}
           {!isLoading &&
@@ -171,6 +160,20 @@ function CollabList () {
             sharedThemLen != 0 && <p>Portfolio That I Shared With Others</p>}
           {!isLoading &&
             sharedThemLen != 0 && (
+              // <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+              //   {collabPortThem.map((them) => {
+              //     <ListItem>
+              //       <ListItemText primary={`Portfolio Name ${them.portfolio_name}`} secondary={
+              //         <div>
+              //           {them.shared_with.map((shared) => {
+              //             <div>{shared}</div>
+              //           })}
+              //         </div>
+              //       }
+              //       />
+              //     </ListItem>
+              //   })}
+              // </List>
               <DataGrid
                 rows={collabPortThem}
                 columns={columns2}
