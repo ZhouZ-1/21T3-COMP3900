@@ -181,11 +181,7 @@ def query_check_edit_permissions(portfolio_id, username):
     cursor = conn.cursor()
     cursor.execute("SELECT username from permissions WHERE portfolio_id=? and status='accepted'", [portfolio_id])
 
-    res = cursor.fetchall()
-    if username in res:
-        return True
-    return False
-
+    return username in cursor.fetchall()
 
 def all_portfolios_from_user(username):
     '''
