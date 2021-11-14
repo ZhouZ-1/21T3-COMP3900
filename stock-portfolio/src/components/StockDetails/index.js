@@ -33,7 +33,7 @@ function StockDetails() {
     }
     setIsGraphLoading(false);
     drawGraph(openPrices);
-  }, [isGraphLoading, graphTimeOption]);
+  }, [symbol, graphTimeOption]);
 
   const onTimeChange = (time) => {
     setIsGraphLoading(true);
