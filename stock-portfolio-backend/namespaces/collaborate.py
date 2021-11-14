@@ -173,7 +173,7 @@ class Add(Resource):
 
         # Check that user owns or has edit permissions for the portfolio
         portfolio = db.query_portfolio(portfolio_id)
-        if portfolio is None or not(portfolio["owner"] == user["username"] or not query_check_edit_permissions(portfolio_id, user['username'])):
+        if portfolio is None or not(portfolio["owner"] == user["username"] or not db.query_check_edit_permissions(portfolio_id, user['username'])):
             abort(400, "User does not have permission to add stocks to the portfolio")
 
         # Check that the type is either buy or sell.
@@ -213,7 +213,7 @@ class Edit(Resource):
         # Check that user owns or has edit permissions for the portfolio
         portfolio_id = db.get_portfolio_id_from_holding(holding_id)
         portfolio = db.query_portfolio(portfolio_id)
-        if portfolio is None or not (portfolio["owner"] == user["username"] or query_check_edit_permissions(portfolio_id, user['username'])):
+        if portfolio is None or not (portfolio["owner"] == user["username"] or db.query_check_edit_permissions(portfolio_id, user['username'])):
             abort(400, "User cannot access this holding.")
 
         # Update holding details.
@@ -245,7 +245,7 @@ class Remove(Resource):
          # Check that user owns or has edit permissions for the portfolio
         portfolio_id = db.get_portfolio_id_from_holding(holding_id)
         portfolio = db.query_portfolio(portfolio_id)
-        if portfolio is None or not(portfolio["owner"] == user["username"] or query_check_edit_permissions(portfolio_id, user['username'])):
+        if portfolio is None or not(portfolio["owner"] == user["username"] or db.query_check_edit_permissions(portfolio_id, user['username'])):
             abort(400, "User cannot access this holding.")
 
         # Delete the holding.
@@ -254,6 +254,67 @@ class Remove(Resource):
         return {
             "is_success": True
         }
+
+@collaborate.route('/portfolio/summary', doc={
+    "description": "Retrieve a summary of all the user's portfolios"
+})
+class Summary(Resource):
+    @collaborate.expect(get_holdings_model)
+    @collaborate.response(200, 'Success', summary_response_model)
+    @collaborate.response(400, 'Invalid token')
+    def post(self):
+        """
+        Returns a summary of a user's portfolio data combined together. 
+        """
+        body = request.get_json()
+        token = body["token"]
+        portfolio_id = body["portfolio_id"]
+
+        # Get username from token
+        user = db.get_user_by_value("active_token", token)
+        if not user:
+            abort(400, "Token is invalid")
+
+        # Check that user has permission to access the portfolio corresponding to the portfolio_id.
+        if len([p for p in db.get_shared_with_user(user["username"]) if p["portfolio_id"] == portfolio_id]) == 0:
+            abort(400, "User does not have permission to access this portfolio.")
+
+        # Retrieve list of holdings from portfolio.
+        holdings = db.get_holdings(portfolio_id)
+
+        # Return a list of holdings.
+        return {
+            "holdings": holdings_summary(holdings)
+        }
+
+@collaborate.route('/portfolio/holdings', doc={
+    "description": "View a list of holdings that is in a portfolio, given the portfolio_id."
+})
+class GetHoldings(Resource):
+    @collaborate.expect(get_holdings_model)
+    @collaborate.response(200, 'Success', holdings_response_model)
+    @collaborate.response(400, 'Invalid token')
+    def post(self):
+        """
+        Retrieve holdings from portfolio.
+        """
+        body = request.json
+        token = body['token']
+        portfolio_id = body['portfolio_id']
+
+        # Get username from token
+        user = db.get_user_by_value("active_token", token)
+        if not user:
+            abort(400, "Token is invalid")
+
+        # Check that user has permission to access the portfolio corresponding to the portfolio_id.
+        if len([p for p in db.get_shared_with_user(user["username"]) if p["portfolio_id"] == portfolio_id]) == 0:
+            abort(400, "User does not have permission to access this portfolio.")
+
+        # Retrieve list of holdings from portfolio.
+        holdings = db.get_holdings(portfolio_id)
+
+        return holdings
 
 @collaborate.route('/revoke-permission', doc={
     'description': 'Revokes a user\'s permission to view and edit a collabortive portfolio',
