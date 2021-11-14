@@ -29,3 +29,14 @@ Started frontend work for watchlist.
 Refactored backend logic for watchlist epic.
 Still in progress of frontend work for watchlist(moving stocks from watchlist to selected portfolio).
 Started Frontend work for CSV import/export
+
+# Week8
+Completed features related to the watchlist(deleting stocks, transition of stocks to portfolio).
+Fixed bugs in sprint 2.
+Completed Frontend work for CSV import/export.
+
+# Week9
+Completed Frontend work for sending collaborative portfolio invitations, accepting/rejecting invitations and invitations notification.
+Completed Frontend work for viewing participants in the owner's portfolio.
+Finalised Frontend styling of the application.
+Contribution to the Final Report.
