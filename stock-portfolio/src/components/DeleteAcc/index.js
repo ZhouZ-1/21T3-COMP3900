@@ -1,8 +1,8 @@
-import React from 'react';
-import { useState } from 'react';
-import { useHistory } from 'react-router';
-import api from '../../api';
-import { Button } from '@mui/material';
+import React from 'react'
+import { useState } from 'react'
+import { useHistory } from 'react-router'
+import api from '../../api'
+import { Button } from '@mui/material'
 
 function DeleteAcc(props) {
   const handleDelete = () => {

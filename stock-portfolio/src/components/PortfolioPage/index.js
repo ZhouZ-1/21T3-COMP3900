@@ -1,33 +1,33 @@
-import React from 'react';
-import { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
-import { useHistory } from 'react-router';
+import React from 'react'
+import { useState, useEffect } from 'react'
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
+import { useHistory } from 'react-router'
 import {
   Button,
+  Menu,
+  MenuItem,
   TextField,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle,
-} from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';
-import api from '../../api';
-import moment from 'moment';
-import Loader from '../Loader';
-import NavBar from '../NavBar/';
-import BalancePortfolio from '../BalancePortfolio';
+  DialogTitle
+} from '@mui/material'
+import { DataGrid } from '@mui/x-data-grid'
+import api from '../../api'
+import moment from 'moment'
+import Loader from '../Loader'
+import NavBar from '../NavBar/'
 
 const columns = [
-  { field: 'holding_id', headerName: 'id', width: 100 },
+  // { field: 'holding_id', headerName: 'id', width: 100 },
   { field: 'symbol', headerName: 'Symbol', width: 125 },
   { field: 'value', headerName: 'Value', width: 120 },
   { field: 'qty', headerName: 'Quantity', width: 130 },
   { field: 'date', headerName: 'Date', width: 130 },
-  { field: 'perform', headerName: 'Performance', width: 150 },
   { field: 'change_val', headerName: 'Changes', width: 150 },
-  { field: 'change_percent', headerName: 'Percentage', width: 150 },
-];
+  { field: 'change_percent', headerName: 'Percentage', width: 150 }
+]
 
 function PortfolioPage() {
   var history = useHistory();
@@ -66,6 +66,8 @@ function PortfolioPage() {
     setParticipants(participants);
   };
   useEffect(async () => {
+    if (sessionStorage.getItem('token') == null) return alert("Not loading the portfolio");
+
     setIsLoading(true);
     let newData = [];
 
@@ -77,20 +79,13 @@ function PortfolioPage() {
       token: token,
       portfolio_id: portfolio_id,
     }).then((res) => {
-      setOverall(
-        data.symbols.filter((c) => {
-          if (c.symbol != 'overall') return c;
-        })
-      );
-      const overall = data.symbols.filter((c) => {
-        if (c.symbol == 'overall') return c;
-      });
+      setOverall(data);
 
-      res.map((s) => {
-        const changes = data.symbols.filter((c) => {
-          if (c.symbol == s.symbol) return c;
-        })[0];
-        newData.push({ id: s.holding_id, ...s, ...changes });
+      res.map(s => {
+        const changes = data.symbols.filter(c => {
+          if (c.symbol == s.symbol) return c
+        })[0]
+        newData.push({ id: s.holding_id, ...s, ...changes })
       });
     });
 
@@ -114,28 +109,28 @@ function PortfolioPage() {
   }, [isPortfolioOwner]);
 
   const handleClickOpenAdd = () => {
-    setOpenAdd(true);
-  };
+    setOpenAdd(true)
+  }
 
   const handleCloseAdd = () => {
-    setOpenAdd(false);
-  };
+    setOpenAdd(false)
+  }
 
   const handleClickOpenDS = () => {
-    setOpenDS(true);
-  };
+    setOpenDS(true)
+  }
 
   const handleCloseDS = () => {
-    setOpenDS(false);
-  };
+    setOpenDS(false)
+  }
 
   const handleClickOpenDelete = () => {
-    setOpenDelete(true);
-  };
+    setOpenDelete(true)
+  }
 
   const handleCloseDelete = () => {
-    setOpenDelete(false);
-  };
+    setOpenDelete(false)
+  }
 
   const getParticipants = async () => {
     if (isPortfolioOwner) {
@@ -189,20 +184,20 @@ function PortfolioPage() {
   };
 
   const getCurrDate = () => {
-    let curr = new Date();
+    let curr = new Date()
     let date =
-      curr.getDate() + '/' + (curr.getMonth() + 1) + '/' + curr.getFullYear();
-    return date;
-  };
+      curr.getDate() + '/' + (curr.getMonth() + 1) + '/' + curr.getFullYear()
+    return date
+  }
 
-  const searchStock = async (s) => {
-    let value = -1;
-    const res = await api(`stocks/search`, 'POST', { symbol: s });
+  const searchStock = async s => {
+    let value = -1
+    const res = await api(`stocks/search`, 'POST', { symbol: s })
     if (res.price) {
-      return res.price;
+      return res.price
     }
-    return value;
-  };
+    return value
+  }
 
   const addStock = async () => {
     setIsLoading(true);
@@ -210,20 +205,14 @@ function PortfolioPage() {
     const value = await searchStock(symbol);
 
     if (!(symbol && qty)) {
-      alert('Missing Symbol/Quantity field.');
-      handleCloseAdd();
-      return;
+      alert('Missing Symbol/Quantity field.')
+      handleCloseAdd()
+      return
     }
 
-    if (!value) {
-      alert('Stock Symbol not exist.');
-      handleCloseAdd();
-      return;
-    }
-
-    if (qty < 1) {
-      alert('Quantity cannot be less than 1.');
-      return;
+    if (qty == 0) {
+      alert('Quantity cannot be equal to 0.')
+      return
     }
 
     const res = await api('portfolio/holdings/add', 'POST', {
@@ -243,37 +232,38 @@ function PortfolioPage() {
       alert('Successfully Add Stock!');
       setRefresh((r) => r + 1);
     }
-    handleCloseAdd();
-    setIsLoading(false);
-  };
+
+    handleCloseAdd()
+    setIsLoading(false)
+  }
 
   const deleteStock = async () => {
-    setIsLoading(true);
+    setIsLoading(true)
 
     if (select.length == 0) {
-      alert('You have not select any stocks.');
-      return;
+      alert('You have not select any stocks.')
+      return
     }
 
     Promise.all(
-      select.map((id) => {
+      select.map(id => {
         const res = api('portfolio/holdings/delete', 'DELETE', {
           token: token,
           holding_id: id,
         });
       })
-    ).then((res) => {
+    ).then(res => {
       if (res !== undefined) {
-        alert('Successfully Delete Stock(s)!');
-        setRefresh((r) => r + 1);
-        setIsLoading(false);
+        alert('Successfully Delete Stock(s)!')
+        setRefresh(r => r + 1)
+        setIsLoading(false)
       }
-    });
-    handleCloseDS();
-  };
+    })
+    handleCloseDS()
+  }
 
   const handleDelete = async () => {
-    setIsLoading(true);
+    setIsLoading(true)
     const res = await api('portfolio/delete', 'DELETE', {
       token: token,
       portfolio_id: portfolio_id,
@@ -284,9 +274,9 @@ function PortfolioPage() {
       sessionStorage.removeItem('id');
       history.push('/viewPortfolio');
     }
-    setIsLoading(false);
-    handleCloseDelete();
-  };
+    setIsLoading(false)
+    handleCloseDelete()
+  }
 
   const onClickShare = async () => {
     const response = await api('collaborate/send', 'POST', {
@@ -298,12 +288,12 @@ function PortfolioPage() {
     return;
   };
   const handleOpenCollaborativeModal = () => {
-    setOpenCollaborativeModal(true);
-  };
+    setOpenCollaborativeModal(true)
+  }
 
   const handleCloseCollaborativeModal = () => {
-    setOpenCollaborativeModal(false);
-  };
+    setOpenCollaborativeModal(false)
+  }
 
   const handleOpenParticipantsModal = () => {
     setOpenParticipantsModal(true);
@@ -315,23 +305,23 @@ function PortfolioPage() {
 
   return (
     <div>
-      <NavBar></NavBar>
+      <NavBar />
       <div>
         <h1>
           Portfolio: {sessionStorage.getItem('name')}
+          <br />
           {!isLoading && (
-            // <button class='btn btn-lg btn-link btn-block' onClick={handleOverview}>Portfolio Balance</button>
-            <Link
+            <Button
+              id="basic-button"
+              component={Link} 
               to={{
-                pathname: '/portfolioBalance',
-                state: { detail: overall },
-              }}
-            >
+                pathname: '/balance',
+                state: { detail: overall }
+              }}>
               Portfolio Balance
-            </Link>
+            </Button>
           )}
         </h1>
-        <br></br>
         <div>
           <Button
             class="btn btn-outline-primary ms-5"
@@ -354,14 +344,14 @@ function PortfolioPage() {
                 id="demo-helper-text-misaligned-no-helper"
                 label="symbol"
                 required
-                onChange={(evt) => setSymbol(evt.target.value)}
-              ></TextField>
+                onChange={evt => setSymbol(evt.target.value)}
+              />
               <TextField
                 id="demo-helper-text-misaligned-no-helper"
                 label="Quantity"
                 required
-                onChange={(evt) => setQty(evt.target.value)}
-              ></TextField>
+                onChange={evt => setQty(evt.target.value)}
+              />
             </DialogContent>
             <DialogActions>
               <Button onClick={handleCloseAdd}>Cancel</Button>
@@ -460,10 +450,10 @@ function PortfolioPage() {
             </>
           )}
         </div>
-        <br></br>
+        <br />
       </div>
       <div style={{ height: 400, width: '100%' }}>
-        {isLoading && <Loader></Loader>}
+        {isLoading && <Loader />}
         {!isLoading && (
           <DataGrid
             rows={stocks}
@@ -473,8 +463,8 @@ function PortfolioPage() {
             pageSize={7}
             rowCount={100}
             // paginationMode="server"
-            onSelectionModelChange={(newModel) => {
-              setSelect(newModel);
+            onSelectionModelChange={newModel => {
+              setSelect(newModel)
             }}
             selectionModel={select}
           />
@@ -509,7 +499,8 @@ function PortfolioPage() {
         )}
       </div>
     </div>
-  );
+  )
 }
 
-export default PortfolioPage;
+export default PortfolioPage
+

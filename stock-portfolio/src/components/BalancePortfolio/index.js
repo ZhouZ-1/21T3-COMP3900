@@ -2,54 +2,76 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import api from '../../api';
-import { Box, TextField } from '@mui/material';
+import { TextField } from '@mui/material';
 import { Grid, Card, CardHeader, CardContent } from '@mui/material';
 
-// class Wizard extends Component {
-//   render() {
 const BalancePortfolio = (props) => {
   var history = useHistory();
-  const [balance, setBalance] = useState([0, 0]);
+  // const [balance, setBalance] = useState([]);
   const [colourGain, setColourGain] = useState('black');
-  const [overall, setOverall] = useState([]);
+  const [stock, setStock] = useState([]);
+  const [overall, setOverall] = useState([0, 0]);
 
   useEffect(() => {
-    handleBalance();
-    setOverall(props.location.state.detail);
-  }, []);
+    // handleBalance();
+    const balance = props.location.state.detail;
+    // orig_price, curr_price, change_val, change_percent
 
-  const handleBalance = async () => {
-    const bal = await api(
-      `invested_performance?token=${sessionStorage.getItem('token')}`,
-      'GET'
-    );
-    let total = parseFloat(bal.total_gains.toFixed(0));
-    let pct = parseFloat(bal.pct_performance.toFixed(3));
-    if (total > 0) {
+    setOverall(balance.symbols.filter((c) => {
+      if (c.symbol == 'overall') return c;
+    })[0]);
+
+    if (overall.change_val > 0) {
       setColourGain('green');
-    } else if (total < 0) {
-      total = parseFloat(bal.total_gains.toFixed(3));
-      pct = parseFloat(bal.pct_performance.toFixed(3));
+    } else if (overall.change_val < 0) {
       setColourGain('red');
     }
-    setBalance({ total_gains: `${total}`, pct_performance: `${pct}` });
-  };
+
+    setStock(
+      balance.symbols.filter((c) => {
+        if (c.symbol != 'overall') return c;
+      })
+    );
+  }, []);
+
+  // const handleBalance = async () => {
+  //   // const bal = await api(
+  //   //   `invested_performance?token=${sessionStorage.getItem('token')}`,
+  //   //   'GET'
+  //   // );
+  //   await api(
+  //     `invested_performance?token=3bAaXqKjTdWyguxqx8Jxhw`,
+  //     'GET'
+  //   ).then((bal) => {
+  //     let total = parseFloat(bal.total_gains.toFixed(0));
+  //     let pct = parseFloat(bal.pct_performance.toFixed(3));
+  //     if (total > 0) {
+  //       setColourGain('green');
+  //     } else if (total < 0) {
+  //       total = parseFloat(bal.total_gains.toFixed(3));
+  //       pct = parseFloat(bal.pct_performance.toFixed(3));
+  //       setColourGain('red');
+  //     }
+  //     setBalance({ total_gains: `${total}`, pct_performance: `${pct}` });
+  //   });
+  //   console.log(balance);
+  // };
   const handleBack = () => {
     history.push(`/portfolio/${sessionStorage.getItem('id')}`);
   };
 
   return (
     <div class="text-center w-100 p-3">
-      Portfolio Balance Page
       <button class="btn btn-lg btn-link btn-block" onClick={handleBack}>
-        Go Back
+      Go Back
       </button>
+      Portfolio Balance Page
       <div>
         <div>
           <span>Total Balance: </span>
           <span style={{ color: colourGain }}>
             {' '}
-            {balance.total_gains} ({balance.pct_performance}%)
+            {overall.change_val} ({overall.change_percent}%)
           </span>
         </div>
         <br />
@@ -60,8 +82,8 @@ const BalancePortfolio = (props) => {
           justify="flex-start"
           alignItems="flex-start"
         >
-          {overall.map((s) => (
-            <Grid item xs={12} sm={6} md={3} key={overall.indexOf(s)}>
+          {stock.map((s) => (
+            <Grid item xs={12} sm={6} md={3} key={stock.indexOf(s)}>
               <Card variant="outlined">
                 <CardHeader
                   title={`Symbol : ${s.symbol}`}

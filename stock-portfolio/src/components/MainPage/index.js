@@ -1,9 +1,9 @@
-import NavBar from '../NavBar';
-import { useHistory } from 'react-router';
+import NavBar from '../NavBar'
+import { useHistory } from 'react-router'
 
-function MainPage() {
-  const history = useHistory();
-  let isAuthenticated = !!sessionStorage.getItem('token');
+function MainPage () {
+  const history = useHistory()
+  let isAuthenticated = !!localStorage.getItem('token')
   return (
     <div>
       <div className="navBar">
@@ -20,13 +20,21 @@ function MainPage() {
             >
               Go to the watch list
             </button>
-            <br></br>
+            <br />
             <button
               type="button"
               class="btn btn-warning"
               onClick={() => history.push('/viewPortfolio')}
             >
               Go to the Portfolio
+            </button>
+            <br />
+            <button
+              type="button"
+              class="btn btn-warning"
+              onClick={() => history.push('/tax')}
+            >
+              Go to the Financial
             </button>
           </div>
         ) : (
@@ -38,6 +46,7 @@ function MainPage() {
         <p>Some footer here</p>
       </div>
     </div>
-  );
+  )
 }
-export default MainPage;
+
+export default MainPage
