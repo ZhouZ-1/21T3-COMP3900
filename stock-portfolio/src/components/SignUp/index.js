@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import { useHistory } from 'react-router';
-import { validatePassword, validateEmail } from './helper';
-import PasswordRuleModal from './PasswordRuleModal';
-import EmailRuleModal from './EmailRuleModal';
-import api from '../../api';
-import NavBar from '../NavBar/index';
+import { useState } from 'react'
+import { useHistory } from 'react-router'
+import { validatePassword, validateEmail } from './helper'
+import PasswordRuleModal from './PasswordRuleModal'
+import EmailRuleModal from './EmailRuleModal'
+import api from '../../api'
+import NavBar from '../NavBar/index'
 import Button from '@mui/material/Button'
 import CssBaseline from '@mui/material/CssBaseline'
 import TextField from '@mui/material/TextField'
@@ -14,31 +14,30 @@ import Container from '@mui/material/Container'
 import LoginIcon from '@mui/icons-material/Login'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 
-function SignUp() {
-  var history = useHistory();
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [userName, setUserName] = useState('');
-  const [password, setPassword] = useState('');
-  const [isPasswordError, setIsPasswordError] = useState(false);
-  const [isEmailError, setIsEmailError] = useState(false);
+function SignUp () {
+  var history = useHistory()
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [email, setEmail] = useState('')
+  const [userName, setUserName] = useState('')
+  const [password, setPassword] = useState('')
+  const [isPasswordError, setIsPasswordError] = useState(false)
+  const [isEmailError, setIsEmailError] = useState(false)
   const theme = createTheme()
 
-
   const handleSignUp = () => {
-    const isPasswordOkay = validatePassword(password);
-    const isEmailOkay = validateEmail(email);
+    const isPasswordOkay = validatePassword(password)
+    const isEmailOkay = validateEmail(email)
 
     if (!isPasswordOkay) {
-      setIsPasswordError(true);
+      setIsPasswordError(true)
     } else {
-      setIsPasswordError(false);
+      setIsPasswordError(false)
     }
     if (!isEmailOkay) {
-      setIsEmailError(true);
+      setIsEmailError(true)
     } else {
-      setIsEmailError(false);
+      setIsEmailError(false)
     }
 
     if (isPasswordOkay && isEmailOkay) {
@@ -48,18 +47,19 @@ function SignUp() {
         first_name: firstName,
         last_name: lastName,
         email,
-        password,
-      }).then((res) => {
+        password
+      }).then(res => {
         if (res.token) {
           // Set token and redirects to the main page.
-          sessionStorage.setItem('token', res.token);
-          history.push('/');
+          sessionStorage.setItem('token', res.token)
+          history.push('/')
+          alert(userName)
         } else {
           // TODO: display error message
         }
-      });
+      })
     }
-  };
+  }
   return (
     <div>
       <NavBar />
@@ -164,7 +164,7 @@ function SignUp() {
         </Container>
       </ThemeProvider>
     </div>
-  );
+  )
 }
 
-export default SignUp;
+export default SignUp
