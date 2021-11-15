@@ -5,6 +5,10 @@ import ExportModal from './ExportModal';
 import ImportModal from './ImportModal';
 import InvitesModal from './InvitesModal';
 import './navbarStyles.css';
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import Box from '@mui/material/Box';
+import SvgIcon from '@mui/material/SvgIcon';
+
 function NavBar() {
   const token = sessionStorage.getItem('token');
   var history = useHistory();
@@ -62,6 +66,7 @@ function NavBar() {
   return (
     <nav class="navbar navbar-light bg-light justify-content-around">
       <a class="navbar-brand" onClick={() => history.push('/')}>
+        <HomeOutlinedIcon  />
         Home
       </a>
       <form class="form-inline" onSubmit={(e) => e.preventDefault()}>
