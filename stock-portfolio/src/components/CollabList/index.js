@@ -67,6 +67,7 @@ function CollabList () {
       //   console.log('m', d);
       // })
 
+      console.log(dataMe)
       setSharingMeLen(dataMe.length)
       setCollabPortMe(
         dataMe.map(d => {
@@ -113,7 +114,7 @@ function CollabList () {
       //     isShared = true;
       //   }
       // })
-
+      console.log(dataThem)
       if (isShared){
         setSharedThemLen(dataThem.length)
         setCollabPortThem(
