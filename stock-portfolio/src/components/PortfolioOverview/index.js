@@ -114,7 +114,9 @@ function PortfolioOverview () {
       <NavBar />
       <br />
       <div>
-        <h3>Portfolio Overview</h3>
+        <Typography component="h1" variant="h4">
+          Portfolio Overview
+        </Typography>
         <div>
           <Button variant="outlined" onClick={handleClickOpen}>
             Create Portfolio

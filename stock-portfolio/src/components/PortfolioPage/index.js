@@ -313,7 +313,7 @@ function PortfolioPage() {
         <Typography component="h1" variant="4">
           Portfolio: {sessionStorage.getItem('name')}
           <div>
-          {isLoading && (
+          {!isLoading && (
             <Button
               id="basic-button"
               component={Link} 
