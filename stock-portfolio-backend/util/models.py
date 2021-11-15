@@ -62,7 +62,7 @@ details_model = api.model('details_model', {
     "first_name": fields.String(required=True, example="john"),
     "last_name": fields.String(required=True, example="smith"),
     "email": fields.String(required=True, example="john@email.com"),
-    "profile_image": fields.String(required=True, example="http://127.0.0.1:5000/images/default.png")
+    "profile_image": fields.String(required=True, example="http://127.0.0.1:27439/images/default.png")
 })
 
 update_details_model = api.inherit('update_details_model', token_model, {

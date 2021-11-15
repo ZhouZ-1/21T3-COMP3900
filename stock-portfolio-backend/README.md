@@ -26,7 +26,7 @@ And that's it for setting up the dev enviroment.
 ## Running the backend
 To start the backend, make sure your terminal's virtual enviroment is activated by looking for the `(env)` text in your terminal, or by running  `source env/Scripts/activate` or `source env/bin/activate`.
 
-Run the command `python run.py` to start the server. http://127.0.0.1:5000/ should be used for the backend. This location also contains documentation for all endpoints.
+Run the command `python run.py` to start the server. http://127.0.0.1:27439/ should be used for the backend. This location also contains documentation for all endpoints.
 
 ## Flushing the database
 To reset the database to it's original state, delete the file `database.db` located in the `db/` folder and restart the server. If there are any schema changes to the tables, you may need to delete this file for the backend to work.
