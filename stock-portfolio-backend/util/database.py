@@ -80,10 +80,6 @@ if not os.path.exists(database_file):
     conn.commit()
 conn = sqlite3.connect('db/database.db', check_same_thread=False)
 
-# Ensure that foreign key constraints are active.
-conn.execute("PRAGMA foreign_keys = 1")
-conn.commit()
-
 def create_user(username, first_name, last_name, email, hashed_password, active_token):
     '''
     Given the username, email, password hash and active_token, adds these details to the database.
