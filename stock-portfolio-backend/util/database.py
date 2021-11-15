@@ -181,7 +181,7 @@ def query_check_edit_permissions(portfolio_id, username):
     cursor = conn.cursor()
     cursor.execute("SELECT username from permissions WHERE portfolio_id=? and status='accepted'", [portfolio_id])
 
-    return username in cursor.fetchall()
+    return username in [p[0] for p in cursor.fetchall()]
 
 def all_portfolios_from_user(username):
     '''
@@ -232,7 +232,8 @@ def get_portfolio_id_from_holding(holding_id):
     '''
     cursor = conn.cursor()
     cursor.execute("SELECT held_by FROM holdings WHERE holding_id=?", [holding_id])
-    return cursor.fetchone()
+    held_by = cursor.fetchone()
+    return held_by[0] if held_by is not None else None
 
 def remove_holding(holding_id):
     '''
