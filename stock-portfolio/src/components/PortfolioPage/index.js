@@ -16,6 +16,8 @@ import {
 import { DataGrid } from '@mui/x-data-grid'
 import api from '../../api'
 import moment from 'moment'
+import Typography from '@mui/material/Typography'
+import { createTheme, ThemeProvider } from '@mui/material/styles'
 import Loader from '../Loader'
 import NavBar from '../NavBar/'
 
@@ -28,6 +30,7 @@ const columns = [
   { field: 'change_val', headerName: 'Changes', width: 150 },
   { field: 'change_percent', headerName: 'Percentage', width: 150 }
 ]
+const theme = createTheme()
 
 function PortfolioPage() {
   var history = useHistory();
@@ -66,7 +69,7 @@ function PortfolioPage() {
     setParticipants(participants);
   };
   useEffect(async () => {
-    if (sessionStorage.getItem('token') == null) return alert("Not loading the portfolio");
+    // if (sessionStorage.getItem('token') == null) return alert("Not Loading Portfolio");
 
     setIsLoading(true);
     let newData = [];
@@ -306,11 +309,11 @@ function PortfolioPage() {
   return (
     <div>
       <NavBar />
-      <div>
-        <h1>
+      <div style={{ margin: "0 10", marginTop: "50px", marginBottom: "20px", display: 'flex', justifyContent: 'center', alignContent: 'center' }}>
+        <Typography component="h1" variant="4">
           Portfolio: {sessionStorage.getItem('name')}
-          <br />
-          {!isLoading && (
+          <div>
+          {isLoading && (
             <Button
               id="basic-button"
               component={Link} 
@@ -321,7 +324,9 @@ function PortfolioPage() {
               Portfolio Balance
             </Button>
           )}
-        </h1>
+          </div>
+              </Typography>
+          <br />
         <div>
           <Button
             class="btn btn-outline-primary ms-5"
@@ -452,7 +457,7 @@ function PortfolioPage() {
         </div>
         <br />
       </div>
-      <div style={{ height: 400, width: '100%' }}>
+      <div style={{ height: 400, width: '85%', margin: '0 auto' }}>
         {isLoading && <Loader />}
         {!isLoading && (
           <DataGrid
