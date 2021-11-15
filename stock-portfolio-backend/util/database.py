@@ -223,7 +223,7 @@ def get_owner_from_holding(holding_id):
     Returns the username of the owner of the holding. Returns None if the holding does not exist.
     '''
     cursor = conn.cursor()
-    cursor.execute("SELECT p.portfoil FROM holdings h JOIN portfolios p ON h.held_by=p.portfolio_id WHERE holding_id=?", [holding_id])
+    cursor.execute("SELECT p.portfolio_id FROM holdings h JOIN portfolios p ON h.held_by=p.portfolio_id WHERE holding_id=?", [holding_id])
     return cursor.fetchone()
 
 def get_portfolio_id_from_holding(holding_id):
