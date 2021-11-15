@@ -81,6 +81,7 @@ function PortfolioPage() {
       portfolio_id: portfolio_id,
     }).then((res) => {
       setOverall(data);
+      console.log(res);
 
       res.map((s) => {
         const changes = data.symbols.filter((c) => {
@@ -215,8 +216,10 @@ function PortfolioPage() {
       alert('Quantity cannot be equal to 0.');
       return;
     }
-
-    const res = await api('portfolio/holdings/add', 'POST', {
+    const stockAdditionURL = isPortfolioOwner
+      ? 'portfolio/holdings/add'
+      : 'collaborate/add-holding';
+    const res = await api(stockAdditionURL, 'POST', {
       token: token,
       portfolio_id: portfolio_id,
       symbol: symbol.toUpperCase(),
@@ -246,9 +249,12 @@ function PortfolioPage() {
       return;
     }
 
+    const stockDeletionURL = isPortfolioOwner
+      ? 'portfolio/holdings/delete'
+      : 'collaborate/remove-holding';
     Promise.all(
       select.map((id) => {
-        const res = api('portfolio/holdings/delete', 'DELETE', {
+        const res = api(stockDeletionURL, 'DELETE', {
           token: token,
           holding_id: id,
         });
