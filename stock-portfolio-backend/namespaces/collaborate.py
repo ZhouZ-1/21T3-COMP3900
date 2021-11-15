@@ -172,9 +172,8 @@ class Add(Resource):
             abort(400, "Token is invalid") 
 
         # Check that user owns or has edit permissions for the portfolio
-        portfolio = db.query_portfolio(portfolio_id)
-        if portfolio is None or not(portfolio["owner"] == user["username"] or not db.query_check_edit_permissions(portfolio_id, user['username'])):
-            abort(400, "User does not have permission to add stocks to the portfolio")
+        if not db.query_check_edit_permissions(portfolio_id, user['username']):
+            abort(400, "User cannot access this holding.")
 
         # Check that the type is either buy or sell.
         if type not in ['buy', 'sell']:
