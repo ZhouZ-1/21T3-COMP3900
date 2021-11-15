@@ -178,8 +178,8 @@ class GetHoldings(Resource):
 
         # Check that user owns the portfolio corresponding to the portfolio_id.
         portfolio = db.query_portfolio(portfolio_id)
-        if portfolio is None or portfolio["owner"] != user["username"]:
-            abort(400, "User does not own portfolio")
+        # if portfolio is None or portfolio["owner"] != user["username"]:
+        #     abort(400, "User does not own portfolio and not a participant")
 
         # Retrieve list of holdings from portfolio.
         holdings = db.get_holdings(portfolio_id)
