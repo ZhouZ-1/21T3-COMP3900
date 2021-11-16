@@ -44,6 +44,7 @@ function PortfolioOverview () {
   const [openEdit, setOpenEdit] = useState(false)
   const [open, setOpen] = React.useState(false)
   const [refresh, setRefresh] = useState(0);
+  const [gain, setGain] = useState('');
 
   const handleClickOpen = () => {
     setOpen(true)
@@ -63,6 +64,19 @@ function PortfolioOverview () {
         }
       }
     )
+    
+    api(
+      `invested_performance?token=${sessionStorage.getItem('token')}`,
+      'GET'
+    ).then(
+      data => {
+        if (data) {
+          setGain(`$${data.pct_performance}(${data.total_gains}%)`)
+          // setPort(res.portfolios)
+        }
+      }
+    )
+
     setIsLoading(false)
   }, [refresh])
 
@@ -98,6 +112,7 @@ function PortfolioOverview () {
       })
       if (res.is_success) {
         alert('Successfully Update Your Portfolio Name!')
+        setRefresh((r) => r + 1);
       }
     }
     handleCloseEdit()
@@ -115,6 +130,10 @@ function PortfolioOverview () {
       <br />
       <div>
         <h3>Portfolio Overview</h3>
+        <div>
+          <p>Invested Performance</p>
+          <p style={{color: Math.sign(gain) === -1 ? "red" : "green"}}>{gain}</p>
+        </div>
         <div>
           <Button variant="outlined" onClick={handleClickOpen}>
             Create Portfolio
@@ -149,6 +168,8 @@ function PortfolioOverview () {
         </div>
       </div>
       <br />
+      <CollabList />
+      <br/>
       {isLoading && <Loader />}
       <Grid
         container
@@ -208,13 +229,6 @@ function PortfolioOverview () {
           </Grid>
         ))}
       </Grid>
-      {/* <Router>
-        <Switch>
-          <Route path="/collab"> */}
-            <CollabList />
-          {/* </Route>
-        </Switch>
-      </Router> */}
     </div>
   )
 }

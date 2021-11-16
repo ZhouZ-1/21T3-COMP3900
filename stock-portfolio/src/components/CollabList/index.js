@@ -10,6 +10,17 @@ import {
 } from '@mui/material'
 import { FixedSizeList } from 'react-window'
 import { DataGrid } from '@mui/x-data-grid'
+import {
+  Button,
+  Menu,
+  MenuItem,
+  TextField,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle
+} from '@mui/material'
 import api from '../../api'
 import NavBar from '../NavBar'
 import Loader from '../Loader'
@@ -32,164 +43,214 @@ const columns2 = [
 
 function CollabList () {
   var history = useHistory()
-  const [title, setTitle] = React.useState('')
-  const [sharingMeLen, setSharingMeLen] = React.useState(false)
-  const [sharedThemLen, setSharedThemLen] = React.useState(0)
-  const [collabPortMe, setCollabPortMe] = useState([])
-  const [collabPortThem, setCollabPortThem] = useState([])
   const [isLoading, setIsLoading] = useState(false)
+  const [openParticipantsModal, setOpenParticipantsModal] = useState(false)
+  const [openParticipants2Modal, setOpenParticipants2Modal] = useState(false)
+  const [meString, setMeString] = useState(
+    <li class="list-group-item list-group-item-action">Loading.....</li>
+  )
+  const [themString, setThemString] = useState(
+    <li class="list-group-item list-group-item-action">Loading.....</li>
+  )
 
   useEffect(async () => {
-    setIsLoading(true)
+    //   setIsLoading(true)
 
-    // // psedo data
-    // const me = [
-    //   {portfolio_id: 1,sharing_id: 1,portfolio_name: 'My Portfolio',owner: 'John Doe'},
-    //   {portfolio_id: 2,sharing_id: 2,portfolio_name: 'My Portfolio',owner: 'May Doe'}
-    // ]
+    //   // psedo data
+    //   const me = [
+    //     {portfolio_id: 1,sharing_id: 1,portfolio_name: 'My Portfolio',owner: 'John Doe'},
+    //     {portfolio_id: 2,sharing_id: 2,portfolio_name: 'My Portfolio',owner: 'May Doe'}
+    //   ]
 
-    // setSharingMeLen(me.length)
-    // setCollabPortMe(
-    //   me.map(m => {
-    //     m.id = m.sharing_id
-    //     return m
-    //   })
-    // )
-    // // console.log(me);
+    //   if (me.length == 0) {
+    //     setMeString(<p>No portfolio share with you yet.</p>);
+    //   } else {
+    //     setMeString(me.map(m => {
+    //       return  <div><span>- Portfolio {m.portfolio_name} by {m.owner} </span></div>
+    //     }))
+    //   };
 
     await api(
       `collaborate/shared-with-me?token=${sessionStorage.getItem('token')}`,
       'GET'
-    )
-    .then((dataMe) => {
-      // // print out result
-      // dataMe.map(d => {
-      //   console.log('m', d);
-      // })
+    ).then(dataMe => {
+      if (dataMe.length == 0) {
+        setMeString(<p>No portfolio share with you yet.</p>)
+      }
 
-      setSharingMeLen(dataMe.length)
-      setCollabPortMe(
-        dataMe.map(d => {
-          d.id = d.sharing_id
-          return d
+      setMeString(
+        dataMe.map(m => {
+          return (
+            <div>
+              <span>
+                - Portfolio {m.portfolio_name} by {m.owner}{' '}
+              </span>
+            </div>
+          )
         })
       )
     })
 
-    // // psedo data
-    // const them = [
-    //   {portfolio_id: 1,portfolio_name: '1',shared_with: ['4321', '1234']},
-    //   {portfolio_id: 2,portfolio_name: '2',shared_with: ['4321']},
-    //   {portfolio_id: 3,portfolio_name: 'third',shared_with: ['1234']}
-    // ]
-    // setSharedThemLen(them.length)
-    // setCollabPortThem(
-    //   them.map(t => {
-    //     t.id = t.portfolio_id
-    //     return t
-    //   })
-    // )
-    // // setCollabPortThem(them);
-    // console.log('them', collabPortThem)
+    //   // psedo data
+    //   const them = [
+    //     {portfolio_id: 1,portfolio_name: '1',shared_with: ['4321', '1234']},
+    //     {portfolio_id: 2,portfolio_name: '2',shared_with: ['4321']},
+    //     {portfolio_id: 3,portfolio_name: 'third',shared_with: ['1234']}
+    //   ]
 
-    // collabPortThem.map(t => {
-    //   console.log('name', t)
-    //   t.shared_with.map(shared => {
-    //     console.log('shared', shared)
-    //   })
-    // })
+    //   if (them.length == 0) {
+    //     setThemString(<p>You haven't shared portfolio with anyone yet.</p>);
+    //   } else {
+    //     setThemString(them.map(t => {
+    //       console.log('name', t)
+    //         return  <div><span>- Portfolio {t.portfolio_name} by {t.shared_with} </span></div>
+    //     }))
+    //   };
+
+    //   // setThemString(collabPortThem.map(t => {
+    //   //   console.log('name', t)
+    //   //   t.shared_with.map(shared => {
+    //   //     console.log('shared', shared)
+    //   //   })
+    //   // }))
 
     await api(
-      `collaborate/sharing-with-others?token=${sessionStorage.getItem('token')}`,
+      `collaborate/sharing-with-others?token=${sessionStorage.getItem(
+        'token'
+      )}`,
       'GET'
-    )
-    .then((dataThem) => {
-      let isShared = false;
-      // // print out result
+    ).then(dataThem => {
+      let isShared = false
+      // print out result
       // console.log('them', dataThem)
-      // dataThem.map(d => {
-      //   console.log('others', d);
-      //   if (d.shared_with.length != 0) {
-      //     isShared = true;
-      //   }
-      // })
+      dataThem.map(d => {
+        // console.log('others', d);
+        if (d.shared_with.length != 0) {
+          console.log('others', d.portfolio_name, d.shared_with)
+          // isShared = true;
+        }
+      })
 
-      if (isShared){
-        setSharedThemLen(dataThem.length)
-        setCollabPortThem(
-          dataThem.map(d => {
-            d.id = d.portfolio_id
-            return d
+      if (isShared) {
+        if (dataThem.length == 0) {
+          setThemString(<p>You haven't shared portfolio with anyone yet.</p>)
+        }
+
+        setThemString(
+          dataThem.map(t => {
+            // if (t.shared_with.length != 0) {
+            return <div>{t.portfolio_name}</div>
+            // return  <div><span>- Portfolio {t.portfolio_name} by {t.shared_with[0].username} </span></div>
+            // }
           })
         )
       }
     })
+    // .then((dataMe) => {
+    //   if (dataMe.length == 0) {
+    //     setMeString(<p>No portfolio share with you yet.</p>);
+    //   }
+
+    //   setMeString(dataMe.map(m => {
+    //     return  <div><span>- Portfolio {m.portfolio_name} by {m.owner} </span></div>
+    //   }));
+    // })
 
     setIsLoading(false)
   }, [])
 
+  const handleOpenParticipantsModal = () => {
+    setOpenParticipantsModal(true)
+  }
+
+  const handleCloseParticipantsModal = () => {
+    setOpenParticipantsModal(false)
+  }
+
+  const handleOpenParticipants2Modal = () => {
+    setOpenParticipants2Modal(true)
+  }
+
+  const handleCloseParticipants2Modal = () => {
+    setOpenParticipants2Modal(false)
+  }
+
   return (
     <div>
-      <hr/>
+      <>
       <div>
-        <h3>Collaboration List</h3>
-        <br />
-        {isLoading && <Loader />}
-        <div style={{ height: 400, width: '100%' }}>
-          {!isLoading &&
-            sharingMeLen != 0 && <p>Portfolio That Sharing Permission To Me</p>}
-          {!isLoading &&
-            sharingMeLen != 0 && (
-              <DataGrid
-                rows={collabPortMe}
-                columns={columns}
-                pagination
-                checkboxSelection
-                pageSize={7}
-                rowCount={100}
-                paginationMode="server"
-              />
-            )}
-          {!isLoading &&
-            sharingMeLen == 0 && (
-              <div>
-                <p>No portfolio share with you yet.</p>
-              </div>
-            )}
-          {!isLoading &&
-            sharedThemLen != 0 && <p>Portfolio That I Shared With Others</p>}
-          {!isLoading &&
-            sharedThemLen != 0 && (
-              // <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-              //   {collabPortThem.map((them) => {
-              //     <ListItem>
-              //       <ListItemText primary={`Portfolio Name ${them.portfolio_name}`} secondary={
-              //         <div>
-              //           {them.shared_with.map((shared) => {
-              //             <div>{shared}</div>
-              //           })}
-              //         </div>
-              //       }
-              //       />
-              //     </ListItem>
-              //   })}
-              // </List>
-              <DataGrid
-                rows={collabPortThem}
-                columns={columns2}
-                pagination
-                checkboxSelection
-                pageSize={7}
-                rowCount={100}
-                paginationMode="server"
-              />
-            )}
-          {!isLoading &&
-            sharedThemLen == 0 && (
-              <p>You haven't shared portfolio with anyone yet.</p>
-            )}
-        </div>
+        <Button
+          class="btn btn-outline-primary ms-5"
+          onClick={handleOpenParticipantsModal}
+        >
+          Shared With me
+        </Button>
+        <Dialog
+          open={openParticipantsModal}
+          onClose={handleCloseParticipantsModal}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            Portfolio That Sharing Permission To Me
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              {meString}
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseParticipantsModal}>Cancel</Button>
+          </DialogActions>
+        </Dialog>
       </div>
+      {/* <DataGrid
+              rows={collabPortMe}
+              columns={columns}
+              pagination
+              checkboxSelection
+              pageSize={7}
+              rowCount={100}
+              paginationMode="server"
+            /> */}
+
+      <div>
+        <Button
+          class="btn btn-outline-primary ms-5"
+          onClick={handleOpenParticipants2Modal}
+        >
+          Shared To Others
+        </Button>
+        <Dialog
+          open={openParticipants2Modal}
+          onClose={handleCloseParticipants2Modal}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            Portfolio That I Shared With Others
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              {themString}
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseParticipants2Modal}>Cancel</Button>
+          </DialogActions>
+        </Dialog>
+      </div>
+
+      {/* <DataGrid
+              rows={collabPortThem}
+              columns={columns2}
+              pagination
+              checkboxSelection
+              pageSize={7}
+              rowCount={100}
+              paginationMode="server"
+            /> */}
+      </>
     </div>
   )
 }

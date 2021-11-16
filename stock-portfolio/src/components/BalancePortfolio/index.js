@@ -3,29 +3,25 @@ import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
 import api from '../../api';
 import { TextField } from '@mui/material';
-import { Grid, Card, CardHeader, CardContent } from '@mui/material';
+import { Grid, Card, CardHeader, CardContent, Typography } from '@mui/material';
 
-const BalancePortfolio = (props) => {
+const BalancePortfolio = () => {
   var history = useHistory();
   // const [balance, setBalance] = useState([]);
-  const [colourGain, setColourGain] = useState('black');
   const [stock, setStock] = useState([]);
   const [overall, setOverall] = useState([0, 0]);
 
-  useEffect(() => {
+  useEffect(async() => {
     // handleBalance();
-    const balance = props.location.state.detail;
-    // orig_price, curr_price, change_val, change_percent
+    // const balance = props.location.state.detail;
+    const balance = await api(
+      `invested_performance/portfolio?portfolio=${sessionStorage.getItem('id')}`,
+      'GET'
+    );
 
     setOverall(balance.symbols.filter((c) => {
       if (c.symbol == 'overall') return c;
     })[0]);
-
-    if (overall.change_val > 0) {
-      setColourGain('green');
-    } else if (overall.change_val < 0) {
-      setColourGain('red');
-    }
 
     setStock(
       balance.symbols.filter((c) => {
@@ -45,12 +41,9 @@ const BalancePortfolio = (props) => {
   //   ).then((bal) => {
   //     let total = parseFloat(bal.total_gains.toFixed(0));
   //     let pct = parseFloat(bal.pct_performance.toFixed(3));
-  //     if (total > 0) {
-  //       setColourGain('green');
-  //     } else if (total < 0) {
+  //     if (total < 0) {
   //       total = parseFloat(bal.total_gains.toFixed(3));
   //       pct = parseFloat(bal.pct_performance.toFixed(3));
-  //       setColourGain('red');
   //     }
   //     setBalance({ total_gains: `${total}`, pct_performance: `${pct}` });
   //   });
@@ -65,14 +58,14 @@ const BalancePortfolio = (props) => {
       <button class="btn btn-lg btn-link btn-block" onClick={handleBack}>
       Go Back
       </button>
-      Portfolio Balance Page
+      <h3>Portfolio Gains</h3>
       <div>
         <div>
-          <span>Total Balance: </span>
-          <span style={{ color: colourGain }}>
-            {' '}
+          <span>Total Gain/Loss: </span>
+          <span style={{color: Math.sign(overall.change_percent) === -1 ? "red" : "green"}}>
             {overall.change_val} ({overall.change_percent}%)
           </span>
+          
         </div>
         <br />
         <Grid
@@ -87,21 +80,12 @@ const BalancePortfolio = (props) => {
               <Card variant="outlined">
                 <CardHeader
                   title={`Symbol : ${s.symbol}`}
-                  subheader={`Changes : ${s.change_val}(${s.change_percent}%)`}
+                  // subheader={`Changes : ${s.change_val}(${s.change_percent}%)`}
                 />
                 <CardContent>
-                  <TextField
-                    id="standard-read-only-input"
-                    label="Buying Price"
-                    value={s.orig_price}
-                    variant="standard"
-                  />
-                  <TextField
-                    id="standard-read-only-input"
-                    label="Buying Price"
-                    value={s.curr_price}
-                    variant="standard"
-                  />
+                  <Typography style={{color: Math.sign(overall.change_percent) === -1 ? "red" : "green"}}>Changes : ${s.change_val}({s.change_percent}%)</Typography>
+                  <Typography>Buying Price: {s.orig_price}</Typography>
+                  <Typography>Current Price: {s.curr_price}</Typography>
                 </CardContent>
               </Card>
             </Grid>
