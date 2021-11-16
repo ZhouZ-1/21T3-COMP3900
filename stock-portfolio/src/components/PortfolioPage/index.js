@@ -81,8 +81,6 @@ function PortfolioPage() {
       portfolio_id: portfolio_id,
     }).then((res) => {
       setOverall(data);
-      console.log(res);
-
       res.map((s) => {
         const changes = data.symbols.filter((c) => {
           if (c.symbol == s.symbol) return c;
@@ -261,7 +259,6 @@ function PortfolioPage() {
       })
     ).then((res) => {
       if (res !== undefined) {
-        console.log(res);
         alert('Successfully Delete Stock(s)!');
         setRefresh((r) => r + 1);
         setIsLoading(false);
