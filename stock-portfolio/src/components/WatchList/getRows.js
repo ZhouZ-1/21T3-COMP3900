@@ -2,8 +2,6 @@ import api from '../../api';
 
 async function getRows(token) {
   const response = await api(`watchlist?token=${token}`, 'GET');
-  let row = [];
-  var i = -1;
 
   const realData = response.watchList.map(async (item, idx) => {
     const realTimeData = await api('stocks/search', 'POST', {

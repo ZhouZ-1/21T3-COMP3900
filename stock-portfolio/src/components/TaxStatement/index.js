@@ -2,21 +2,16 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import api from '../../api';
 import { Box, TextField } from '@mui/material';
-import Loader from '../Loader';
 
 function TaxStatement() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [prevI, setPrevI] = useState(0);
   const [income, setIncome] = useState(0);
   const [rate, setRate] = useState(0);
   const [tax, setTaxValue] = useState(0);
-  const [editing, setEditing] = useState(false);
 
   useEffect(() => {
     if (sessionStorage.getItem('token') == null)
       return alert('Not loading the portfolio');
 
-    setIsLoading(true);
     api(
       `invested_performance/tax?token=${sessionStorage.getItem('token')}`,
       'GET'
@@ -29,7 +24,6 @@ function TaxStatement() {
         alert('No Stocks yet');
       }
     });
-    setIsLoading(false);
   }, []);
 
   return (

@@ -88,9 +88,12 @@ function InvitesModal(props) {
     return invites;
   };
 
-  useEffect(async () => {
-    const invites = await getInvites();
-    setInvites(invites);
+  useEffect(() => {
+    (async () => {
+      const invites = await getInvites();
+      setInvites(invites);
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

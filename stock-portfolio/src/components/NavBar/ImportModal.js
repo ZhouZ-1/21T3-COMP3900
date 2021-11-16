@@ -25,7 +25,7 @@ function ImportModal(props) {
             var rowContent = lines[count].split(',');
             let data = '';
             for (var i = 0; i < rowContent.length; i++) {
-              if (i == rowContent.length - 1) {
+              if (i === rowContent.length - 1) {
                 data = data.concat(rowContent[i].trim());
               } else {
                 data = data.concat(rowContent[i].trim());
@@ -33,7 +33,7 @@ function ImportModal(props) {
               }
             }
 
-            if (count == lines.length - 2) {
+            if (count === lines.length - 2) {
               csv_string = csv_string.concat(data);
             } else {
               csv_string = csv_string.concat(data);

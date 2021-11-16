@@ -27,10 +27,13 @@ function WatchList() {
   const [rows, setRows] = useState(initialRow);
   const [selectedStocks, setSelectedStocks] = useState([]);
 
-  useEffect(async () => {
-    const newRow = await getRows(token);
-    setRows(newRow);
-  }, []);
+  useEffect(() => {
+    (async () => {
+      const newRow = await getRows(token);
+      setRows(newRow);
+    })();
+  }
+, [token]);
 
   const onDeleteClick = async () => {
     let stockToRemove = [];
@@ -39,7 +42,9 @@ function WatchList() {
         if (idx === item.id) {
           stockToRemove.push(item.code);
         }
+        return null;
       });
+      return null;
     });
     const newRows = rows.filter((item) => !selectedStocks.includes(item.id));
     await api('watchlist/delete', 'DELETE', {

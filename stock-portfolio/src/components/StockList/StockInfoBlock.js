@@ -1,5 +1,3 @@
-import { fontSize, fontWeight } from "@mui/system";
-import api from "../../api";
 import { useHistory } from "react-router";
 function StockInfoBlock(props) {
     var history = useHistory();

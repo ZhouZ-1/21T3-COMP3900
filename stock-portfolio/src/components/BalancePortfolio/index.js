@@ -1,7 +1,6 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
-import api from '../../api';
 import { TextField } from '@mui/material';
 import { Grid, Card, CardHeader, CardContent } from '@mui/material';
 
@@ -18,7 +17,8 @@ const BalancePortfolio = (props) => {
     // orig_price, curr_price, change_val, change_percent
 
     setOverall(balance.symbols.filter((c) => {
-      if (c.symbol == 'overall') return c;
+      if (c.symbol === 'overall') return c;
+      return null;
     })[0]);
 
     if (overall.change_val > 0) {
@@ -29,10 +29,11 @@ const BalancePortfolio = (props) => {
 
     setStock(
       balance.symbols.filter((c) => {
-        if (c.symbol != 'overall') return c;
+        if (c.symbol !== 'overall') return c;
+        return null;
       })
     );
-  }, []);
+  }, [overall.change_val, props.location.state.detail]);
 
   // const handleBalance = async () => {
   //   // const bal = await api(

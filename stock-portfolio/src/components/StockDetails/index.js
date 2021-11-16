@@ -16,23 +16,27 @@ function StockDetails() {
   const [isGraphLoading, setIsGraphLoading] = useState(true);
   const [graphTimeOption, setGraphTimeOption] = useState('3 months');
 
-  useEffect(async () => {
-    const response = await api('stocks/search', 'POST', { symbol: symbol });
-    setStockDetails(response);
-    isStockInWatchList(symbol).then((res) => setIsInWatchList(res));
-    setIsLoading(false);
-    setIsGraphLoading(true);
+  useEffect(() => {
+    (async () => {
+      const response = await api('stocks/search', 'POST', { symbol: symbol });
+      setStockDetails(response);
+      isStockInWatchList(symbol).then((res) => setIsInWatchList(res));
+      setIsLoading(false);
+      setIsGraphLoading(true);
+    })();
   }, [symbol]);
 
-  useEffect(async () => {
-    const pricesWithinTime = await getPricesWithinTime(symbol, graphTimeOption);
-    const openPrices = getOpenPrices(pricesWithinTime);
-    let chartStatus = Chart.getChart('myChart'); // Delete graph if any.
-    if (chartStatus != undefined) {
-      chartStatus.destroy();
-    }
-    setIsGraphLoading(false);
-    drawGraph(openPrices);
+  useEffect(() => {
+    (async () => {
+      const pricesWithinTime = await getPricesWithinTime(symbol, graphTimeOption);
+      const openPrices = getOpenPrices(pricesWithinTime);
+      let chartStatus = Chart.getChart('myChart'); // Delete graph if any.
+      if (chartStatus !== undefined) {
+        chartStatus.destroy();
+      }
+      setIsGraphLoading(false);
+      drawGraph(openPrices);
+    })();
   }, [symbol, graphTimeOption]);
 
   const onTimeChange = (time) => {
@@ -42,13 +46,13 @@ function StockDetails() {
 
   const onWatchListIconClick = async () => {
     if (isInWatchList === true) {
-      const response = await api('watchlist/delete', 'DELETE', {
+      await api('watchlist/delete', 'DELETE', {
         token: sessionStorage.getItem('token'),
         stocks: [symbol],
       });
       setIsInWatchList(false);
     } else {
-      const response = await api('watchlist/add', 'POST', {
+      await api('watchlist/add', 'POST', {
         token: sessionStorage.getItem('token'),
         symbol: symbol,
         stock_name: stockDetails.name,

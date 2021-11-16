@@ -2,7 +2,6 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { useHistory } from 'react-router'
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
 import CollabList from '../CollabList'
 
 import {
@@ -19,13 +18,11 @@ import {
   DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle,
-  useTheme
+  DialogTitle
 } from '@mui/material'
 import api from '../../api'
 import NavBar from '../NavBar'
 import Loader from '../Loader'
-import PortfolioPage from '../PortfolioPage'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -35,7 +32,6 @@ const useStyles = makeStyles(theme => ({
 }))
 
 function PortfolioOverview () {
-  const theme = useTheme()
   var history = useHistory()
   const classes = useStyles()
   const [title, setTitle] = React.useState('')

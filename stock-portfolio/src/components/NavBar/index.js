@@ -89,7 +89,6 @@ function NavBar() {
           onChange={(e) => onKeywordChange(e)}
           data-bs-toggle="collapse"
           data-bs-target="#stockList"
-          aria-expanded="false"
         />
         {showDropDown ? (
           showAllStocks ? (

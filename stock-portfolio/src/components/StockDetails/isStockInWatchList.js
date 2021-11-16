@@ -8,6 +8,7 @@ async function isStockInWatchList(symbol) {
     if (item[0] === symbol) {
       isInWatchList = true;
     }
+    return null;
   });
   return isInWatchList;
 }

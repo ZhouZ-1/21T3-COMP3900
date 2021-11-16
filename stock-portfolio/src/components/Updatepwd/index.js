@@ -1,12 +1,10 @@
 import React from 'react';
 import { useState } from 'react';
-import { useHistory } from 'react-router';
 import PasswordRuleModal from './../SignUp/PasswordRuleModal';
 import { validatePassword } from './../SignUp/helper';
 import api from '../../api';
 
 function UpdatePassword() {
-  var history = useHistory();
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [isPasswordError, setIsPasswordError] = useState(false);
@@ -55,7 +53,7 @@ function UpdatePassword() {
   function checkPassword() {
     let checkPassword = document.getElementById('checkPassword').value;
     // error or input field is empty
-    if (checkPassword == -1) {
+    if (checkPassword === -1) {
       // alert('Please enter the confirm password.')
       return false;
     } else if (!checkPassword.match(newPassword)) {

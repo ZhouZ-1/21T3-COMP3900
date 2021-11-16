@@ -5,8 +5,10 @@ import StockInfoBlock from './StockInfoBlock';
 function StockList() {
   const [stocks, setStocks] = useState();
 
-  useEffect(async () => {
-    await getStockList('normal');
+  useEffect(() => {
+    (async () => {
+      await getStockList('normal');
+    })();
   }, []);
 
   const getStockList = async (type) => {

@@ -9,7 +9,7 @@ async function getPricesWithinTime(symbol,timeFrame){
     for (const [date, dateData] of Object.entries(graphResult)) {
         var priceInDay = [];
         priceInDay.push(date);
-        for (const [priceType, price] of Object.entries(dateData)) {
+        for (const [, price] of Object.entries(dateData)) {
             priceInDay.push(price);
         }
         priceInPeriod.push(priceInDay);

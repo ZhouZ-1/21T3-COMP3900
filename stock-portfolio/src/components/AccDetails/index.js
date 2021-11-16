@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react'
-import { useHistory } from 'react-router'
 import React from 'react'
 import api from '../../api'
-import { Avatar, Box, TextField } from '@mui/material'
+import { Box, TextField } from '@mui/material'
 import {
   Card,
-  CardActions,
   CardContent,
   CardMedia,
   Typography
@@ -13,7 +11,6 @@ import {
 import { validateEmail } from '../SignUp/helper'
 
 function AccDetails () {
-  var history = useHistory()
   const [username, setUsername] = useState('')
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
@@ -36,7 +33,7 @@ function AccDetails () {
         // Something went wrong
       }
     })
-  }, [])
+  }, [token])
 
   const updateEmail = () => {
     api('accounts/update-details', 'PUT', {
@@ -65,15 +62,6 @@ function AccDetails () {
   const handleEmailChange = e => {
     setEmail(e.target.value)
     setIsValidEmail(validateEmail(e.target.value))
-  }
-
-  const handleAccountPage = () => {
-    // @TODO: check id/password to authenticate/authorise.
-    //  if(id,password exist){
-    history.push('/account') // Go back to the main page
-    // }else{
-    //     display error message
-    // }
   }
 
   function edit () {

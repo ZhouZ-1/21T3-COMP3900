@@ -2,7 +2,7 @@ import Chart from 'chart.js/auto';
 
 function drawGraph(openPrices) {
   var ctx = document.getElementById('myChart');
-  if (ctx == undefined) {
+  if (ctx === undefined) {
     return;
   }
   ctx = ctx.getContext('2d');
@@ -24,7 +24,7 @@ function drawGraph(openPrices) {
       },
     ],
   };
-  var myChart = new Chart(ctx, {
+  new Chart(ctx, {
     type: 'line',
     data: data,
     options: {},
