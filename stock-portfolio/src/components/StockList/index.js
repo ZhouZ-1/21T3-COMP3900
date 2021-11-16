@@ -17,7 +17,6 @@ function StockList() {
       response = await api('stocks/searchprev', 'POST');
     } else {
       response = await api('stocks/searchall', 'POST');
-      console.log(response);
     }
     const stockData = [];
     for (const [symbol, stockDetails] of Object.entries(response.body)) {

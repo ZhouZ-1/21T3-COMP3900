@@ -40,8 +40,6 @@ function PortfolioModal(props) {
     allStocks.map((item) => {
       selectedStocks.map((idx) => {
         if (idx === item.id) {
-          console.log(item);
-          console.log(idx);
           selectedStocksCode.push(item.code);
         }
       });
