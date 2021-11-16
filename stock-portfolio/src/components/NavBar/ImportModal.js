@@ -111,7 +111,7 @@ function ImportModal(props) {
             <button
               type="button"
               class="btn btn-primary"
-              data-dismiss="modal"
+              data-bs-dismiss="modal"
               onClick={processFile}
             >
               Import
