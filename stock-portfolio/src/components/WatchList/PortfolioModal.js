@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import api from '../../api';
 import Loader from '../Loader';
-
+import './Styles.css';
 function PortfolioModal(props) {
   const { selectedStocks, allStocks, onProceedClick } = props;
   const token = sessionStorage.getItem('token');
@@ -10,6 +10,10 @@ function PortfolioModal(props) {
   const [portfolios, setPortfolios] = useState(<div class="list-group"></div>);
   const [selectedPortfolioId, setSelectedPortfolioId] = useState();
   const [qty, setQty] = useState(0);
+
+  const onPortfolioClick = (portfolioId) => {
+    setSelectedPortfolioId(portfolioId);
+  };
   useEffect(async () => {
     const response = await api(`portfolio?token=${token}`, 'GET');
     if (response.portfolios.length === 0) {
@@ -19,12 +23,14 @@ function PortfolioModal(props) {
         </button>
       );
     } else {
+      // () => setSelectedPortfolioId(item.portfolio_id)
       const portfolioList = response.portfolios.map(function (item) {
         return (
           <button
+            id="portfolio"
             type="button"
             class="list-group-item list-group-item-action"
-            onClick={() => setSelectedPortfolioId(item.portfolio_id)}
+            onClick={() => onPortfolioClick(item.portfolio_id)}
           >
             {item.portfolio_name}
           </button>
