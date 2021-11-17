@@ -61,3 +61,11 @@ Monday: Started working on the implementation of some portfolio routes (I finish
 Tuesday: Finished accept collaborative portfolio invite.
 Wednesday: Finish the rest of the implementation of the portfolio routes.
 Thursday: Start working on final report + potential script for the final demo.
+Friday: Yesterday finished basic structure of report. Today, reviewing and add basic information.
+Saturday: More work on the final report.
+Sunday: Help with last minute issues with the code.
+
+# Week 10
+Monday: Started to clean up code in the frontend. Meeting to see what we were missing. Also assigned parts for the demo
+Tuseday: Additional emergency meeting to address issues we found in yesterday's meeting.
+Wednesday: Wrote a short script for my part, demonstrated the project today. Also add screenshots of the demo to the report.
