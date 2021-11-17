@@ -7,7 +7,7 @@ import csv
 
 import util.database as db
 
-ALPHAVANTAGE_API_KEY = "FVR0K5XNNUQA3HXT"
+ALPHAVANTAGE_API_KEY = "74P3Y1PYRCA0OYC2"
 
 class DataCollector:
     def __init__(self):

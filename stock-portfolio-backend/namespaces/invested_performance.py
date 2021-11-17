@@ -160,7 +160,7 @@ class GetCapitalGainTax(Resource):
 
         for holding in all_holdings:
             # Get the price of the stock a year ago
-            CSV_URL = f'https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY_EXTENDED&symbol={holding["symbol"]}&interval=15min&slice=year2month1&apikey=FVR0K5XNNUQA3HXT'
+            CSV_URL = f'https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY_EXTENDED&symbol={holding["symbol"]}&interval=15min&slice=year2month1&apikey=74P3Y1PYRCA0OYC2'
 
             with requests.Session() as s:
                 download = s.get(CSV_URL)
