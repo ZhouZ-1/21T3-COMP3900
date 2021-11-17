@@ -11,15 +11,15 @@ import {
   DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle
-} from '@mui/material'
-import { DataGrid } from '@mui/x-data-grid'
-import api from '../../api'
-import moment from 'moment'
-import Typography from '@mui/material/Typography'
-import { createTheme, ThemeProvider } from '@mui/material/styles'
-import Loader from '../Loader'
-import NavBar from '../NavBar/'
+  DialogTitle,
+} from '@mui/material';
+import { DataGrid } from '@mui/x-data-grid';
+import api from '../../api';
+import moment from 'moment';
+import Typography from '@mui/material/Typography';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import Loader from '../Loader';
+import NavBar from '../NavBar/';
 
 const columns = [
   // { field: 'holding_id', headerName: 'id', width: 100 },
@@ -28,8 +28,8 @@ const columns = [
   { field: 'qty', headerName: 'Quantity', width: 130 },
   { field: 'date', headerName: 'Date', width: 130 },
   { field: 'change', headerName: 'Daily Change in Dollar', width: 220 },
-]
-const theme = createTheme()
+];
+const theme = createTheme();
 
 function PortfolioPage() {
   var history = useHistory();
@@ -47,7 +47,7 @@ function PortfolioPage() {
   const [refresh, setRefresh] = useState(0);
   const [isPortfolioOwner, setIsPortfolioOwner] = useState(false);
   const [participants, setParticipants] = useState(
-    <li class="list-group-item list-group-item-action">
+    <li class='list-group-item list-group-item-action'>
       ...Loading Participants...
     </li>
   );
@@ -67,28 +67,28 @@ function PortfolioPage() {
 
   useEffect(async () => {
     setIsLoading(true);
-    if (sessionStorage.getItem('token') == null) 
-      return alert("Not loading the portfolio");
+    if (sessionStorage.getItem('token') == null)
+      return alert('Not loading the portfolio');
 
     let newData = [];
-    
+
     await api('portfolio/holdings', 'POST', {
       token: token,
       portfolio_id: portfolio_id,
-    })
-    .then(async(res) => {
+    }).then(async (res) => {
       let change = 0;
 
-      res.map(async(s) => {
-        const changes = await api(`stocks/search`, 'POST', { symbol: s.symbol })
-      
-        if(changes) {
-          change = parseFloat(changes.previous_close).toFixed(3)
-        }
-        
-        newData.push({ id: s.holding_id, change, ...s})
-      })
+      res.map(async (s) => {
+        const changes = await api(`stocks/search`, 'POST', {
+          symbol: s.symbol,
+        });
 
+        if (changes) {
+          change = parseFloat(changes.previous_close).toFixed(3);
+        }
+
+        newData.push({ id: s.holding_id, change, ...s });
+      });
     });
 
     setStocks(newData);
@@ -104,7 +104,6 @@ function PortfolioPage() {
     }
 
     setIsPortfolioOwner(isOwner);
-    // setIsPortfolioOwner(true);
 
     setIsLoading(false);
   }, [refresh]);
@@ -161,27 +160,27 @@ function PortfolioPage() {
       });
       const currentParticipants = activeParticipants.map(function (userInfo) {
         return (
-          <li class="list-group-item list-group-item-action">
+          <li class='list-group-item list-group-item-action'>
             <span>{userInfo[0]}</span>
             <svg
-              id="reject"
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              fill="currentColor"
-              class="bi bi-dash-circle"
-              viewBox="0 0 16 16"
+              id='reject'
+              xmlns='http://www.w3.org/2000/svg'
+              width='20'
+              height='20'
+              fill='currentColor'
+              class='bi bi-dash-circle'
+              viewBox='0 0 16 16'
               onClick={() => onRemoveParticipants(userInfo[1])}
             >
-              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-              <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z" />
+              <path d='M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z' />
+              <path d='M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z' />
             </svg>
           </li>
         );
       });
       if (currentParticipants.length === 0) {
         return (
-          <li class="list-group-item list-group-item-action">
+          <li class='list-group-item list-group-item-action'>
             You have no Participants in this portfolio.
           </li>
         );
@@ -211,8 +210,8 @@ function PortfolioPage() {
     const date = getCurrDate();
     const value = await searchStock(symbol);
     if (value == -1) {
-      alert('Wait a minute. Try again.')
-      return
+      alert('Wait a minute. Try again.');
+      return;
     }
 
     if (!(symbol && qty)) {
@@ -322,24 +321,34 @@ function PortfolioPage() {
   return (
     <div>
       <NavBar />
-      <div style={{ margin: "0 10", marginTop: "50px", marginBottom: "20px", display: 'flex', justifyContent: 'center', alignContent: 'center' }}>
-        <Typography component="h1" variant="4">
+      <div
+        style={{
+          margin: '0 10',
+          marginTop: '50px',
+          marginBottom: '20px',
+          display: 'flex',
+          justifyContent: 'center',
+          alignContent: 'center',
+        }}
+      >
+        <Typography component='h1' variant='4'>
           Portfolio: {sessionStorage.getItem('name')}
           <div>
             <Button
-              id="basic-button"
+              id='basic-button'
               component={Link}
               to={{
                 pathname: '/balance',
-              }}>
+              }}
+            >
               Portfolio Balance
             </Button>
           </div>
-              </Typography>
-          <br />
+        </Typography>
+        <br />
         <div>
           <Button
-            class="btn btn-outline-primary ms-5"
+            class='btn btn-outline-primary ms-5'
             onClick={handleClickOpenAdd}
           >
             Add Stock
@@ -347,23 +356,23 @@ function PortfolioPage() {
           <Dialog
             open={openAdd}
             onClose={handleCloseAdd}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
+            aria-labelledby='alert-dialog-title'
+            aria-describedby='alert-dialog-description'
           >
-            <DialogTitle id="alert-dialog-title">{'Add Stock'}</DialogTitle>
+            <DialogTitle id='alert-dialog-title'>{'Add Stock'}</DialogTitle>
             <DialogContent>
-              <DialogContentText id="alert-dialog-description">
+              <DialogContentText id='alert-dialog-description'>
                 Please Enter the Symbol of Stock:
               </DialogContentText>
               <TextField
-                id="demo-helper-text-misaligned-no-helper"
-                label="symbol"
+                id='demo-helper-text-misaligned-no-helper'
+                label='symbol'
                 required
                 onChange={(evt) => setSymbol(evt.target.value)}
               />
               <TextField
-                id="demo-helper-text-misaligned-no-helper"
-                label="Quantity"
+                id='demo-helper-text-misaligned-no-helper'
+                label='Quantity'
                 required
                 onChange={(evt) => setQty(evt.target.value)}
               />
@@ -376,7 +385,7 @@ function PortfolioPage() {
             </DialogActions>
           </Dialog>
           <Button
-            class="btn btn-outline-primary ms-5"
+            class='btn btn-outline-primary ms-5'
             onClick={handleClickOpenDS}
           >
             Delete Stock
@@ -384,12 +393,12 @@ function PortfolioPage() {
           <Dialog
             open={openDS}
             onClose={handleCloseDS}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
+            aria-labelledby='alert-dialog-title'
+            aria-describedby='alert-dialog-description'
           >
-            <DialogTitle id="alert-dialog-title">{'Delete Stock'}</DialogTitle>
+            <DialogTitle id='alert-dialog-title'>{'Delete Stock'}</DialogTitle>
             <DialogContent>
-              <DialogContentText id="alert-dialog-description">
+              <DialogContentText id='alert-dialog-description'>
                 Do You Want To Delete These Stock(s)?
               </DialogContentText>
             </DialogContent>
@@ -403,7 +412,7 @@ function PortfolioPage() {
           {isPortfolioOwner && (
             <>
               <Button
-                class="btn btn-outline-primary ms-5"
+                class='btn btn-outline-primary ms-5'
                 onClick={handleOpenCollaborativeModal}
               >
                 Share this portfolio
@@ -411,19 +420,19 @@ function PortfolioPage() {
               <Dialog
                 open={openCollaborativeModal}
                 onClose={handleCloseCollaborativeModal}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
+                aria-labelledby='alert-dialog-title'
+                aria-describedby='alert-dialog-description'
               >
-                <DialogTitle id="alert-dialog-title">
+                <DialogTitle id='alert-dialog-title'>
                   Collaborative Portfolio
                 </DialogTitle>
                 <DialogContent>
-                  <DialogContentText id="alert-dialog-description">
+                  <DialogContentText id='alert-dialog-description'>
                     Please type in user's name you want to share it with
                   </DialogContentText>
                   <TextField
-                    id="demo-helper-text-misaligned-no-helper"
-                    label="user name"
+                    id='demo-helper-text-misaligned-no-helper'
+                    label='user name'
                     required
                     onChange={(evt) => setUserName(evt.target.value)}
                   ></TextField>
@@ -441,7 +450,7 @@ function PortfolioPage() {
           {isPortfolioOwner && (
             <>
               <Button
-                class="btn btn-outline-primary ms-5"
+                class='btn btn-outline-primary ms-5'
                 onClick={handleOpenParticipantsModal}
               >
                 participants
@@ -449,12 +458,12 @@ function PortfolioPage() {
               <Dialog
                 open={openParticipantsModal}
                 onClose={handleCloseParticipantsModal}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
+                aria-labelledby='alert-dialog-title'
+                aria-describedby='alert-dialog-description'
               >
-                <DialogTitle id="alert-dialog-title">Participants</DialogTitle>
+                <DialogTitle id='alert-dialog-title'>Participants</DialogTitle>
                 <DialogContent>
-                  <DialogContentText id="alert-dialog-description">
+                  <DialogContentText id='alert-dialog-description'>
                     {participants}
                   </DialogContentText>
                 </DialogContent>
@@ -492,14 +501,14 @@ function PortfolioPage() {
             <Dialog
               open={openDelete}
               onClose={handleCloseDelete}
-              aria-labelledby="alert-dialog-title"
-              aria-describedby="alert-dialog-description"
+              aria-labelledby='alert-dialog-title'
+              aria-describedby='alert-dialog-description'
             >
-              <DialogTitle id="alert-dialog-title">
+              <DialogTitle id='alert-dialog-title'>
                 'Delete Portfolio'
               </DialogTitle>
               <DialogContent>
-                <DialogContentText id="alert-dialog-description">
+                <DialogContentText id='alert-dialog-description'>
                   Do You Want To Delete This Portfolio?
                 </DialogContentText>
               </DialogContent>

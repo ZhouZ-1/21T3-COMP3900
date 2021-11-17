@@ -31,38 +31,38 @@ function TaxStatement() {
   }, []);
 
   return (
-    <div class="text-center w-100 p-3">
+    <div class='text-center w-100 p-3'>
       <form>
         <h1>Financial Information</h1>
       </form>
 
       <div>
         <Box
-          component="form"
+          component='form'
           sx={{
             '& .MuiTextField-root': { m: 1, width: '25ch' },
           }}
-          autoComplete="off"
+          autoComplete='off'
         >
           <TextField
-            id="standard-read-only-input"
-            label="How much you gain from stocks so far:"
+            id='standard-read-only-input'
+            label='How much you gain from stocks so far:'
             value={`$${income}`}
-            variant="standard"
+            variant='standard'
           />
           <br />
           <TextField
-            id="standard-read-only-input"
-            label="Owned for more than a year(CGT):"
+            id='standard-read-only-input'
+            label='Owned for more than a year(CGT):'
             value={`$${tax}`}
-            variant="standard"
+            variant='standard'
           />
           <br />
           <TextField
-            id="standard-read-only-input"
-            label="Otherwise, you have to declare:"
+            id='standard-read-only-input'
+            label='Otherwise, you have to declare:'
             value={`$${rate}`}
-            variant="standard"
+            variant='standard'
           />
         </Box>
       </div>
