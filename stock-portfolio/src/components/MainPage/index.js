@@ -57,10 +57,6 @@ function MainPage() {
           <p>Some contents here</p>
         )}
       </div>
-
-      <div className="footer">
-        <p>Some footer here</p>
-      </div>
     </div>
   );
 }
