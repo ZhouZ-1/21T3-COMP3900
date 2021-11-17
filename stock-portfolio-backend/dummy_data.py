@@ -11,11 +11,13 @@ import sys
 # Remove dummy users
 if len(sys.argv) > 1 and sys.argv[1] == 'remove':
     print('Removing dummy data')
-    cursor = sqlite3.connect('db/database.db', check_same_thread=False).cursor()
+    conn = sqlite3.connect('db/database.db', check_same_thread=False)
+    cursor = conn.cursor()
     cursor.execute("DELETE FROM users")
     cursor.execute("DELETE FROM portfolios")
     cursor.execute("DELETE FROM holdings")
     cursor.execute("DELETE FROM permissions")
+    conn.commit()
 
     sys.exit(0)
 
