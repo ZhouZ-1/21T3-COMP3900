@@ -16,6 +16,8 @@ import {
 import { DataGrid } from '@mui/x-data-grid'
 import api from '../../api'
 import moment from 'moment'
+import Typography from '@mui/material/Typography'
+import { createTheme, ThemeProvider } from '@mui/material/styles'
 import Loader from '../Loader'
 import NavBar from '../NavBar/'
 
@@ -27,6 +29,7 @@ const columns = [
   { field: 'date', headerName: 'Date', width: 130 },
   { field: 'change', headerName: 'Daily Change in Dollar', width: 220 },
 ]
+const theme = createTheme()
 
 function PortfolioPage() {
   var history = useHistory();
@@ -308,10 +311,10 @@ function PortfolioPage() {
   return (
     <div>
       <NavBar />
-      <div>
-        <h1>
+      <div style={{ margin: "0 10", marginTop: "50px", marginBottom: "20px", display: 'flex', justifyContent: 'center', alignContent: 'center' }}>
+        <Typography component="h1" variant="4">
           Portfolio: {sessionStorage.getItem('name')}
-          <br />
+          <div>
           {!isLoading && (
             <Button
               id="basic-button"
@@ -322,7 +325,9 @@ function PortfolioPage() {
               Portfolio Balance
             </Button>
           )}
-        </h1>
+          </div>
+              </Typography>
+          <br />
         <div>
           <Button
             class="btn btn-outline-primary ms-5"
@@ -453,7 +458,7 @@ function PortfolioPage() {
         </div>
         <br />
       </div>
-      <div style={{ height: 400, width: '100%' }}>
+      <div style={{ height: 400, width: '85%', margin: '0 auto' }}>
         {isLoading && <Loader />}
         {!isLoading && (
           <DataGrid

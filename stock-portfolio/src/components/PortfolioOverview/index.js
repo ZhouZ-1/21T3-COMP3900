@@ -4,7 +4,6 @@ import { makeStyles } from '@material-ui/core/styles'
 import { useHistory } from 'react-router'
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
 import CollabList from '../CollabList'
-
 import {
   Grid,
   Card,
@@ -22,6 +21,7 @@ import {
   DialogTitle,
   useTheme
 } from '@mui/material'
+import { createTheme, ThemeProvider } from '@mui/material/styles'
 import api from '../../api'
 import NavBar from '../NavBar'
 import Loader from '../Loader'
@@ -129,7 +129,9 @@ function PortfolioOverview () {
       <NavBar />
       <br />
       <div>
-        <h3>Portfolio Overview</h3>
+        <Typography component="h1" variant="h4">
+          Portfolio Overview
+        </Typography>
         <div>
           <p>Invested Performance</p>
           <p style={{color: Math.sign(gain) === -1 ? "red" : "green"}}>{gain}</p>
