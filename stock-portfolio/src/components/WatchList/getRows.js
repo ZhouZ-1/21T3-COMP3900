@@ -13,8 +13,8 @@ async function getRows(token) {
       id: idx,
       code: item[0],
       name: item[1],
-      price: realTimeData.price,
-      change_percent: realTimeData.change_percent,
+      price: parseFloat(realTimeData.price).toFixed(3),
+      change_percent: parseFloat(realTimeData.change_percent).toFixed(3),
     };
   });
   const result = await Promise.all(realData);
