@@ -1,3 +1,7 @@
 #notificationIcon:hover {
   fill: #ffe4b5;
 }
+#homeButton:hover {
+  background-color: #e5e5e5;
+  text-shadow: 2px 2px #ff0000;
+}

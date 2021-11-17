@@ -34,7 +34,7 @@ function ExportModal(props) {
 
   const onPortfolioClick = async (portFolioId) => {
     window.open(
-      `http://localhost:5000/portfolio/download?portfolio_id=${portFolioId}&token=${token}`,
+      `http://localhost:27439/portfolio/download?portfolio_id=${portFolioId}&token=${token}`,
       '_blank'
     );
   };

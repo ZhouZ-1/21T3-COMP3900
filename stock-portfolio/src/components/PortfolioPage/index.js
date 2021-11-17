@@ -1,7 +1,7 @@
-import React from 'react'
-import { useState, useEffect } from 'react'
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
-import { useHistory } from 'react-router'
+import React from 'react';
+import { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
+import { useHistory } from 'react-router';
 import {
   Button,
   Menu,
@@ -110,28 +110,28 @@ function PortfolioPage() {
   }, [isPortfolioOwner]);
 
   const handleClickOpenAdd = () => {
-    setOpenAdd(true)
-  }
+    setOpenAdd(true);
+  };
 
   const handleCloseAdd = () => {
-    setOpenAdd(false)
-  }
+    setOpenAdd(false);
+  };
 
   const handleClickOpenDS = () => {
-    setOpenDS(true)
-  }
+    setOpenDS(true);
+  };
 
   const handleCloseDS = () => {
-    setOpenDS(false)
-  }
+    setOpenDS(false);
+  };
 
   const handleClickOpenDelete = () => {
-    setOpenDelete(true)
-  }
+    setOpenDelete(true);
+  };
 
   const handleCloseDelete = () => {
-    setOpenDelete(false)
-  }
+    setOpenDelete(false);
+  };
 
   const getParticipants = async () => {
     if (isPortfolioOwner) {
@@ -185,20 +185,20 @@ function PortfolioPage() {
   };
 
   const getCurrDate = () => {
-    let curr = new Date()
+    let curr = new Date();
     let date =
-      curr.getDate() + '/' + (curr.getMonth() + 1) + '/' + curr.getFullYear()
-    return date
-  }
+      curr.getDate() + '/' + (curr.getMonth() + 1) + '/' + curr.getFullYear();
+    return date;
+  };
 
-  const searchStock = async s => {
-    let value = -1
-    const res = await api(`stocks/search`, 'POST', { symbol: s })
+  const searchStock = async (s) => {
+    let value = -1;
+    const res = await api(`stocks/search`, 'POST', { symbol: s });
     if (res.price) {
-      return res.price
+      return res.price;
     }
-    return value
-  }
+    return value;
+  };
 
   const addStock = async () => {
     setIsLoading(true);
@@ -210,17 +210,19 @@ function PortfolioPage() {
     }
 
     if (!(symbol && qty)) {
-      alert('Missing Symbol/Quantity field.')
-      handleCloseAdd()
-      return
+      alert('Missing Symbol/Quantity field.');
+      handleCloseAdd();
+      return;
     }
 
     if (qty == 0) {
-      alert('Quantity cannot be equal to 0.')
-      return
+      alert('Quantity cannot be equal to 0.');
+      return;
     }
-
-    const res = await api('portfolio/holdings/add', 'POST', {
+    const stockAdditionURL = isPortfolioOwner
+      ? 'portfolio/holdings/add'
+      : 'collaborate/add-holding';
+    const res = await api(stockAdditionURL, 'POST', {
       token: token,
       portfolio_id: portfolio_id,
       symbol: symbol.toUpperCase(),
@@ -238,37 +240,40 @@ function PortfolioPage() {
       setRefresh((r) => r + 1);
     }
 
-    handleCloseAdd()
-    setIsLoading(false)
-  }
+    handleCloseAdd();
+    setIsLoading(false);
+  };
 
   const deleteStock = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
 
     if (select.length == 0) {
-      alert('You have not select any stocks.')
-      return
+      alert('You have not select any stocks.');
+      return;
     }
 
+    const stockDeletionURL = isPortfolioOwner
+      ? 'portfolio/holdings/delete'
+      : 'collaborate/remove-holding';
     Promise.all(
-      select.map(id => {
-        const res = api('portfolio/holdings/delete', 'DELETE', {
+      select.map((id) => {
+        const res = api(stockDeletionURL, 'DELETE', {
           token: token,
           holding_id: id,
         });
       })
-    ).then(res => {
-      if (res) {
-        alert('Successfully Delete Stock(s)!')
-        setRefresh(r => r + 1)
-        setIsLoading(false)
+    ).then((res) => {
+      if (res !== undefined) {
+        alert('Successfully Delete Stock(s)!');
+        setRefresh((r) => r + 1);
+        setIsLoading(false);
       }
-    })
-    handleCloseDS()
-  }
+    });
+    handleCloseDS();
+  };
 
   const handleDelete = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     const res = await api('portfolio/delete', 'DELETE', {
       token: token,
       portfolio_id: portfolio_id,
@@ -279,9 +284,9 @@ function PortfolioPage() {
       sessionStorage.removeItem('id');
       history.push('/viewPortfolio');
     }
-    setIsLoading(false)
-    handleCloseDelete()
-  }
+    setIsLoading(false);
+    handleCloseDelete();
+  };
 
   const onClickShare = async () => {
     const response = await api('collaborate/send', 'POST', {
@@ -293,12 +298,12 @@ function PortfolioPage() {
     return;
   };
   const handleOpenCollaborativeModal = () => {
-    setOpenCollaborativeModal(true)
-  }
+    setOpenCollaborativeModal(true);
+  };
 
   const handleCloseCollaborativeModal = () => {
-    setOpenCollaborativeModal(false)
-  }
+    setOpenCollaborativeModal(false);
+  };
 
   const handleOpenParticipantsModal = () => {
     setOpenParticipantsModal(true);
@@ -318,7 +323,7 @@ function PortfolioPage() {
           {!isLoading && (
             <Button
               id="basic-button"
-              component={Link} 
+              component={Link}
               to={{
                 pathname: '/balance',
               }}>
@@ -350,13 +355,13 @@ function PortfolioPage() {
                 id="demo-helper-text-misaligned-no-helper"
                 label="symbol"
                 required
-                onChange={evt => setSymbol(evt.target.value)}
+                onChange={(evt) => setSymbol(evt.target.value)}
               />
               <TextField
                 id="demo-helper-text-misaligned-no-helper"
                 label="Quantity"
                 required
-                onChange={evt => setQty(evt.target.value)}
+                onChange={(evt) => setQty(evt.target.value)}
               />
             </DialogContent>
             <DialogActions>
@@ -469,8 +474,8 @@ function PortfolioPage() {
             pageSize={7}
             rowCount={100}
             // paginationMode="server"
-            onSelectionModelChange={newModel => {
-              setSelect(newModel)
+            onSelectionModelChange={(newModel) => {
+              setSelect(newModel);
             }}
             selectionModel={select}
           />
@@ -505,8 +510,7 @@ function PortfolioPage() {
         )}
       </div>
     </div>
-  )
+  );
 }
 
-export default PortfolioPage
-
+export default PortfolioPage;

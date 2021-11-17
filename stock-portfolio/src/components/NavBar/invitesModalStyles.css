@@ -1,9 +1,9 @@
 #accept {
-  fill: blue;
+  fill: #87ceeb;
   margin: 5px;
 }
 
 #reject {
-  fill: red;
+  fill: #ff6347;
   margin: 5px;
 }

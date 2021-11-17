@@ -1,6 +1,6 @@
-import React from 'react'
-import { useState, useEffect } from 'react'
-import { useHistory } from 'react-router'
+import React from 'react';
+import { useState, useEffect } from 'react';
+import { useHistory } from 'react-router';
 import {
   Box,
   List,
@@ -26,20 +26,14 @@ import NavBar from '../NavBar'
 import Loader from '../Loader'
 
 const columns = [
-  // { field: 'id', headerName: 'id', width: 100 },
-  // { field: 'sharing_id', headerName: 'id', width: 100 },
-  // { field: 'portfolio_id', headerName: 'Portfolio id', width: 150 },
   { field: 'portfolio_name', headerName: 'Portfolio', width: 150 },
-  { field: 'owner', headerName: 'Owner', width: 130 }
-]
+  { field: 'owner', headerName: 'Owner', width: 130 },
+];
 
 const columns2 = [
-  // { field: 'id', headerName: 'id', width: 100 },
-  // { field: 'sharing_id', headerName: 'id', width: 100 },
-  // { field: 'portfolio_id', headerName: 'Portfolio id', width: 150 },
   { field: 'portfolio_name', headerName: 'Portfolio', width: 150 },
-  { field: 'shared_with', headerName: 'Shared_with', width: 130 }
-]
+  { field: 'shared_with', headerName: 'Shared_with', width: 130 },
+];
 
 function CollabList () {
   var history = useHistory()
@@ -160,8 +154,13 @@ function CollabList () {
       );
     })
 
-    setIsLoading(false)
-  }, [])
+  const goToPortfolioPage = (selectedPortfolio) => {
+    const portfolioId = collabPortMe[selectedPortfolio.id - 1].portfolio_id;
+    const portfolioName = collabPortMe[selectedPortfolio.id - 1].portfolio_name;
+    sessionStorage.setItem('id', portfolioId);
+    sessionStorage.setItem('name', portfolioName);
+    history.push(`portfolio/${portfolioId}`);
+  };
 
   const handleOpenParticipantsModal = () => {
     setOpenParticipantsModal(true)
@@ -256,7 +255,7 @@ function CollabList () {
             /> */}
       </>
     </div>
-  )
+  );
 }
 
-export default CollabList;
+export default CollabList

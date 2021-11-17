@@ -1,5 +1,4 @@
-# Week 1
-Created proposal document 
+# Week 1 Created proposal document 
 Start writing problem overview 
 
 # Week 2
@@ -34,3 +33,8 @@ Finish calculations for performance data
 
 # Week 9
 Start feature to calculate Capital Gains Tax
+Finish all of my tasks
+
+# Week 10
+Work on final report
+Present

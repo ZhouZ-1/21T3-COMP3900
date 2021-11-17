@@ -9,7 +9,7 @@ function PortfolioModal(props) {
   const [isPortfolioLoading, setIsPortfolioLoading] = useState(true);
   const [portfolios, setPortfolios] = useState(<div class="list-group"></div>);
   const [selectedPortfolioId, setSelectedPortfolioId] = useState();
-
+  const [qty, setQty] = useState(0);
   useEffect(async () => {
     const response = await api(`portfolio?token=${token}`, 'GET');
     if (response.portfolios.length === 0) {
@@ -49,13 +49,20 @@ function PortfolioModal(props) {
       token: token,
       stocks: selectedStocksCode,
     });
-    selectedStocks.map(async (code) => {
+    selectedStocksCode.map(async (code) => {
+      const stockDetail = await api('stocks/search', 'POST', {
+        symbol: code,
+      });
+      let value = stockDetail.price;
+      if (value == undefined) {
+        value = 1;
+      }
       await api('portfolio/holdings/add', 'POST', {
         token: token,
         portfolio_id: selectedPortfolioId,
         symbol: code,
-        value: 1.1,
-        qty: 99.9,
+        value: value,
+        qty: parseInt(qty),
         type: 'buy',
         brokerage: 9.95,
         exchange: 'NYSE',
@@ -82,7 +89,7 @@ function PortfolioModal(props) {
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="exampleModalLabel">
-              Select a portfolio to add stock(s)
+              Select a portfolio to add stock(s) and quantity
             </h5>
             <button
               type="button"
@@ -97,7 +104,24 @@ function PortfolioModal(props) {
             {isPortfolioLoading ? (
               <Loader />
             ) : (
-              <div class="list-group">{portfolios}</div>
+              <>
+                <div class="list-group">{portfolios}</div>
+                <div class="input-group input-group-sm mb-3">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">
+                      Qty to buy
+                    </span>
+                  </div>
+                  <input
+                    id="portfolioInput"
+                    type="text"
+                    class="form-control"
+                    aria-label="Small"
+                    aria-describedby="inputGroup-sizing-sm"
+                    onChange={(e) => setQty(e.target.value)}
+                  />
+                </div>
+              </>
             )}
           </div>
           <div class="modal-footer">
