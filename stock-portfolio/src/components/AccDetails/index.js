@@ -104,12 +104,12 @@ function AccDetails () {
         <Box display="flex" justifyContent="center" alignItems="center">
           <div>
             <Card sx={{ maxWidth: 345 }}>
-              <CardMedia
+              {/* <CardMedia
                 component="img"
                 // height="140"
                 image={`${profileImage}`}
                 alt="Logo"
-              />
+              /> */}
               <CardContent>
                 <Typography gutterBottom variant="h5" component="div">
                   {username}
