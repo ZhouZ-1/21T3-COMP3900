@@ -120,7 +120,7 @@ function CollabList () {
       )}`,
       'GET'
     ).then(dataThem => {
-      let isShared = false
+      // let isShared = false
       // print out result
       // console.log('them', dataThem)
       dataThem.map(d => {
@@ -131,30 +131,34 @@ function CollabList () {
         }
       })
 
-      if (isShared) {
-        if (dataThem.length == 0) {
-          setThemString(<p>You haven't shared portfolio with anyone yet.</p>)
-        }
-
-        setThemString(
-          dataThem.map(t => {
-            // if (t.shared_with.length != 0) {
-            return <div>{t.portfolio_name}</div>
-            // return  <div><span>- Portfolio {t.portfolio_name} by {t.shared_with[0].username} </span></div>
-            // }
-          })
-        )
+      if (dataThem.length == 0) {
+        setThemString(<p>You haven't shared portfolio with anyone yet.</p>)
       }
-    })
-    // .then((dataMe) => {
-    //   if (dataMe.length == 0) {
-    //     setMeString(<p>No portfolio share with you yet.</p>);
-    //   }
 
-    //   setMeString(dataMe.map(m => {
-    //     return  <div><span>- Portfolio {m.portfolio_name} by {m.owner} </span></div>
-    //   }));
-    // })
+      let str = []
+      dataThem.map(t => {
+        if (t.shared_with.length != 0) {
+          let isComma = false
+          // let subStr = []
+          str += `- Portfolio ${t.portfolio_name} by `
+        // return <div>- Portfolio {t.portfolio_name} by </div>
+          // str.append(<span>- Portfolio {t.portfolio_name} by </span>)
+          t.shared_with.map(share => {
+            if (isComma) str += ", "
+            else isComma = true
+            
+            str += `${share.username}  \n`
+            // console.log(share.username)
+            // str.append(<span>{share.username} </span>)
+          })
+          return <span>{str}</span>
+        }
+      })
+
+      setThemString(
+        (str != []) ? (<div>{str}</div>) : (setThemString(<p>You haven't shared portfolio with anyone yet.</p>))
+      );
+    })
 
     setIsLoading(false)
   }, [])
@@ -255,4 +259,4 @@ function CollabList () {
   )
 }
 
-export default CollabList
+export default CollabList;
