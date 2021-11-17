@@ -12,7 +12,6 @@ function MainPage() {
 
       <div className="mainContents">
         {isAuthenticated ? (
-          // <div>
           <div
             class="btn-group"
             style={{
@@ -26,7 +25,7 @@ function MainPage() {
               marginTop: '50px',
               marginBottom: '50px'
             }}
-          >
+          > 
             <button
               type="button"
               class="btn btn-warning"
@@ -53,15 +52,15 @@ function MainPage() {
             >
               Go to Financial
             </button>
-            {/* </div> */}
           </div>
         ) : (
           <p>Some contents here</p>
         )}
       </div>
-      {/* <div className="footer">
+
+      <div className="footer">
         <p>Some footer here</p>
-      </div> */}
+      </div>
     </div>
   );
 }

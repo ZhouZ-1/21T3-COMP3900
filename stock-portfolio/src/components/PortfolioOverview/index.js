@@ -18,10 +18,8 @@ import {
   DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle,
-  useTheme
+  DialogTitle
 } from '@mui/material'
-import { createTheme, ThemeProvider } from '@mui/material/styles'
 import api from '../../api'
 import NavBar from '../NavBar'
 import Loader from '../Loader'
@@ -35,7 +33,6 @@ const useStyles = makeStyles(theme => ({
 }))
 
 function PortfolioOverview () {
-  const theme = useTheme()
   var history = useHistory()
   const classes = useStyles()
   const [title, setTitle] = React.useState('')
@@ -43,8 +40,8 @@ function PortfolioOverview () {
   const [isLoading, setIsLoading] = useState(false)
   const [openEdit, setOpenEdit] = useState(false)
   const [open, setOpen] = React.useState(false)
-  const [refresh, setRefresh] = useState(0);
-  const [gain, setGain] = useState('');
+  const [refresh, setRefresh] = useState(0)
+  const [gain, setGain] = useState('')
 
   const handleClickOpen = () => {
     setOpen(true)
@@ -54,31 +51,35 @@ function PortfolioOverview () {
     setOpen(false)
   }
 
-  useEffect(() => {
-    if (sessionStorage.getItem('token') == null) return alert("Not loading the portfolio");
-    setIsLoading(true)
-    api(`portfolio?token=${sessionStorage.getItem('token')}`, 'GET').then(
-      res => {
-        if (res) {
-          setPort(res.portfolios)
-        }
-      }
-    )
-    
-    api(
-      `invested_performance?token=${sessionStorage.getItem('token')}`,
-      'GET'
-    ).then(
-      data => {
+  useEffect(
+    () => {
+      api(
+        `invested_performance?token=${sessionStorage.getItem('token')}`,
+        'GET'
+      ).then(data => {
         if (data) {
-          setGain(`$${data.pct_performance}(${data.total_gains}%)`)
-          // setPort(res.portfolios)
+          const total = parseFloat(data.total_gains).toFixed(1)
+          const pct = parseFloat(data.pct_performance).toFixed(3)
+          setGain(`$${total}(${pct}%)`)
         }
-      }
-    )
+      })
 
-    setIsLoading(false)
-  }, [refresh])
+      if (sessionStorage.getItem('token') == null) {
+        return alert('Not loading the portfolio')
+      }
+      setIsLoading(true)
+      api(`portfolio?token=${sessionStorage.getItem('token')}`, 'GET').then(
+        res => {
+          if (res) {
+            setPort(res.portfolios)
+          }
+        }
+      )
+
+      setIsLoading(false)
+    },
+    [refresh]
+  )
 
   const handleCreate = async () => {
     if (title !== '') {
@@ -86,10 +87,11 @@ function PortfolioOverview () {
         token: sessionStorage.getItem('token'),
         portfolio_name: title
       })
+      console.log(res)
       if (res.portfolios) {
         alert('Successfully Add A New Portfolio!')
-        setRefresh((r) => r + 1);
-        history.go(0)
+        setRefresh(r => r + 1)
+        // history.go(0)
       }
     }
     handleClose()
@@ -110,9 +112,10 @@ function PortfolioOverview () {
         portfolio_name: title,
         portfolio_id: sessionStorage.getItem('id')
       })
+      console.log(res)
       if (res.is_success) {
         alert('Successfully Update Your Portfolio Name!')
-        setRefresh((r) => r + 1);
+        setRefresh(r => r + 1)
       }
     }
     handleCloseEdit()
@@ -134,7 +137,9 @@ function PortfolioOverview () {
         </Typography>
         <div>
           <p>Invested Performance</p>
-          <p style={{color: Math.sign(gain) === -1 ? "red" : "green"}}>{gain}</p>
+          <p style={{ color: Math.sign(gain) === -1 ? 'red' : 'green' }}>
+            {gain}
+          </p>
         </div>
         <div>
           <Button variant="outlined" onClick={handleClickOpen}>
@@ -167,11 +172,10 @@ function PortfolioOverview () {
               </Button>
             </DialogActions>
           </Dialog>
-        </div>
+      <CollabList />
+      </div>
       </div>
       <br />
-      <CollabList />
-      <br/>
       {isLoading && <Loader />}
       <Grid
         container

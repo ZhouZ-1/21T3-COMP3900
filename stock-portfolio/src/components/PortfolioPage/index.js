@@ -77,21 +77,23 @@ function PortfolioPage() {
       portfolio_id: portfolio_id,
     })
     .then(async(res) => {
+      let change = 0;
+
       res.map(async(s) => {
         const changes = await api(`stocks/search`, 'POST', { symbol: s.symbol })
-        let change = 0;
-
+      
         if(changes) {
           change = parseFloat(changes.previous_close).toFixed(3)
-          console.log("right", changes.previous_close, change)
         }
         
         newData.push({ id: s.holding_id, change, ...s})
-      });
+      })
+
     });
 
     setStocks(newData);
 
+    // todo: uncomment
     const response = await api(`portfolio?token=${token}`, 'GET');
     let portfolios = response.portfolios;
     let isOwner = false;
@@ -100,10 +102,14 @@ function PortfolioPage() {
         isOwner = true;
       }
     }
+
     setIsPortfolioOwner(isOwner);
+    // setIsPortfolioOwner(true);
+
     setIsLoading(false);
   }, [refresh]);
 
+  // todo: uncomment
   useEffect(async () => {
     const participants = await getParticipants();
     setParticipants(participants);
@@ -320,7 +326,6 @@ function PortfolioPage() {
         <Typography component="h1" variant="4">
           Portfolio: {sessionStorage.getItem('name')}
           <div>
-          {!isLoading && (
             <Button
               id="basic-button"
               component={Link}
@@ -329,7 +334,6 @@ function PortfolioPage() {
               }}>
               Portfolio Balance
             </Button>
-          )}
           </div>
               </Typography>
           <br />
