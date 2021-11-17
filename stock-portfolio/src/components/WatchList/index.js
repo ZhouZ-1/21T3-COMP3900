@@ -15,8 +15,8 @@ function WatchList () {
     { field: 'code', headerName: 'Stock Code', width: 200 },
     { field: 'name', headerName: 'Stock Name', width: 200 },
     { field: 'price', headerName: 'Price', width: 200 },
-    { field: 'change_percent', headerName: 'Daily changes', width: 250 }
-  ]
+    { field: 'change_percent', headerName: 'Daily changes (%)', width: 250 },
+  ];
   const initialRow = [
     {
       id: 0,

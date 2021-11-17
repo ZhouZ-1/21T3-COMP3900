@@ -19,6 +19,7 @@ function ExportModal(props) {
       const portfolioList = response.portfolios.map(function (item) {
         return (
           <button
+            id="portfolio"
             type="button"
             class="list-group-item list-group-item-action"
             onClick={() => onPortfolioClick(item.portfolio_id)}
