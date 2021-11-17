@@ -7,33 +7,31 @@ function ExportModal(props) {
   const token = sessionStorage.getItem('token');
   const [isPortfolioLoading, setIsPortfolioLoading] = useState(true);
   const [portfolios, setPortfolios] = useState(<div class="list-group"></div>);
-  useEffect(() => {
-    (async () => {
-      const response = await api(`portfolio?token=${token}`, 'GET');
-      if (response.portfolios.length === 0) {
-        setPortfolios(
-          <button type="button" class="list-group-item list-group-item-action">
-            You have no Portfolio
+  useEffect(async () => {
+    const response = await api(`portfolio?token=${token}`, 'GET');
+    if (response.portfolios.length === 0) {
+      setPortfolios(
+        <button type="button" class="list-group-item list-group-item-action">
+          You have no Portfolio
+        </button>
+      );
+    } else {
+      const portfolioList = response.portfolios.map(function (item) {
+        return (
+          <button
+            id="portfolio"
+            type="button"
+            class="list-group-item list-group-item-action"
+            onClick={() => onPortfolioClick(item.portfolio_id)}
+          >
+            {item.portfolio_name}
           </button>
         );
-      } else {
-        const portfolioList = response.portfolios.map(function (item) {
-          return (
-            <button
-              type="button"
-              class="list-group-item list-group-item-action"
-              onClick={() => onPortfolioClick(item.portfolio_id)}
-            >
-              {item.portfolio_name}
-            </button>
-          );
-        });
-        setPortfolios(portfolioList);
-      }
-      setIsPortfolioLoading(false);
-    })();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [trigger, token]);
+      });
+      setPortfolios(portfolioList);
+    }
+    setIsPortfolioLoading(false);
+  }, [trigger]);
 
   const onPortfolioClick = async (portFolioId) => {
     window.open(

@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { useHistory } from 'react-router'
 import CollabList from '../CollabList'
-
 import {
   Grid,
   Card,
@@ -39,7 +38,8 @@ function PortfolioOverview () {
   const [isLoading, setIsLoading] = useState(false)
   const [openEdit, setOpenEdit] = useState(false)
   const [open, setOpen] = React.useState(false)
-  const [refresh, setRefresh] = useState(0);
+  const [refresh, setRefresh] = useState(0)
+  const [gain, setGain] = useState('')
 
   const handleClickOpen = () => {
     setOpen(true)
@@ -49,18 +49,35 @@ function PortfolioOverview () {
     setOpen(false)
   }
 
-  useEffect(() => {
-    if (sessionStorage.getItem('token') == null) return alert("Not loading the portfolio");
-    setIsLoading(true)
-    api(`portfolio?token=${sessionStorage.getItem('token')}`, 'GET').then(
-      res => {
-        if (res) {
-          setPort(res.portfolios)
+  useEffect(
+    () => {
+      api(
+        `invested_performance?token=${sessionStorage.getItem('token')}`,
+        'GET'
+      ).then(data => {
+        if (data) {
+          const total = parseFloat(data.total_gains).toFixed(1)
+          const pct = parseFloat(data.pct_performance).toFixed(3)
+          setGain(`$${total}(${pct}%)`)
         }
+      })
+
+      if (sessionStorage.getItem('token') == null) {
+        return alert('Not loading the portfolio')
       }
-    )
-    setIsLoading(false)
-  }, [refresh])
+      setIsLoading(true)
+      api(`portfolio?token=${sessionStorage.getItem('token')}`, 'GET').then(
+        res => {
+          if (res) {
+            setPort(res.portfolios)
+          }
+        }
+      )
+
+      setIsLoading(false)
+    },
+    [refresh]
+  )
 
   const handleCreate = async () => {
     if (title !== '') {
@@ -68,10 +85,11 @@ function PortfolioOverview () {
         token: sessionStorage.getItem('token'),
         portfolio_name: title
       })
+      console.log(res)
       if (res.portfolios) {
         alert('Successfully Add A New Portfolio!')
-        setRefresh((r) => r + 1);
-        history.go(0)
+        setRefresh(r => r + 1)
+        // history.go(0)
       }
     }
     handleClose()
@@ -92,8 +110,10 @@ function PortfolioOverview () {
         portfolio_name: title,
         portfolio_id: sessionStorage.getItem('id')
       })
+      console.log(res)
       if (res.is_success) {
         alert('Successfully Update Your Portfolio Name!')
+        setRefresh(r => r + 1)
       }
     }
     handleCloseEdit()
@@ -110,7 +130,15 @@ function PortfolioOverview () {
       <NavBar />
       <br />
       <div>
-        <h3>Portfolio Overview</h3>
+        <Typography component="h1" variant="h4">
+          Portfolio Overview
+        </Typography>
+        <div>
+          <p>Invested Performance</p>
+          <p style={{ color: Math.sign(gain) === -1 ? 'red' : 'green' }}>
+            {gain}
+          </p>
+        </div>
         <div>
           <Button variant="outlined" onClick={handleClickOpen}>
             Create Portfolio
@@ -142,7 +170,8 @@ function PortfolioOverview () {
               </Button>
             </DialogActions>
           </Dialog>
-        </div>
+      <CollabList />
+      </div>
       </div>
       <br />
       {isLoading && <Loader />}
@@ -204,13 +233,6 @@ function PortfolioOverview () {
           </Grid>
         ))}
       </Grid>
-      {/* <Router>
-        <Switch>
-          <Route path="/collab"> */}
-            <CollabList />
-          {/* </Route>
-        </Switch>
-      </Router> */}
     </div>
   )
 }

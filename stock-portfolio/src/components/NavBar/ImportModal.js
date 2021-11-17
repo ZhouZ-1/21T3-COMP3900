@@ -87,7 +87,7 @@ function ImportModal(props) {
             <div class="input-group input-group-sm mb-3">
               <div class="input-group-prepend">
                 <span class="input-group-text" id="inputGroup-sizing-sm">
-                  Import as
+                  Import it as:
                 </span>
               </div>
               <input

@@ -16,12 +16,10 @@ function TaxStatement() {
       `invested_performance/tax?token=${sessionStorage.getItem('token')}`,
       'GET'
     ).then((res) => {
-      if (res.CGT) {
+      if (res) {
         setIncome(res.yearly_gain);
         setTaxValue(res.CGT);
         setRate(res.to_declare);
-      } else {
-        alert('No Stocks yet');
       }
     });
   }, []);

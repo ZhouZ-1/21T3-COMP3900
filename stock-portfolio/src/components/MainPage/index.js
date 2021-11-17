@@ -12,38 +12,50 @@ function MainPage() {
 
       <div className="mainContents">
         {isAuthenticated ? (
-          <div>
+          <div
+            class="btn-group"
+            style={{
+              textAlign: 'center',
+              // maxWidth: "950px",
+              margin: '0 auto',
+              display: 'flex',
+              flexDirection: 'column',
+              // border: "1px solid #e6e6e6",
+              padding: '40px 25%',
+              marginTop: '50px',
+              marginBottom: '50px'
+            }}
+          > 
             <button
               type="button"
               class="btn btn-warning"
+              style={{ margin: '10px', color: 'white' }}
               onClick={() => history.push('/watchList')}
             >
-              Go to the watch list
+              Go to Watchlist
             </button>
             <br />
             <button
               type="button"
               class="btn btn-warning"
+              style={{ margin: '10px', color: 'white' }}
               onClick={() => history.push('/viewPortfolio')}
             >
-              Go to the Portfolio
+              Go to Portfolio
             </button>
             <br />
             <button
               type="button"
               class="btn btn-warning"
+              style={{ margin: '10px', color: 'white' }}
               onClick={() => history.push('/tax')}
             >
-              Go to the Financial
+              Go to Financial
             </button>
           </div>
         ) : (
-          <p>Some contents here</p>
+          <p>Log in!</p>
         )}
-      </div>
-
-      <div className="footer">
-        <p>Some footer here</p>
       </div>
     </div>
   );

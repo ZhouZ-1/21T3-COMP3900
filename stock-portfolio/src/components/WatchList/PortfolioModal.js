@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import api from '../../api';
 import Loader from '../Loader';
-
+import './Styles.css';
 function PortfolioModal(props) {
   const { selectedStocks, allStocks, onProceedClick } = props;
   const token = sessionStorage.getItem('token');
@@ -10,32 +10,36 @@ function PortfolioModal(props) {
   const [portfolios, setPortfolios] = useState(<div class="list-group"></div>);
   const [selectedPortfolioId, setSelectedPortfolioId] = useState();
   const [qty, setQty] = useState(0);
-  useEffect(() => {
-    (async () => {
-      const response = await api(`portfolio?token=${token}`, 'GET');
-      if (response.portfolios.length === 0) {
-        setPortfolios(
-          <button type="button" class="list-group-item list-group-item-action">
-            You have no Portfolio
+
+  const onPortfolioClick = (portfolioId) => {
+    setSelectedPortfolioId(portfolioId);
+  };
+  useEffect(async () => {
+    const response = await api(`portfolio?token=${token}`, 'GET');
+    if (response.portfolios.length === 0) {
+      setPortfolios(
+        <button type="button" class="list-group-item list-group-item-action">
+          You have no Portfolio
+        </button>
+      );
+    } else {
+      // () => setSelectedPortfolioId(item.portfolio_id)
+      const portfolioList = response.portfolios.map(function (item) {
+        return (
+          <button
+            id="portfolio"
+            type="button"
+            class="list-group-item list-group-item-action"
+            onClick={() => onPortfolioClick(item.portfolio_id)}
+          >
+            {item.portfolio_name}
           </button>
         );
-      } else {
-        const portfolioList = response.portfolios.map(function (item) {
-          return (
-            <button
-              type="button"
-              class="list-group-item list-group-item-action"
-              onClick={() => setSelectedPortfolioId(item.portfolio_id)}
-            >
-              {item.portfolio_name}
-            </button>
-          );
-        });
-        setPortfolios(portfolioList);
-      }
-      setIsPortfolioLoading(false);
-    })();
-  }, [token]);
+      });
+      setPortfolios(portfolioList);
+    }
+    setIsPortfolioLoading(false);
+  }, []);
 
   const onMoveClick = async () => {
     let selectedStocksCode = [];
@@ -44,9 +48,7 @@ function PortfolioModal(props) {
         if (idx === item.id) {
           selectedStocksCode.push(item.code);
         }
-        return null;
       });
-      return null;
     });
 
     await api('watchlist/delete', 'DELETE', {
@@ -58,7 +60,7 @@ function PortfolioModal(props) {
         symbol: code,
       });
       let value = stockDetail.price;
-      if (value === undefined) {
+      if (value == undefined) {
         value = 1;
       }
       await api('portfolio/holdings/add', 'POST', {
@@ -74,6 +76,9 @@ function PortfolioModal(props) {
         currency: 'USD',
       });
     });
+    const newRows = allStocks.filter(
+      (item) => !selectedStocks.includes(item.id)
+    );
     onProceedClick();
   };
 
