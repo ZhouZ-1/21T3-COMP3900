@@ -43,8 +43,13 @@ Week 8
 - Bug fixes for sprint 2
 
 Week 9
-- Collaborative stocks features (add, remove, delete) 
-- Report
+- Collaborative stocks features (add, remove, delete)
+- Fixing bugs in the codebase
+- Working on final report implementaton and challenges section
+
+Week 10
+- Demo prepartions
+- Final report functionalities and storyboarding
 
 
 Matthews email
