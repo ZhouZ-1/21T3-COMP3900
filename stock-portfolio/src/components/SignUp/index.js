@@ -28,7 +28,7 @@ function SignUp () {
   const handleSignUp = () => {
     const isPasswordOkay = validatePassword(password)
     const isEmailOkay = validateEmail(email)
-
+    
     if (!isPasswordOkay) {
       setIsPasswordError(true)
     } else {
@@ -53,7 +53,6 @@ function SignUp () {
           // Set token and redirects to the main page.
           sessionStorage.setItem('token', res.token)
           history.push('/')
-          alert(userName)
         } else {
           // TODO: display error message
         }
@@ -80,7 +79,7 @@ function SignUp () {
               </Typography>
             </div>
             <Box
-              component="form"
+              // component="form"
               onSubmit={handleSignUp}
               noValidate
               sx={{ mt: 1 }}
@@ -91,7 +90,7 @@ function SignUp () {
                 fullWidth
                 id="firstName"
                 label="First Name"
-                name="First Name"
+                // name="First Name"
                 autoFocus
                 onChange={evt => setFirstName(evt.target.value)}
               />
@@ -101,7 +100,7 @@ function SignUp () {
                 fullWidth
                 id="lastName"
                 label="Last Name"
-                name="Last Name"
+                // name="Last Name"
                 autoFocus
                 onChange={evt => setLastName(evt.target.value)}
               />
@@ -112,23 +111,22 @@ function SignUp () {
                   fullWidth
                   id="email"
                   label="Email"
-                  name="Email"
+                  // name="Email"
                   autoFocus
                   onChange={evt => setEmail(evt.target.value)}
                 />
                 <EmailRuleModal />
-              </div>
               {isEmailError && (
                 <p class="text-danger">Please check Email Rule!</p>
               )}
-
+              </div>
               <TextField
                 margin="normal"
                 required
                 fullWidth
                 id="username"
                 label="Username"
-                name="Username"
+                // name="Username"
                 autoFocus
                 onChange={evt => setUserName(evt.target.value)}
               />
@@ -138,7 +136,7 @@ function SignUp () {
                   margin="normal"
                   required
                   fullWidth
-                  name="passrd"
+                  // name="passrd"
                   label="Password"
                   type="password"
                   id="password"
@@ -146,10 +144,10 @@ function SignUp () {
                   onChange={evt => setPassword(evt.target.value)}
                 />
                 <PasswordRuleModal />
-              </div>
               {isPasswordError && (
                 <p class="text-danger">Please check Password Rule!</p>
               )}
+              </div>
               <Button
                 type="submit"
                 fullWidth

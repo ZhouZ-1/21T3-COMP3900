@@ -18,6 +18,7 @@ function SignIn () {
   const [password, setPassword] = useState('')
   const [authenticationError, setAuthenticationError] = useState(false)
   const theme = createTheme()
+
   const handleSignIn = () =>
     api('accounts/login', 'POST', { username, password }).then(res => {
       if (res.token) {
@@ -45,11 +46,10 @@ function SignIn () {
           >
             <div>
               <Typography component="h1" variant="h5">
-                Please Sign In <LoginIcon />
+                Sign In <LoginIcon />
               </Typography>
             </div>
             <Box
-              component="form"
               onSubmit={handleSignIn}
               noValidate
               sx={{ mt: 1 }}
@@ -60,7 +60,7 @@ function SignIn () {
                 fullWidth
                 id="username"
                 label="Username"
-                name="Username"
+                // name="Username"
                 autoFocus
                 onChange={evt => setUsername(evt.target.value)}
               />
@@ -68,17 +68,13 @@ function SignIn () {
                 margin="normal"
                 required
                 fullWidth
-                name="password"
+                // name="password"
                 label="Password"
                 type="password"
                 id="password"
                 autoComplete="current-password"
                 onChange={evt => setPassword(evt.target.value)}
               />
-              {/* <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            /> */}
               {authenticationError && (
                 <p class="text-danger">
                   Incorrect Username or Password. Please try again!
