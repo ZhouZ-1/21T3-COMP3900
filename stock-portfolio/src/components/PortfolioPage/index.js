@@ -1,11 +1,9 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useHistory } from 'react-router';
 import {
   Button,
-  Menu,
-  MenuItem,
   TextField,
   Dialog,
   DialogActions,
@@ -15,21 +13,17 @@ import {
 } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 import api from '../../api'
-import moment from 'moment'
 import Typography from '@mui/material/Typography'
-import { createTheme, ThemeProvider } from '@mui/material/styles'
 import Loader from '../Loader'
 import NavBar from '../NavBar/'
 
 const columns = [
-  // { field: 'holding_id', headerName: 'id', width: 100 },
   { field: 'symbol', headerName: 'Symbol', width: 125 },
   { field: 'value', headerName: 'Value', width: 120 },
   { field: 'qty', headerName: 'Quantity', width: 130 },
   { field: 'date', headerName: 'Date', width: 130 },
   { field: 'change', headerName: 'Daily Change in Dollar', width: 220 },
 ]
-const theme = createTheme()
 
 function PortfolioPage() {
   var history = useHistory();
@@ -65,54 +59,57 @@ function PortfolioPage() {
     setParticipants(participants);
   };
 
-  useEffect(async () => {
-    setIsLoading(true);
-    if (sessionStorage.getItem('token') == null) 
-      return alert("Not loading the portfolio");
+  useEffect(() => {
+    (async () => {
+      setIsLoading(true);
+      if (sessionStorage.getItem('token') === null) 
+        return alert("Not loading the portfolio");
 
-    let newData = [];
-    
-    await api('portfolio/holdings', 'POST', {
-      token: token,
-      portfolio_id: portfolio_id,
-    })
-    .then(async(res) => {
-      let change = 0;
-
-      res.map(async(s) => {
-        const changes = await api(`stocks/search`, 'POST', { symbol: s.symbol })
+      let newData = [];
       
-        if(changes) {
-          change = parseFloat(changes.previous_close).toFixed(3)
-        }
-        
-        newData.push({ id: s.holding_id, change, ...s})
+      await api('portfolio/holdings', 'POST', {
+        token: token,
+        portfolio_id: portfolio_id,
       })
+      .then(async(res) => {
+        let change = 0;
 
-    });
+        res.map(async(s) => {
+          const changes = await api(`stocks/search`, 'POST', { symbol: s.symbol })
+        
+          if(changes) {
+            change = parseFloat(changes.previous_close).toFixed(3)
+          }
+          
+          newData.push({ id: s.holding_id, change, ...s})
+        })
 
-    setStocks(newData);
+      });
 
-    // todo: uncomment
-    const response = await api(`portfolio?token=${token}`, 'GET');
-    let portfolios = response.portfolios;
-    let isOwner = false;
-    for (let index = 0; index < portfolios.length; index++) {
-      if (portfolios[index].portfolio_id == portfolio_id) {
-        isOwner = true;
+      setStocks(newData);
+
+      const response = await api(`portfolio?token=${token}`, 'GET');
+      let portfolios = response.portfolios;
+      let isOwner = false;
+      for (let index = 0; index < portfolios.length; index++) {
+        if (portfolios[index].portfolio_id === portfolio_id) {
+          isOwner = true;
+        }
       }
-    }
 
-    setIsPortfolioOwner(isOwner);
-    // setIsPortfolioOwner(true);
+      setIsPortfolioOwner(isOwner);
 
-    setIsLoading(false);
-  }, [refresh]);
+      setIsLoading(false);
+    })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refresh, token, portfolio_id]);
 
-  // todo: uncomment
-  useEffect(async () => {
-    const participants = await getParticipants();
-    setParticipants(participants);
+  useEffect(() => {
+    (async () => {
+      const participants = await getParticipants();
+      setParticipants(participants);
+    })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPortfolioOwner]);
 
   const handleClickOpenAdd = () => {
@@ -148,16 +145,18 @@ function PortfolioPage() {
       );
       let currnetPortfolio = {};
       allPortfolios.map((portfolioInfo) => {
-        if (portfolioInfo.portfolio_id == portfolio_id) {
+        if (portfolioInfo.portfolio_id === portfolio_id) {
           currnetPortfolio = portfolioInfo;
         }
+        return null;
       });
       let allParticipants = currnetPortfolio.shared_with || [];
       let activeParticipants = [];
       allParticipants.map((user) => {
-        if (user.status == 'accepted') {
+        if (user.status === 'accepted') {
           activeParticipants.push([user.username, user.sharing_id]);
         }
+        return null;
       });
       const currentParticipants = activeParticipants.map(function (userInfo) {
         return (
@@ -210,7 +209,7 @@ function PortfolioPage() {
     setIsLoading(true);
     const date = getCurrDate();
     const value = await searchStock(symbol);
-    if (value == -1) {
+    if (value === -1) {
       alert('Wait a minute. Try again.')
       return
     }
@@ -221,7 +220,7 @@ function PortfolioPage() {
       return;
     }
 
-    if (qty == 0) {
+    if (qty === 0) {
       alert('Quantity cannot be equal to 0.');
       return;
     }
@@ -253,7 +252,7 @@ function PortfolioPage() {
   const deleteStock = async () => {
     setIsLoading(true);
 
-    if (select.length == 0) {
+    if (select.length === 0) {
       alert('You have not select any stocks.');
       return;
     }
@@ -263,10 +262,11 @@ function PortfolioPage() {
       : 'collaborate/remove-holding';
     Promise.all(
       select.map((id) => {
-        const res = api(stockDeletionURL, 'DELETE', {
+        api(stockDeletionURL, 'DELETE', {
           token: token,
           holding_id: id,
         });
+        return null;
       })
     ).then((res) => {
       if (res !== undefined) {
@@ -295,7 +295,7 @@ function PortfolioPage() {
   };
 
   const onClickShare = async () => {
-    const response = await api('collaborate/send', 'POST', {
+    await api('collaborate/send', 'POST', {
       token: token,
       username: userName,
       portfolio_id: portfolio_id,

@@ -4,62 +4,45 @@ import { useHistory } from 'react-router'
 import api from '../../api'
 import { Grid, Card, CardHeader, CardContent, Typography } from '@mui/material'
 
-const BalancePortfolio = () => {
+const BalancePortfolio = (props) => {
   var history = useHistory()
   // const [balance, setBalance] = useState([]);
   const [stock, setStock] = useState([])
   const [overall, setOverall] = useState([0, 0])
 
-  useEffect(async () => {
-    // handleBalance();
-    // const balance = props.location.state.detail;
-    const balance = await api(
-      `invested_performance/portfolio?portfolio=${sessionStorage.getItem(
-        'id'
-      )}`,
-      'GET'
-    )
+  useEffect(() => {
+    (async () => {
+      const balance = await api(
+        `invested_performance/portfolio?portfolio=${sessionStorage.getItem(
+          'id'
+        )}`,
+        'GET'
+      )
 
-    balance.symbols.filter(c => {
-      c.change_val = parseFloat(c.change_val).toFixed(1)
-      c.change_percent = parseFloat(c.change_percent).toFixed(3)
-    })
-
-    setOverall(
       balance.symbols.filter(c => {
-        if (c.symbol == 'overall') {
-          return c
-        }
-      })[0]
-    )
-
-    setStock(
-      balance.symbols.filter((c) => {
-        if (c.symbol !== 'overall') return c;
+        c.change_val = parseFloat(c.change_val).toFixed(1)
+        c.change_percent = parseFloat(c.change_percent).toFixed(3)
         return null;
       })
-    );
+
+      setOverall(
+        balance.symbols.filter(c => {
+          if (c.symbol === 'overall') {
+            return c
+          }
+          return null;
+        })[0]
+      )
+
+      setStock(
+        balance.symbols.filter((c) => {
+          if (c.symbol !== 'overall') return c;
+          return null;
+        })
+      );
+    })();
   }, [overall.change_val, props.location.state.detail]);
 
-  // const handleBalance = async () => {
-  //   // const bal = await api(
-  //   //   `invested_performance?token=${sessionStorage.getItem('token')}`,
-  //   //   'GET'
-  //   // );
-  //   await api(
-  //     `invested_performance?token=3bAaXqKjTdWyguxqx8Jxhw`,
-  //     'GET'
-  //   ).then((bal) => {
-  //     let total = parseFloat(bal.total_gains.toFixed(0));
-  //     let pct = parseFloat(bal.pct_performance.toFixed(3));
-  //     if (total < 0) {
-  //       total = parseFloat(bal.total_gains.toFixed(3));
-  //       pct = parseFloat(bal.pct_performance.toFixed(3));
-  //     }
-  //     setBalance({ total_gains: `${total}`, pct_performance: `${pct}` });
-  //   });
-  //   console.log(balance);
-  // };
   const handleBack = () => {
     history.push(`/portfolio/${sessionStorage.getItem('id')}`)
   }
@@ -95,7 +78,6 @@ const BalancePortfolio = () => {
               <Card variant="outlined">
                 <CardHeader
                   title={`Symbol : ${s.symbol}`}
-                  // subheader={`Changes : ${s.change_val}(${s.change_percent}%)`}
                 />
                 <CardContent>
                   <Typography

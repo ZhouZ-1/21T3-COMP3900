@@ -6,7 +6,6 @@ import getRows from './getRows'
 import api from '../../api'
 import PortfolioModal from './PortfolioModal'
 import Typography from '@mui/material/Typography'
-import { createTheme, ThemeProvider } from '@mui/material/styles'
 
 function WatchList () {
   const token = sessionStorage.getItem('token')
@@ -28,12 +27,13 @@ function WatchList () {
   ]
   const [rows, setRows] = useState(initialRow)
   const [selectedStocks, setSelectedStocks] = useState([])
-  const theme = createTheme()
 
-  useEffect(async () => {
-    const newRow = await getRows(token)
-    setRows(newRow)
-  }, [])
+  useEffect(() => {
+    (async () => {
+      const newRow = await getRows(token)
+      setRows(newRow)
+    })();
+  }, [token])
 
   const onDeleteClick = async () => {
     let stockToRemove = []
@@ -42,7 +42,9 @@ function WatchList () {
         if (idx === item.id) {
           stockToRemove.push(item.code)
         }
+        return null;
       })
+      return null;
     })
     const newRows = rows.filter(item => !selectedStocks.includes(item.id))
     await api('watchlist/delete', 'DELETE', {

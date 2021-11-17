@@ -29,17 +29,11 @@ function UpdateAccount(){
             setIsCheckPasswordError(false);
         }
         
-        //@TODO: check id/password to authenticate/authorise.
-        //  if(id,password exist){
         if (isPasswordOkay && isCheckPassword){
             history.push('/updateAccount') // stay in the refresh page
         }
-        // }else{
-        //     display error message
-        // }
     }
     
-    // setIsPasswordError(!validatePassword(newPassword));
 
     function checkPassword() {
         let checkPassword = document.getElementById("checkPassword").value;

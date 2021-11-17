@@ -138,6 +138,14 @@ def delete_user(username):
     '''
     cursor = conn.cursor()
     cursor.execute("DELETE FROM users WHERE username=?", [username])
+    
+    # Select all portfolios that the user owns
+    cursor.execute("SELECT portfolio_id FROM portfolios WHERE owner=?", [username])
+    for portfolio_id in cursor.fetchall():
+        id = portfolio_id[0]
+        cursor.execute("DELETE FROM holdings WHERE held_by=?", [id])
+        cursor.execute("DELETE FROM permissions WHERE portfolio_id=?", [id])
+        cursor.execute("DELETE FROM portfolios WHERE portfolio_id=?", [id])
     conn.commit()
 
 def add_portfolio(username, portfolio_name):

@@ -45,9 +45,6 @@ function UpdatePassword() {
         }
       });
     }
-    // }else{
-    //     display error message
-    // }
   };
 
   function checkPassword() {

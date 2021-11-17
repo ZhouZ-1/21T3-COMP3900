@@ -5,7 +5,6 @@ import { Box, TextField } from '@mui/material'
 import {
   Card,
   CardContent,
-  CardMedia,
   Typography
 } from '@mui/material'
 import { validateEmail } from '../SignUp/helper'
@@ -15,7 +14,6 @@ function AccDetails () {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
-  const [profileImage, setProfileImage] = useState('')
   const [editing, setEditing] = useState(false)
   const [isValidEmail, setIsValidEmail] = useState(true)
 
@@ -28,9 +26,6 @@ function AccDetails () {
         setFirstName(res.first_name)
         setLastName(res.last_name)
         setEmail(res.email)
-        setProfileImage(res.profile_image)
-      } else {
-        // Something went wrong
       }
     })
   }, [token])
@@ -92,12 +87,6 @@ function AccDetails () {
         <Box display="flex" justifyContent="center" alignItems="center">
           <div>
             <Card sx={{ maxWidth: 345 }}>
-              {/* <CardMedia
-                component="img"
-                // height="140"
-                image={`${profileImage}`}
-                alt="Logo"
-              /> */}
               <CardContent>
                 <Typography gutterBottom variant="h5" component="div">
                   {username}
