@@ -54,7 +54,7 @@ function MainPage() {
             </button>
           </div>
         ) : (
-          <p>Some contents here</p>
+          <p>Log in!</p>
         )}
       </div>
     </div>
