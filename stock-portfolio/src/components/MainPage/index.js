@@ -6,29 +6,27 @@ function MainPage() {
   let isAuthenticated = !!sessionStorage.getItem('token');
   return (
     <div>
-      <div className="navBar">
+      <div className='navBar'>
         <NavBar />
       </div>
 
-      <div className="mainContents">
+      <div className='mainContents'>
         {isAuthenticated ? (
           <div
-            class="btn-group"
+            class='btn-group'
             style={{
               textAlign: 'center',
-              // maxWidth: "950px",
               margin: '0 auto',
               display: 'flex',
               flexDirection: 'column',
-              // border: "1px solid #e6e6e6",
               padding: '40px 25%',
               marginTop: '50px',
-              marginBottom: '50px'
+              marginBottom: '50px',
             }}
-          > 
+          >
             <button
-              type="button"
-              class="btn btn-warning"
+              type='button'
+              class='btn btn-warning'
               style={{ margin: '10px', color: 'white' }}
               onClick={() => history.push('/watchList')}
             >
@@ -36,8 +34,8 @@ function MainPage() {
             </button>
             <br />
             <button
-              type="button"
-              class="btn btn-warning"
+              type='button'
+              class='btn btn-warning'
               style={{ margin: '10px', color: 'white' }}
               onClick={() => history.push('/viewPortfolio')}
             >
@@ -45,8 +43,8 @@ function MainPage() {
             </button>
             <br />
             <button
-              type="button"
-              class="btn btn-warning"
+              type='button'
+              class='btn btn-warning'
               style={{ margin: '10px', color: 'white' }}
               onClick={() => history.push('/tax')}
             >

@@ -36,19 +36,19 @@ function StockList() {
   return (
     <>
       <NavBar></NavBar>
-      <div class="m-5">
+      <div class='m-5'>
         <div>{stocks ? stocks : <p>loading</p>}</div>
       </div>
       <button
-        type="button"
-        class="btn btn-outline-primary ms-5"
+        type='button'
+        class='btn btn-outline-primary ms-5'
         onClick={() => getStockList('prev')}
       >
         prev
       </button>
       <button
-        type="button"
-        class="btn btn-outline-primary ms-2"
+        type='button'
+        class='btn btn-outline-primary ms-2'
         onClick={() => getStockList('next')}
       >
         next

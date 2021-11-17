@@ -1,15 +1,15 @@
-import * as React from 'react'
-import { useState, useEffect } from 'react'
-import { DataGrid } from '@mui/x-data-grid'
-import NavBar from '../NavBar'
-import getRows from './getRows'
-import api from '../../api'
-import PortfolioModal from './PortfolioModal'
-import Typography from '@mui/material/Typography'
-import { createTheme, ThemeProvider } from '@mui/material/styles'
+import * as React from 'react';
+import { useState, useEffect } from 'react';
+import { DataGrid } from '@mui/x-data-grid';
+import NavBar from '../NavBar';
+import getRows from './getRows';
+import api from '../../api';
+import PortfolioModal from './PortfolioModal';
+import Typography from '@mui/material/Typography';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-function WatchList () {
-  const token = sessionStorage.getItem('token')
+function WatchList() {
+  const token = sessionStorage.getItem('token');
   const columns = [
     { field: 'id', headerName: 'ID', width: 100 },
     { field: 'code', headerName: 'Stock Code', width: 200 },
@@ -23,39 +23,39 @@ function WatchList () {
       code: 'N/A',
       name: 'RENDERING WATCHLIST.... PLEASE WAIT',
       price: 'Loading',
-      change_percent: 'Loading'
-    }
-  ]
-  const [rows, setRows] = useState(initialRow)
-  const [selectedStocks, setSelectedStocks] = useState([])
-  const theme = createTheme()
+      change_percent: 'Loading',
+    },
+  ];
+  const [rows, setRows] = useState(initialRow);
+  const [selectedStocks, setSelectedStocks] = useState([]);
+  const theme = createTheme();
 
   useEffect(async () => {
-    const newRow = await getRows(token)
-    setRows(newRow)
-  }, [])
+    const newRow = await getRows(token);
+    setRows(newRow);
+  }, []);
 
   const onDeleteClick = async () => {
-    let stockToRemove = []
-    rows.map(item => {
-      selectedStocks.map(idx => {
+    let stockToRemove = [];
+    rows.map((item) => {
+      selectedStocks.map((idx) => {
         if (idx === item.id) {
-          stockToRemove.push(item.code)
+          stockToRemove.push(item.code);
         }
-      })
-    })
-    const newRows = rows.filter(item => !selectedStocks.includes(item.id))
+      });
+    });
+    const newRows = rows.filter((item) => !selectedStocks.includes(item.id));
     await api('watchlist/delete', 'DELETE', {
       token: token,
-      stocks: stockToRemove
-    })
-    setRows(newRows)
-  }
+      stocks: stockToRemove,
+    });
+    setRows(newRows);
+  };
 
   const onMoveStocksClick = async () => {
-    const newRow = await getRows(token)
-    setRows(newRow)
-  }
+    const newRow = await getRows(token);
+    setRows(newRow);
+  };
   return (
     <div>
       <NavBar />
@@ -66,26 +66,26 @@ function WatchList () {
           marginBottom: '20px',
           display: 'flex',
           justifyContent: 'center',
-          alignContent: 'center'
+          alignContent: 'center',
         }}
       >
-        <Typography component="h1" variant="h5">
+        <Typography component='h1' variant='h5'>
           Watchlist
         </Typography>
         <div>
           <button
-            type="button"
-            class="btn btn-outline-primary ms-5"
+            type='button'
+            class='btn btn-outline-primary ms-5'
             onClick={onDeleteClick}
           >
             Delete Stock
           </button>
           <button
-            id="moveStock"
-            type="button"
-            class="btn btn-outline-primary ms-5"
-            data-bs-toggle="modal"
-            data-bs-target="#portfolioModal"
+            id='moveStock'
+            type='button'
+            class='btn btn-outline-primary ms-5'
+            data-bs-toggle='modal'
+            data-bs-target='#portfolioModal'
           >
             Move stocks to portfolio
           </button>
@@ -104,11 +104,11 @@ function WatchList () {
           punitsSize={5}
           rowsPerPunitsOptions={[5]}
           checkboxSelection
-          onSelectionModelChange={ids => setSelectedStocks(ids)}
+          onSelectionModelChange={(ids) => setSelectedStocks(ids)}
         />
       </div>
     </div>
-  )
+  );
 }
 
-export default WatchList
+export default WatchList;

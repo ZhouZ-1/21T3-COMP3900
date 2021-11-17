@@ -1,76 +1,76 @@
-import { useState } from 'react'
-import React from 'react'
-import api from '../../api'
-import NavBar from '../NavBar/index'
-import { validateEmail } from './../SignUp/helper'
-import EmailRuleModal from './../SignUp/EmailRuleModal'
-import Button from '@mui/material/Button'
-import TextField from '@mui/material/TextField'
-import Typography from '@mui/material/Typography'
-import { createTheme } from '@mui/material/styles'
+import { useState } from 'react';
+import React from 'react';
+import api from '../../api';
+import NavBar from '../NavBar/index';
+import { validateEmail } from './../SignUp/helper';
+import EmailRuleModal from './../SignUp/EmailRuleModal';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import { createTheme } from '@mui/material/styles';
 
-function ForgotMyPassword () {
-  const [email, setEmail] = useState('')
-  const [sentEmail, setSentEmail] = useState(false)
-  const [isEmailError, setIsEmailError] = useState(false)
-  const theme = createTheme()
+function ForgotMyPassword() {
+  const [email, setEmail] = useState('');
+  const [sentEmail, setSentEmail] = useState(false);
+  const [isEmailError, setIsEmailError] = useState(false);
+  const theme = createTheme();
 
   const handleSubmit = () => {
-    const isEmailOkay = validateEmail(email)
+    const isEmailOkay = validateEmail(email);
     if (!isEmailOkay) {
-      setIsEmailError(true)
+      setIsEmailError(true);
     } else {
-      setIsEmailError(false)
+      setIsEmailError(false);
     }
 
     if (isEmailOkay) {
-      api('accounts/recover', 'POST', { email })
-      setSentEmail(true)
+      api('accounts/recover', 'POST', { email });
+      setSentEmail(true);
     }
-  }
+  };
 
   return (
     <div>
       <NavBar />
       <div
-        class="container"
+        class='container'
         style={{
           marginTop: '3em',
           border: '1px solid',
           borderRadius: '5px',
-          padding: '50px 30px'
+          padding: '50px 30px',
         }}
       >
-        <Typography component="h1" variant="h4">
+        <Typography component='h1' variant='h4'>
           Please Sign In
         </Typography>
         {!sentEmail ? (
           <div>
-            <Typography variant="body1" style={{ padding: theme.spacing(1) }}>
+            <Typography variant='body1' style={{ padding: theme.spacing(1) }}>
               Enter in your email address below to reset your password.
             </Typography>
             <div>
               {isEmailError && (
-                <p class="text-danger">Please check Email Rule!</p>
+                <p class='text-danger'>Please check Email Rule!</p>
               )}
-              <div class="d-flex justify-content-center">
+              <div class='d-flex justify-content-center'>
                 <TextField
-                  margin="normal"
+                  margin='normal'
                   required
                   fullWidth
-                  id="email"
-                  label="Email"
-                  name="Email"
+                  id='email'
+                  label='Email'
+                  name='Email'
                   autoFocus
-                  onChange={evt => setEmail(evt.target.value)}
+                  onChange={(evt) => setEmail(evt.target.value)}
                 />
                 <EmailRuleModal />
               </div>
               <br />
               <Button
-                type="submit"
+                type='submit'
                 fullWidth
-                variant="contained"
+                variant='contained'
                 sx={{ mt: 3, mb: 2 }}
                 onClick={handleSubmit}
               >
@@ -88,7 +88,7 @@ function ForgotMyPassword () {
         )}
       </div>
     </div>
-  )
+  );
 }
 
-export default ForgotMyPassword
+export default ForgotMyPassword;
